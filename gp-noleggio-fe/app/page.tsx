@@ -1,13 +1,20 @@
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
+import HeroBanner from "@/components/hero-banner";
+import {makeGetServerInsertedHTML} from "next/dist/server/app-render/make-get-server-inserted-html";
+
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#D22000] font-sans dark:bg-black">
-     Home
-        <Button>
-            cliccami !
-        </Button>
-    </div>
+      <main className="min-h-screen bg-black w-full">
+
+          <HeroBanner />
+
+          <section className="flex items-center justify-center ">
+
+          </section>
+
+
+      </main>
   );
 }
