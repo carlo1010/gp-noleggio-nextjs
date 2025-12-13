@@ -22,8 +22,13 @@ import {
 export default function SearchCard() {
     const [customerType, setCustomerType] = useState<"private" | "business">("private");
     const [vehicleType, setVehicleType] = useState<"car" | "van">("car");
-    const [open, setOpen] = useState(false)
-    const [date, setDate] = useState<Date | undefined>(undefined)
+    // pickup
+    const [pickupDate, setPickupDate] = useState<Date | undefined>()
+    const [pickupOpen, setPickupOpen] = useState(false)
+
+    // dropoff
+    const [dropoffDate, setDropoffDate] = useState<Date | undefined>()
+    const [dropoffOpen, setDropoffOpen] = useState(false)
 
     return (
         // form: puoi cambiare action e method quando colleghi il backend
@@ -77,8 +82,10 @@ export default function SearchCard() {
                 <div className="col-span-1"></div>
                 <div className="col-span-1"></div>
 
+
+                
                 {/* COLONNA 1: CITTÀ + CHECKBOX */}
-                <div className="flex-1 col-span-2 space-y-2">
+                <div className="col-span-2 space-y-2">
                     <div className="flex items-center justify-between">
                         <Label htmlFor="terms">Città ritiro e riconsegna</Label>
 
@@ -103,40 +110,40 @@ export default function SearchCard() {
                 </div>
 
                 {/* COLONNA 2: DATA E ORA DEL RITIRO */}
-                <div className="flex-1 col-span-1  space-y-2">
+                <div className="col-span-1 space-y-2">
                     <Label className="font-semibold">Data e ora del ritiro</Label>
 
-                    <div className="flex">
-                        {/* data ritiro */}
                         <div className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden">
-                            <div className="flex flex-col ">
-                                <Popover open={open} onOpenChange={setOpen}>
+                        {/* data ritiro */}
+                            <div className="flex flex-col">
+                              <Popover open={pickupOpen} onOpenChange={setPickupOpen}>
                                     <PopoverTrigger asChild className="">
                                         <Button
                                             variant="ghost"
-                                            id="date-picker"
-                                            className="h-full w-full rounded-none bg-transparent px-3 text-sm flex items-center leading-none border-none shadow-none hover:bg-transparent focus-visible:ring-0"
-                                        >
-                                            {date ? date.toLocaleDateString() : "Data ritiro"}
+                                            id="pickup-date-picker"
+                                            className="h-full w-full rounded-none bg-transparent px-3 text-sm flex items-center leading-none border-r shadow-none hover:bg-transparent focus-visible:ring-0">
+                                            <CalendarDays className='w-4 h-4 text-[#0700DE]'/>
+                                            {pickupDate ? pickupDate.toLocaleDateString() : "Data ritiro"}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto overflow-hidden p-0" align="start">
                                         <Calendar
                                             mode="single"
-                                            selected={date}
+                                            selected={pickupDate}
                                             captionLayout="dropdown"
-                                            onSelect={(date) => {
-                                                setDate(date)
-                                            }}
+                                             onSelect={(date) => {
+                                                if (!date) return
+                                                setPickupDate(date)
+                                                setPickupOpen(false)   // autoclose on selected date
+                                              }}
                                         />
                                     </PopoverContent>
                                 </Popover>
                             </div>
-                            <div className="flex flex-col ">
+                            <div className="flex flex-col">
                                 <Select>
-  <SelectTrigger size="sm" className="!h-full !py-0 flex items-center px-3 leading-none rounded-none bg-transparent border-none shadow-none hover:bg-transparent focus-visible:ring-0"
-  >
-                                        <SelectValue placeholder="ora" className="leading-none"/>
+                                    <SelectTrigger size="sm" className="!h-full !py-0 flex items-center px-3 leading-none rounded-none bg-transparent border-none shadow-none hover:bg-transparent focus-visible:ring-0">
+                                        <SelectValue placeholder="Ora" className="leading-none"/>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
@@ -148,19 +155,59 @@ export default function SearchCard() {
                                 </Select>
                             </div>
                         </div>
-
-                        {/* COLONNA 3: DATA E ORA DELLA RICONSEGNA */}
-                        <div className="flex-1 col-span-1   space-y-2">
-
                         </div>
+                        {/* COLONNA 3: DATA E ORA DELLA RICONSEGNA */}
+                         <div className="col-span-1 space-y-2">
+                            <Label className="font-semibold">Data e ora della consegna</Label>
 
-                    </div>
+                            <div className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden">
+                                <div className="flex flex-col">
+                                    <Popover open={dropoffOpen} onOpenChange={setDropoffOpen}>
+                                        <PopoverTrigger asChild className="">
+                                            <Button
+                                                variant="ghost"
+                                                id="dropoff-date-picker"
+                                                className="h-full w-full rounded-none bg-transparent px-3 text-sm flex items-center leading-none border-r shadow-none hover:bg-transparent focus-visible:ring-0">
+                                                <CalendarDays className='w-4 h-4 text-[#0700DE]'/>
+                                                {dropoffDate ? dropoffDate.toLocaleDateString() : "Data rientro"}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                                            <Calendar
+                                                mode="single"
+                                                selected={dropoffDate}
+                                                captionLayout="dropdown"
+                                                  onSelect={(date) => {
+                                                    if (!date) return
+                                                    setDropoffDate(date)
+                                                    setDropoffOpen(false)  // autoclose on selected
+                                                  }}
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                </div>
+                                <div className="flex flex-col">
+                                <Select>
+                                <SelectTrigger size="sm" className="!h-full !py-0 flex items-center px-3 leading-none rounded-none bg-transparent border-none shadow-none hover:bg-transparent focus-visible:ring-0">
+                                    <SelectValue placeholder="Ora" className="leading-none"/>
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                    <SelectGroup>
+                                                                        <SelectItem value="apple">01:00</SelectItem>
+                                                                        <SelectItem value="banana">02:00</SelectItem>
+                                                                        <SelectItem value="blueberry">03:00</SelectItem>
+                                                                    </SelectGroup>
+                                                                </SelectContent>
+                                </Select>
+                                </div>
+                            </div>
+                        </div>
 
                     {/* RIGA 3: 4 COLONNE EQUAMENTE DISTRIBUITE */}
                 </div>
 
 
-            </div>
+
             <div className="grid grid-cols-4 ">
 
                 <div className="flex justify-start gap-x-12 flex-row col-span-3">
