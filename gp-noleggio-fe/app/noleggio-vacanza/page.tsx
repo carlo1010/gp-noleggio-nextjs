@@ -1,0 +1,19 @@
+import Header from "@/components/header";
+import OfferBar from "@/components/offer-banner";
+import HeroVacanzaSection from "@/components/hero-vacanza";
+import ContentSection from "@/components/content-section";
+import VantaggiIcone from "@/components/vantaggi-icone";
+import TerminiCondizioni from "@/components/termini-condizioni";
+
+export default function Page() {
+    return (
+        <>
+            <Header/>
+            <OfferBar/>
+            <HeroVacanzaSection/>
+            <ContentSection/>
+            <VantaggiIcone/>
+            <TerminiCondizioni/>
+        </>
+    );
+}
