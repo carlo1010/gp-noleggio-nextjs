@@ -29,6 +29,10 @@ export default function SearchCard() {
     // dropoff
     const [dropoffDate, setDropoffDate] = useState<Date | undefined>()
     const [dropoffOpen, setDropoffOpen] = useState(false)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dayAfterTomorrow = new Date();
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
 
     return (
         // form: puoi cambiare action e method quando colleghi il backend
@@ -123,7 +127,7 @@ export default function SearchCard() {
                                             id="pickup-date-picker"
                                             className="h-full w-full rounded-none bg-transparent px-3 text-sm flex items-center leading-none border-r shadow-none hover:bg-transparent focus-visible:ring-0">
                                             <CalendarDays className='w-4 h-4 text-[#0700DE]'/>
-                                            {pickupDate ? pickupDate.toLocaleDateString() : "Data ritiro"}
+                                        {pickupDate ? pickupDate.toLocaleDateString() : tomorrow.toLocaleDateString()}
                                         </Button>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-auto overflow-hidden p-0" align="start">
@@ -169,7 +173,7 @@ export default function SearchCard() {
                                                 id="dropoff-date-picker"
                                                 className="h-full w-full rounded-none bg-transparent px-3 text-sm flex items-center leading-none border-r shadow-none hover:bg-transparent focus-visible:ring-0">
                                                 <CalendarDays className='w-4 h-4 text-[#0700DE]'/>
-                                                {dropoffDate ? dropoffDate.toLocaleDateString() : "Data rientro"}
+                                        {dropoffDate ? dropoffDate.toLocaleDateString() : dayAfterTomorrow.toLocaleDateString()}
                                             </Button>
                                         </PopoverTrigger>
                                         <PopoverContent className="w-auto overflow-hidden p-0" align="start">

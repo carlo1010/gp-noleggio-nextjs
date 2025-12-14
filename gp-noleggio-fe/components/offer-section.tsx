@@ -10,39 +10,73 @@ export default function OffersSection() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
 
                 {/* CARD GRANDE (OCCUPA 2 COLONNE) */}
-                <div
-                    className="md:col-span-2 relative rounded-tl-sm rounded-br-sm overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
+                
+                <div className="relative md:col-span-2 aspect-[16/9] overflow-hidden rounded-tl-3xl rounded-br-3xl shadow-md cursor-pointer hover:scale-[1.02] transition">
                     <Image
-                        src="/vacanza.png"
+                        src="/vacanza.jpg"
                         alt="Noleggio Vacanza"
-                        width={900}
-                        height={400}
-                        className="object-cover w-full h-56 md:h-64 lg:h-72"
+                        fill
+                        className="object-cover"
                     />
+                    {/* OFFER BADGE DA FARE BACKGROUND IN ROSSO */}
+                    <div className="absolute mt-3 left-3 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
+                        <div className="text-white text-left leading-tight">
+                            <div className="text-xs font-medium">Fino al</div>
+                            <div className="text-lg font-bold">20%</div>
+                        </div>
+                    </div>
+                    {/* LABEL FONDO SCHEDA */}
+                    <div className="absolute bottom-3 left-3 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2" style={{ bottom: '20px' }}>
+                        <div className="text-white text-left leading-tight">
+                            <div className="text-2xl font-medium">Noleggio Vacanza</div>
+                        </div>
+                    </div>
                 </div>
-
                 {/* CARD PICCOLA 1 */}
                 <div
-                    className="relative rounded-tl-sm rounded-br-sm overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
+                    className="relative aspect-[4/3] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
                     <Image
-                        src="/furgoni.png"
+                        src="/furgoni.jpg"
                         alt="Noleggio Furgoni"
-                        width={450}
-                        height={300}
+                        fill
                         className="object-cover w-full h-56 md:h-64 lg:h-72"
                     />
+                    {/* OFFER BADGE DA FARE BACKGROUND IN ROSSO */}
+                    <div className="absolute mt-3 left-3 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
+                        <div className="text-white text-left leading-tight">
+                            <div className="text-xs font-medium">Fino al</div>
+                            <div className="text-lg font-bold">10%</div>
+                        </div>
+                    </div>
+                    {/* LABEL FONDO SCHEDA */}
+                    <div className="absolute bottom-3 left-3 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2" style={{ bottom: '20px' }}>
+                        <div className="text-white text-left leading-tight">
+                            <div className="text-2xl font-medium">Noleggio Furgoni</div>
+                        </div>
+                    </div>
                 </div>
-
                 {/* CARD PICCOLA 2 */}
                 <div
-                    className="relative rounded-tl-sm rounded-br-sm overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
+                    className="relative aspect-[4/3] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
                     <Image
-                        src="/business.png"
+                        src="/business.jpg"
                         alt="Noleggio Business"
-                        width={450}
-                        height={300}
+                        fill
                         className="object-cover w-full h-56 md:h-64 lg:h-72"
                     />
+                    {/* OFFER BADGE DA FARE BACKGROUND IN ROSSO */}
+                    <div className="absolute mt-3 left-3 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
+                        <div className="text-white text-left leading-tight">
+                            <div className="text-xs font-medium">Fino al</div>
+                            <div className="text-lg font-bold">30%</div>
+                        </div>
+                    </div>
+                    {/* LABEL FONDO SCHEDA */}
+                    <div className="absolute bottom-3 left-3 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2" style={{ bottom: '20px' }}>
+                        <div className="text-white text-left leading-tight">
+                            <div className="text-2xl font-medium">Noleggio Business</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             {/* SECONDA RIGA: TESTO + IMMAGINE VANTAGGI */}
@@ -71,17 +105,49 @@ export default function OffersSection() {
                 </div>
 
                 {/* DESTRA — 2 COLONNE */}
-                <div className="md:col-span-2 relative rounded-tl-sm rounded-br-sm overflow-hidden shadow-lg">
+                <div className="md:col-span-2 relative rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-lg">
                     <Image
-                        src="/vantaggi.png"
+                        src="/vacanza.jpg"
                         alt="Vantaggi"
                         width={700}
                         height={400}
                         className="object-cover w-full h-64 md:h-full"
                     />
+                    {/* overlay per contrasto testo, da regolare trasparenza*/}
+                    <div className="absolute inset-0 bg-black/40"></div>               
+                    {/* LISTA - da risolvere colore "check" */}
+                    <div className="absolute top-0 h-full flex flex-col justify-center ml-12 space-y-3" style={{ left: '40px' }} >
+                        {/* VANTAGGIO 1 */}
+                        <div className="flex items-center gap-3">
+                            <Check className='w-5 h-5' />
+                            <span className="text-2xl text-white font-medium">Vantaggio 1</span>
+                        </div>
 
-                    {/* overlay per contrasto testo */}
+                        {/* VANTAGGIO 2 */}
+                        <div className="flex items-center gap-3">
+                            <Check className='w-5 h-5' />
+                            <span className="text-2xl text-white font-medium">Vantaggio 2</span>
+                        </div>
 
+                        {/* VANTAGGIO 3 */}
+                        <div className="flex items-center gap-3">
+                            <Check className='w-5 h-5' />
+                            <span className="text-2xl text-white font-medium">Vantaggio 3</span>
+                        </div>
+                        {/* VANTAGGIO 3 */}
+                        <div className="flex items-center gap-3">
+                            <Check className='w-5 h-5' />
+                            <span className="text-2xl text-white font-medium">Vantaggio 4</span>
+                        </div>
+                        {/* VANTAGGIO 3 */}
+                        <div className="flex items-center gap-3">
+                            <Check className='w-5 h-5'/>
+                            <span className="text-2xl text-white font-medium">Vantaggio 5</span>
+                        </div>
+                    </div>
+
+                    
+                    
                 </div>
 
             </div>
