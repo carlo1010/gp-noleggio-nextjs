@@ -1,0 +1,17 @@
+import OfferBar from "@/components/offer-banner";
+import HeroBusiness from "@/components/hero-business";
+import ContentSection from "@/components/content-section";
+import VantaggiIcone from "@/components/vantaggi-icone";
+import TerminiCondizioni from "@/components/termini-condizioni";
+
+export default function Page() {
+    return (
+        <>
+            <OfferBar/>
+            <HeroBusiness/>
+            <ContentSection/>
+            <VantaggiIcone/>
+            <TerminiCondizioni/>
+        </>
+    );
+}
