@@ -104,18 +104,18 @@ export default function SearchCard() {
 
                 {/* COLONNA 2: DATA E ORA DEL RITIRO */}
                 <div className="flex-1 col-span-1  space-y-2">
-                    <span className="text-sm font-semibold">Data e ora del ritiro</span>
+                    <Label className="font-semibold">Data e ora del ritiro</Label>
 
                     <div className="flex">
                         {/* data ritiro */}
-                        <div className="flex  border rounded-tl-sm rounded-br-sm h-max">
+                        <div className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden">
                             <div className="flex flex-col ">
                                 <Popover open={open} onOpenChange={setOpen}>
                                     <PopoverTrigger asChild className="">
                                         <Button
                                             variant="ghost"
                                             id="date-picker"
-                                            className="block shadow-none  bg-white hover:bg-white font-normal mx-2 w-full h-full rounded-tl-sm rounded-br-sm p-0 border-r border-none border text-sm"
+                                            className="h-full w-full rounded-none bg-transparent px-3 text-sm flex items-center leading-none border-none shadow-none hover:bg-transparent focus-visible:ring-0"
                                         >
                                             {date ? date.toLocaleDateString() : "Data ritiro"}
                                         </Button>
@@ -134,10 +134,10 @@ export default function SearchCard() {
                             </div>
                             <div className="flex flex-col ">
                                 <Select>
-                                    <SelectTrigger
-                                        className="shadow-none appearance-none font-normal mx-2 w-full h-full rounded-tl-sm border-none rounded-br-sm p-0 text-sm"
+                                    <SelectTrigger size="sm"
+                                                   className="!h-full !py-0 flex items-center px-3 leading-none rounded-none bg-transparent border-none shadow-none hover:bg-transparent focus-visible:ring-0"
                                     >
-                                        <SelectValue placeholder="ora"/>
+                                        <SelectValue placeholder="ora" className="leading-none"/>
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
