@@ -134,9 +134,11 @@ export default function SearchCard() {
                             </div>
                             <div className="flex flex-col ">
                                 <Select>
+
                                     <SelectTrigger size="sm"
                                                    className="!h-full !py-0 flex items-center px-3 leading-none rounded-none bg-transparent border-none shadow-none hover:bg-transparent focus-visible:ring-0"
                                     >
+
                                         <SelectValue placeholder="ora" className="leading-none"/>
                                     </SelectTrigger>
                                     <SelectContent>
