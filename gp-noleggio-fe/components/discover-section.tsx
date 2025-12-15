@@ -4,11 +4,11 @@ import Link from "next/link";
 const items = [
     {
         kicker: "LOREM IPSUM",
-        title: "Lorem ipsum",
+        title: "Lorem ipsum1",
         desc:
             "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         href: "/",
-        cta: "Lorem Ipsum",
+        cta: "Lorem Ipsum2",
         img: "/discover1.png",
         imgAlt: "Discover 1",
     },
@@ -18,13 +18,13 @@ const items = [
         desc:
             "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         href: "/",
-        cta: "Lorem Ipsum",
+        cta: "Lorem Ipsum3",
         img: "/discover2.png",
         imgAlt: "Discover 2",
     },
     {
         kicker: "LOREM IPSUM",
-        title: "Lorem ipsum",
+        title: "Lorem ipsum4",
         desc:
             "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         href: "/",
@@ -43,7 +43,7 @@ export default function DiscoverSection() {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {items.map((item) => (
+                    {items.map((item, idx) => (
                         <article key={item.title} className="flex flex-col">
                             {/* Immagine */}
                             <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl">

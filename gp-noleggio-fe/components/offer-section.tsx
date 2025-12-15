@@ -1,5 +1,6 @@
 import Image from "next/image";
 import {Check} from "lucide-react";
+import BadgePromo from "@/components/badge-promo";
 
 export default function OffersSection() {
     return (
@@ -19,14 +20,12 @@ export default function OffersSection() {
                         className="object-cover"
                     />
                     {/* OFFER BADGE DA FARE BACKGROUND IN ROSSO */}
-                    <div className="absolute mt-3 left-3 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
-                        <div className="text-white text-left leading-tight">
-                            <div className="text-xs font-medium">Fino al</div>
-                            <div className="text-lg font-bold">20%</div>
-                        </div>
-                    </div>
+                    <BadgePromo
+                        topText="Fino al"
+                        bottomText="30%"
+                    />
                     {/* LABEL FONDO SCHEDA */}
-                    <div className="absolute bottom-3 left-3 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2" style={{ bottom: '20px' }}>
+                    <div className="absolute mb-3 ml-5 z-10 bg-black/60 rounded-tl-xl rounded-br-xl px-3 py-2" style={{ bottom: '20px' }}>
                         <div className="text-white text-left leading-tight">
                             <div className="text-2xl font-medium">Noleggio Vacanza</div>
                         </div>
@@ -41,13 +40,10 @@ export default function OffersSection() {
                         fill
                         className="object-cover w-full h-56 md:h-64 lg:h-72"
                     />
-                    {/* OFFER BADGE DA FARE BACKGROUND IN ROSSO */}
-                    <div className="absolute mt-3 left-3 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
-                        <div className="text-white text-left leading-tight">
-                            <div className="text-xs font-medium">Fino al</div>
-                            <div className="text-lg font-bold">10%</div>
-                        </div>
-                    </div>
+                     <BadgePromo
+                        topText="Fino al"
+                        bottomText="10%"
+                    />
                     {/* LABEL FONDO SCHEDA */}
                     <div className="absolute bottom-3 left-3 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2" style={{ bottom: '20px' }}>
                         <div className="text-white text-left leading-tight">
@@ -64,13 +60,10 @@ export default function OffersSection() {
                         fill
                         className="object-cover w-full h-56 md:h-64 lg:h-72"
                     />
-                    {/* OFFER BADGE DA FARE BACKGROUND IN ROSSO */}
-                    <div className="absolute mt-3 left-3 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
-                        <div className="text-white text-left leading-tight">
-                            <div className="text-xs font-medium">Fino al</div>
-                            <div className="text-lg font-bold">30%</div>
-                        </div>
-                    </div>
+                    <BadgePromo
+                        topText="Fino al"
+                        bottomText="20%"
+                    />
                     {/* LABEL FONDO SCHEDA */}
                     <div className="absolute bottom-3 left-3 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2" style={{ bottom: '20px' }}>
                         <div className="text-white text-left leading-tight">
