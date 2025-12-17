@@ -1,13 +1,13 @@
 import OfferBar from "@/components/offer-banner";
-import HeroBusiness from "@/components/hero-business";
 import ContentSection from "@/components/content-section";
 import VantaggiIcone from "@/components/vantaggi-icone";
+import HeroBanner from "@/components/hero-banner";
 
 export default function Page() {
     return (
         <>
             <OfferBar/>
-            <HeroBusiness/>
+            <HeroBanner imageUrl={'/hero/sfondo-hero-business.png'}/>
             <ContentSection/>
             <VantaggiIcone/>
         </>
