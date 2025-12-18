@@ -18,9 +18,7 @@ interface CardNoleggioProps {
     alimentazione: string;
     prezzoTotale: string;
     prezzoGiornaliero: string;
-
-
-
+    openDialog: (event: boolean) => void;
 }
 
 export default function CardNoleggio(props: CardNoleggioProps,) {
@@ -87,7 +85,7 @@ export default function CardNoleggio(props: CardNoleggioProps,) {
                 <div className={""}>
                     Totale {formatPrice(props.prezzoTotale)}
                 </div>
-                <Button className="px-10 text-lg">
+                <Button onClick={() => props.openDialog(true)} className="px-10 cursor-pointer text-lg">
                     Seleziona
                 </Button>
 
