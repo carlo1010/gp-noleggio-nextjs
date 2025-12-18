@@ -1,34 +1,61 @@
 import Image from "next/image";
 import {Check} from "lucide-react";
 import {Button} from "@/components/ui/button";
+import {formatPrice} from "@/lib/formatPrice";
+import CambioIcon from "@/components/svg/cambioIcon";
+import PostiIcon from "@/components/svg/postiIcon";
+import {PatenteIcon} from "@/components/svg/patenteicon";
+import PorteIcon from "@/components/svg/porteicon";
+import AriaIcon from "@/components/svg/ariaicon";
+interface CardNoleggioProps {
+    imageUrl: string;
+    nome: string;
+    cambio: string;
+    posti: number;
+    ariaCondizionata: boolean;
+    eta: string;
+    porte: number;
+    alimentazione: string;
+    prezzoTotale: string;
+    prezzoGiornaliero: string;
 
-export default function CardNoleggio() {
+
+
+}
+
+export default function CardNoleggio(props: CardNoleggioProps,) {
     return (
-        <div className={"grid grid-cols-3 gap-x-4  border-b  border-gray-200 "}>
-            <Image src={'/fiat-500.png'} alt={''} width={269} height={219}/>
-            <div className={"flex flex-col gap-y-2"}>
+        <div className={"grid grid-cols-7 gap-x-4  border-b  border-gray-200 "}>
+
+
+            <div className='col-span-2 flex items-center justify-center'>
+                <Image className="" src={props.imageUrl} alt={''} width={300} height={219}/>
+
+            </div>
+
+            <div className={"flex flex-col gap-y-2 col-span-3"}>
                 <div className={" font-bold uppercase"}>
-                    Fiat - 500
+                    {props.nome}
                 </div>
                 <div className={"w-max p-2 rounded-tl-sm rounded-br-sm bg-[#999999] text-white uppercase"}>
                     O MINI SIMILARE
                 </div>
 
                 <div className={"flex flex-row flex-wrap gap-x-4 font-bold"}>
-                    <div>
-                        Manuale
+                    <div className={"flex flew-row gap-x-2 items-center"}>
+                        <CambioIcon />{props.cambio}
                     </div>
-                    <div>
-                        4
+                    <div className={"flex flew-row gap-x-2 items-center"}>
+                        <PostiIcon/>{props.posti}
                     </div>
-                    <div>
-                        A/C
+                    <div className={"flex flew-row gap-x-2 items-center"}>
+                        <AriaIcon/>{props.ariaCondizionata == true ? 'A/C' : 'NO A/C'}
                     </div>
-                    <div>
-                        18
+                    <div className={"flex flew-row gap-x-2 items-center"}>
+                        <PatenteIcon/>{props.eta}
                     </div>
-                    <div>
-                        3
+                    <div className={"flex flew-row gap-x-2 items-center"}>
+                        <PorteIcon/>{props.porte}
                     </div>
                 </div>
                 <div className={" flex flex-col gap-y-2 "}>
@@ -49,21 +76,23 @@ export default function CardNoleggio() {
 
 
             </div>
-            <div className={"flex flex-col items-end justify-center gap-y-2"}>
+
+            <div className={"flex flex-col col-span-2 items-end justify-center gap-y-2"}>
                 <div className={"flex flex-row gap-x-2"}>
                     A partire da
                 </div>
                 <div className={" text-xl font-semibold "}>
-                    32,30€ <span className="text-sm font-medium"> / al giorno</span>
+                    {formatPrice(props.prezzoGiornaliero)} <span className="text-sm font-medium"> / al giorno</span>
                 </div>
                 <div className={""}>
-                    Totale 322,60€
+                    Totale {formatPrice(props.prezzoTotale)}
                 </div>
                 <Button className="px-10 text-lg">
                     Seleziona
                 </Button>
 
             </div>
+
 
         </div>
 

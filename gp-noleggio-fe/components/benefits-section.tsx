@@ -61,7 +61,7 @@ export default function BenefitsSection() {
                             {/* BOTTONE */}
                             <Link
                                 href={b.href}
-                                className="mt-6 inline-flex items-center justify-center bg-[#0700DE] text-white px-10 py-2 rounded-md text-sm font-medium hover:bg-[#0500b0] transition"
+                                className="mt-6 inline-flex items-center rounded-tl-sm rounded-br-sm justify-center bg-[#0700DE] text-white px-10 py-2  text-sm font-medium hover:bg-[#0500b0] transition"
                             >
                                 {b.button}
                             </Link>

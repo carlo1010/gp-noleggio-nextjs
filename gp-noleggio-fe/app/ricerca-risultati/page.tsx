@@ -12,16 +12,13 @@ export default function RicercsRisultati() {
                 </div>
 
             </section>
-            <FiltroAuto/>
+
 
             <div className="container mx-auto py-4 space-y-10">
-                <CardNoleggio/>
-                <CardNoleggio/>
-                <CardNoleggio/>
-                <CardNoleggio/>
-                <CardNoleggio/>
-                <CardNoleggio/>
-                <CardNoleggio/>
+                <FiltroAuto/>
+                <CardNoleggio imageUrl={""} nome={"Fiat-500"} cambio={"Automatico"} posti={4} ariaCondizionata={true} eta={"26+"} porte={3}
+                              alimentazione={"diesel"} prezzoTotale={"372"} prezzoGiornaliero={"25  "}/>
+
             </div>
         </>
 

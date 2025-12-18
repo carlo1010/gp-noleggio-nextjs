@@ -39,7 +39,7 @@ export default function FiltroAuto() {
 
     return (
         <section className="w-full">
-            <div className="mx-auto max-w-6xl px-6 py-10">
+            <div className="mx-auto px-6 py-10">
                 {/* Titolo */}
                 <h1 className="text-4xl font-bold tracking-tight">Scegli il tuo veicolo</h1>
 
