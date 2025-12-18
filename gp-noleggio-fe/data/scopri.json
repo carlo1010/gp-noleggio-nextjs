@@ -1,0 +1,32 @@
+[
+  {
+    "id": "discover-001",
+    "kicker": "LOREM IPSUM",
+    "title": "Lorem ipsum1",
+    "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "href": "/",
+    "cta": "Scopri di più",
+    "img": "/discover1.png",
+    "imgAlt": "Flotta auto Piccirillo Rent"
+  },
+  {
+    "id": "discover-002",
+    "kicker": "LOREM IPSUM",
+    "title": "Lorem ipsum",
+    "desc": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "href": "/",
+    "cta": "Vedi offerte",
+    "img": "/discover2.png",
+    "imgAlt": "Noleggio lungo termine"
+  },
+  {
+    "id": "discover-003",
+    "kicker": "LOREM IPSUM",
+    "title": "Lorem ipsum4",
+    "desc": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "href": "/",
+    "cta": "Contattaci",
+    "img": "/discover3.png",
+    "imgAlt": "Servizio clienti Piccirillo"
+  }
+]
