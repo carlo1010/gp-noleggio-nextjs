@@ -37,7 +37,7 @@ export default async function DiscoverSection() {
                     {items.map((item) => (
                         <article key={item.id} className="flex flex-col group">
                             {/* Immagine con Hover Effect */}
-                            <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl">
+                            <div className="relative w-full aspect-video overflow-hidden rounded-tl-2xl rounded-br-2xl">
                                 <Image
                                     src={item.img}
                                     alt={item.imgAlt}
