@@ -1,0 +1,91 @@
+[
+  {
+    "id": "guida-al-noleggio",
+    "kicker": "GUIDA AL NOLEGGIO",
+    "title": "Come scegliere l'auto perfetta per le tue vacanze",
+    "desc": "Dimensioni del bagagliaio, consumi e comfort: ecco i 5 fattori fondamentali da considerare prima di prenotare la tua auto per il prossimo viaggio.",
+    "cta": "Leggi di più",
+    "img": "/blog/blog1.png",
+    "imgAlt": "Auto a noleggio per vacanze"
+  },
+  {
+    "id": "blog-002",
+    "kicker": "RISPARMIO",
+    "title": "Noleggio lungo termine: conviene davvero?",
+    "desc": "Scopri i vantaggi economici e fiscali del noleggio a lungo termine rispetto all'acquisto di una vettura di proprietà nel 2024.",
+    "href": "/blog/",
+    "cta": "Scopri i vantaggi",
+    "img": "/blog/blog2.jpg",
+    "imgAlt": "Analisi costi noleggio"
+  },
+  {
+    "id": "blog-003",
+    "kicker": "MANUTENZIONE",
+    "title": "Viaggiare sicuri: i controlli della nostra flotta",
+    "desc": "La sicurezza dei nostri clienti è la priorità. Ecco quali test meccanici ed igienici eseguiamo su ogni veicolo prima della consegna.",
+    "href": "/blog/",
+    "cta": "La nostra qualità",
+    "img": "/blog/blog3.jpg",
+    "imgAlt": "Meccanico al lavoro su auto a noleggio"
+  },
+  {
+    "id": "blog-004",
+    "kicker": "ECO-MOBILITY",
+    "title": "Auto elettriche: la rivoluzione del noleggio",
+    "desc": "Tutto quello che devi sapere sul noleggio di auto elettriche e ibride: autonomia, ricarica e vantaggi per l'ambiente.",
+    "href": "/blog/",
+    "cta": "Vai all'articolo",
+    "img": "/blog/blog4.jpg",
+    "imgAlt": "Auto elettrica in ricarica"
+  },
+  {
+    "id": "blog-005",
+    "kicker": "BUSINESS",
+    "title": "Soluzioni di mobilità per aziende e professionisti",
+    "desc": "Ottimizza i costi aziendali con le nostre formule di noleggio flessibile studiate appositamente per le Partite IVA e le PMI.",
+    "href": "/blog/",
+    "cta": "Soluzioni business",
+    "img": "/blog/blog5.jpg",
+    "imgAlt": "Uomo d'affari con auto aziendale"
+  },
+  {
+    "id": "blog-006",
+    "kicker": "TIPS & TRICKS",
+    "title": "5 Borghi campani da visitare assolutamente",
+    "desc": "Prendi l'auto e parti alla scoperta delle perle nascoste della Campania: itinerari fuori dalle rotte turistiche più affollate.",
+    "href": "/blog/",
+    "cta": "Inizia il viaggio",
+    "img": "/blog/blog6.jpg",
+    "imgAlt": "Paesaggio costiero campano"
+  },
+  {
+    "id": "blog-007",
+    "kicker": "DOCUMENTI",
+    "title": "Cosa serve per noleggiare un'auto?",
+    "desc": "Patente, carta di credito o deposito cauzionale: facciamo chiarezza sui documenti necessari per ritirare il tuo veicolo senza stress.",
+    "href": "/blog/",
+    "cta": "Controlla la lista",
+    "img": "/blog/blog7.jpg",
+    "imgAlt": "Documenti e chiavi auto"
+  },
+  {
+    "id": "blog-008",
+    "kicker": "VAN & FURGONI",
+    "title": "Trasloco imminente? Scegli il furgone giusto",
+    "desc": "Guida alle cubature dei furgoni: come calcolare quanto spazio ti serve veramente per il tuo trasloco o trasporto merci.",
+    "href": "/blog/",
+    "cta": "Guida ai furgoni",
+    "img": "/blog/blog8.png",
+    "imgAlt": "Noleggio furgoni per traslochi"
+  },
+  {
+    "id": "blog-009",
+    "kicker": "NEWS",
+    "title": "Nuovi arrivi in flotta: scopri le novità 2025",
+    "desc": "Dalle city car agili ai SUV spaziosi, ecco i nuovi modelli appena arrivati nel parco auto di Piccirillo Rent.",
+    "href": "/blog/",
+    "cta": "Vedi le novità",
+    "img": "/blog/blog9.png",
+    "imgAlt": "Nuovi modelli auto 2025"
+  }
+]
