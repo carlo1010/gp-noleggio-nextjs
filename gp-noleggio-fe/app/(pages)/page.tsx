@@ -12,6 +12,7 @@ export default function Home() {
     return (
         <main className="min-h-screen bg-black w-full">
 
+
             <HeroBanner imageUrl={'/logo-banner.png'}/>
             <OffersSection/>
             <FleetSection/>
