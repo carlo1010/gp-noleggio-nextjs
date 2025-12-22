@@ -3,6 +3,8 @@ import HeroBanner from "@/components/hero-banner";
 import FlottaGriglia from "@/components/flotta-griglia";
 import GammaElettricaInfo from "@/components/gamma-elettricainfo";
 import BannerElettriche from "@/components/banner-elettriche";
+import InfoElettrico from "@/components/info-elettrico";
+import ElettricoKeyPoints from "@/components/elettrico-key-points";
 
 const cars = [
     {imageUrl: "/fleet/fiat-500.png", nome: "Fiat 500", autonomia: "Autonomia 190/320"},
@@ -29,6 +31,8 @@ export default function Page() {
             <GammaElettricaInfo/>
             <FlottaGriglia title="La nostra flotta" cars={cars}/>
             <BannerElettriche/>
+            <InfoElettrico />
+            <ElettricoKeyPoints/>
 
 
         </>

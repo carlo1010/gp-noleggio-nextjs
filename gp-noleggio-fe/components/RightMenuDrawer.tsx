@@ -84,15 +84,15 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
                         <li>
                             <div className="font-semibold">La nostra flotta</div>
                             <ul className="mt-3 space-y-2 pl-4 text-gray-700">
-                                <li><Link href="#" onClick={onClose} className="hover:underline">Auto</Link></li>
-                                <li><Link href="#" onClick={onClose} className="hover:underline">Premium</Link></li>
-                                <li><Link href="#" onClick={onClose} className="hover:underline">Elettriche</Link></li>
-                                <li><Link href="#" onClick={onClose} className="hover:underline">Furgoni</Link></li>
+                                <li><Link href="/tipo-noleggio/noleggio-auto" onClick={onClose} className="hover:underline">Auto</Link></li>
+                                <li><Link href="/tipo-noleggio/noleggio-premium" onClick={onClose} className="hover:underline">Premium</Link></li>
+                                <li><Link href="/tipo-noleggio/noleggio-elettriche" onClick={onClose} className="hover:underline">Elettriche</Link></li>
+                                <li><Link href="/blog/noleggio-furgoni" onClick={onClose} className="hover:underline">Furgoni</Link></li>
                             </ul>
                         </li>
 
                         <li>
-                            <Link href="#" onClick={onClose} className="font-semibold hover:underline">
+                            <Link href="/blog" onClick={onClose} className="font-semibold hover:underline">
                                 Il blog
                             </Link>
                         </li>
