@@ -5,7 +5,7 @@ const fleetItems = [
     {
         title: "Auto",
         desc: "La nostra ampia flotta offre auto di piccole e grandi dimensioni, incluse soluzioni eco-friendly.",
-        href: "/flotta/auto",
+        href: "/tipo-noleggio/noleggio-auto",
         img: "/auto.png",
         imgAlt: "Auto",
         width: 301,
@@ -15,7 +15,7 @@ const fleetItems = [
     {
         title: "Elettriche",
         desc: "Scegli l’auto elettrica perfetta per te nella nostra esclusiva gamma di modelli",
-        href: "/flotta/elettriche",
+        href: "/tipo-noleggio/noleggio-elettriche",
         img: "/elettriche.png",
         imgAlt: "Elettriche",
         width: 236,
@@ -24,7 +24,7 @@ const fleetItems = [
     {
         title: "Premium",
         desc: "Prenota un’auto firmata da uno dei brand automobilistici più rinomati al mondo",
-        href: "/flotta/premium",
+        href: "/tipo-noleggio/noleggio-premium",
         img: "/premium.png",
         imgAlt: "Premium",
         width: 306,
