@@ -13,7 +13,8 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select"
+import {listaAgenzia} from "@/hook/useAgenzia";
 
 export default function SearchCard() {
     // STATE VARIABLES
@@ -28,10 +29,16 @@ export default function SearchCard() {
     const [hasPromo, setHasPromo] = useState(false);
     const [dropoffTime, setDropoffTime] = useState<string | undefined>();
     const [pickupTime, setPickupTime] = useState<string | undefined>();
+    const [stessoUfficioChecked, setStessoUfficioChecked] = useState<boolean>(true);
+  
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const dayAfterTomorrow = new Date();
     dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+
+    const {isPending: isLoadingAgenzie, data: agenzie,} = listaAgenzia()
+
+    console.log(agenzie)
 
     return (
         <form
@@ -139,6 +146,7 @@ export default function SearchCard() {
                             className="w-full h-11 rounded-br-sm rounded-tl-sm border border-gray-300 pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none"
                         />
                     </div>
+
                 </div>
 
                 {/* DATA/ORA RITIRO */}

@@ -165,3 +165,38 @@
         @apply bg-background text-foreground;
     }
 }
+
+
+.noleggioCard {
+    transition: box-shadow 0.3s ease;
+}
+
+.noleggioCard .hide-on-hover {
+    display: flex;
+}
+
+.noleggioCard .hide-on-hover-product {
+    display: grid;
+}
+
+.noleggioCard .show-on-hover {
+    display: none;
+}
+
+.noleggioCard:hover .hide-on-hover {
+    display: none;
+}
+
+.noleggioCard:hover .hide-on-hover-product {
+    display: none;
+}
+
+.noleggioCard:hover .show-on-hover {
+    display: flex;
+}
+
+.noleggioCard:hover {
+    -webkit-box-shadow: 0px 0px 27.1px 0px rgba(0, 26, 255, 0.55);
+    -moz-box-shadow: 0px 0px 27.1px 0px rgba(0, 26, 255, 0.55);
+    box-shadow: 0px 0px 27.1px 0px rgba(0, 26, 255, 0.55);
+}
