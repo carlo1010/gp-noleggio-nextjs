@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { promises as fs } from 'fs';
 import path from 'path';
+import NextBreadcrumb from "@/components/blog-breadcrumbs";
 
 interface BlogItem {
     id: string;
@@ -44,6 +45,14 @@ export default async function BlogSection() {
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto px-4 py-14">
+                <NextBreadcrumb
+                    homeElement={'Home'}
+                    separator={<span> | </span>}
+                    activeClasses='text-blue-500'
+                    containerClasses='flex py-1'
+                    listClasses='hover:underline mx-2 font-bold'
+                    capitalizeLinks
+                />
                 <h2 className="text-3xl md:text-4xl font-bold mb-10">
                     Articoli in evidenza
                 </h2>

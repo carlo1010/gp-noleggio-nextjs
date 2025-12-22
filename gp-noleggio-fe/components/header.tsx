@@ -1,5 +1,6 @@
 import {Flag, Info, LogIn} from "lucide-react";
 import Link from "next/link";
+import Image from 'next/image';
 
 interface HeaderProps {
     dark: boolean;
@@ -10,8 +11,14 @@ export default function Header({dark = false}: HeaderProps) {
         <header className="absolute top-0 left-0 w-full z-50 bg-transparent">
             <div className="container mx-auto h-20 flex items-center justify-between">
                 <div className="flex flex-col">
-                    <img src={dark ? "/logo-rent-colori.png" : "/logo-rent.png"}
-                         alt={"logo gruppo piccirillo rent"} width={266} height={44}/>
+                    <Link href={"/"}>
+                    <Image
+                        src={dark ? "/logo-rent-colori.png" : "/logo-rent.png"}
+                        width={266}
+                        height={44}
+                        alt="logo gruppo piccirillo rent"
+                    />
+                    </Link>
                 </div>
 
 
