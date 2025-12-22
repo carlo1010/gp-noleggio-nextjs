@@ -1,40 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
+import { promises as fs } from 'fs';
+import path from 'path';
 
-const items = [
-    {
-        kicker: "LOREM IPSUM",
-        title: "Lorem ipsum1",
-        desc:
-            "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        href: "/",
-        cta: "Lorem Ipsum2",
-        img: "/discover1.png",
-        imgAlt: "Discover 1",
-    },
-    {
-        kicker: "LOREM IPSUM",
-        title: "Lorem ipsum",
-        desc:
-            "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        href: "/",
-        cta: "Lorem Ipsum3",
-        img: "/discover2.png",
-        imgAlt: "Discover 2",
-    },
-    {
-        kicker: "LOREM IPSUM",
-        title: "Lorem ipsum4",
-        desc:
-            "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        href: "/",
-        cta: "Lorem Ipsum",
-        img: "/discover3.png",
-        imgAlt: "Discover 3",
-    },
-];
+// 1. Define the Interface for Type Safety
+interface DiscoverItem {
+    id: string;
+    kicker: string;
+    title: string;
+    desc: string;
+    href: string;
+    cta: string;
+    img: string;
+    imgAlt: string;
+}
 
-export default function DiscoverSection() {
+// 2. Data Fetching Function (Server-Side)
+async function getDiscoverData(): Promise<DiscoverItem[]> {
+    const filePath = path.join(process.cwd(), 'data', 'scopri.json');
+    const fileContents = await fs.readFile(filePath, 'utf8');
+    return JSON.parse(fileContents);
+}
+
+// 3. The Server Component
+export default async function DiscoverSection() {
+    const items = await getDiscoverData();
+
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto px-4 py-14">
@@ -43,16 +34,15 @@ export default function DiscoverSection() {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {items.map((item, idx) => (
-                        <article key={item.title} className="flex flex-col">
-                            {/* Immagine */}
+                    {items.map((item) => (
+                        <article key={item.id} className="flex flex-col group">
+                            {/* Immagine con Hover Effect */}
                             <div className="relative w-full aspect-[16/9] overflow-hidden rounded-2xl">
                                 <Image
                                     src={item.img}
                                     alt={item.imgAlt}
                                     fill
-                                    priority={false}
-                                    className="object-cover"
+                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                                     sizes="(max-width: 1024px) 100vw, 33vw"
                                 />
                             </div>
@@ -67,13 +57,13 @@ export default function DiscoverSection() {
                                     {item.title}
                                 </h3>
 
-                                <p className="mt-3 text-gray-600 leading-relaxed">
+                                <p className="mt-3 text-gray-600 leading-relaxed line-clamp-3">
                                     {item.desc}
                                 </p>
 
                                 <Link
                                     href={item.href}
-                                    className="mt-6 inline-block text-[#0700DE] font-semibold"
+                                    className="mt-6 inline-block text-[#0700DE] font-semibold hover:text-blue-800 transition-colors"
                                 >
                                     {item.cta}
                                 </Link>
