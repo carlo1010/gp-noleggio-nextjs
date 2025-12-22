@@ -1,12 +1,10 @@
 "use client";
 
-import {Menu} from "lucide-react";
 import Link from "next/link";
-import {useState} from "react";
-import RightMenuDrawer from "@/components/RightMenuDrawer";
+ 
 
 export default function OfferBanner() {
-    const [menuOpen, setMenuOpen] = useState(false);
+    
 
     return (
         <>
@@ -16,16 +14,7 @@ export default function OfferBanner() {
           rounded-tl-sm rounded-br-sm px-[15px] py-[10px]
           w-[1124px] max-w-[calc(100vw-32px)] text-white text-sm"
                 >
-                    {/* MENU BUTTON */}
-                    <button
-                        type="button"
-                        onClick={() => setMenuOpen(true)}
-                        aria-label="Apri menu"
-                        className="w-6 h-6 rounded-full border border-white
-            flex items-center justify-center hover:bg-white/10 transition cursor-pointer"
-                    >
-                        <Menu className="w-3 h-3 text-white"/>
-                    </button>
+                    
 
                     {/* TESTO OFFERTA */}
                     <p className="text-center">
@@ -39,12 +28,6 @@ export default function OfferBanner() {
                     </Link>
                 </div>
             </div>
-
-            {/* DRAWER */}
-            <RightMenuDrawer
-                open={menuOpen}
-                onClose={() => setMenuOpen(false)}
-            />
         </>
     );
 }

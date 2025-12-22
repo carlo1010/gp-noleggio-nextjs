@@ -437,7 +437,7 @@ export default function SearchCard() {
                         </label>
                     </div>
 
-                    {/* COLONNA 2 - VIVO IN */}
+                    {/* COLONNA 2 - VIVO IN
                     <div className="flex items-center">
                         <label className="flex items-center gap-1 text-sm text-gray-800 cursor-pointer">
                             <span>Vivo in</span>
@@ -448,7 +448,7 @@ export default function SearchCard() {
                             </select>
                         </label>
                     </div>
-
+*/}
                     {/* COLONNA 3 - CODICE PROMO CHECKBOX & INPUT */}
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 text-sm text-gray-800">

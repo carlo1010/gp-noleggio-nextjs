@@ -87,7 +87,7 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
                                 <li><Link href="/tipo-noleggio/noleggio-auto" onClick={onClose} className="hover:underline">Auto</Link></li>
                                 <li><Link href="/tipo-noleggio/noleggio-premium" onClick={onClose} className="hover:underline">Premium</Link></li>
                                 <li><Link href="/tipo-noleggio/noleggio-elettriche" onClick={onClose} className="hover:underline">Elettriche</Link></li>
-                                <li><Link href="/blog/noleggio-furgoni" onClick={onClose} className="hover:underline">Furgoni</Link></li>
+                                <li><Link href="/tipo-noleggio/noleggio-furgoni" onClick={onClose} className="hover:underline">Furgoni</Link></li>
                             </ul>
                         </li>
 
