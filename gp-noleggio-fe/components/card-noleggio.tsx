@@ -7,6 +7,9 @@ import PostiIcon from "@/components/svg/postiIcon";
 import {PatenteIcon} from "@/components/svg/patenteicon";
 import PorteIcon from "@/components/svg/porteicon";
 import AriaIcon from "@/components/svg/ariaicon";
+import {listaAgenzia} from "@/hook/useAgenzia";
+import {listaVeicoli} from "@/hook/useVeicoli";
+
 interface CardNoleggioProps {
     imageUrl: string;
     nome: string;
@@ -20,6 +23,7 @@ interface CardNoleggioProps {
     prezzoGiornaliero: string;
     openDialog: (event: boolean) => void;
 }
+
 
 export default function CardNoleggio(props: CardNoleggioProps,) {
     return (
@@ -41,7 +45,7 @@ export default function CardNoleggio(props: CardNoleggioProps,) {
 
                 <div className={"flex flex-row flex-wrap gap-x-4 font-bold"}>
                     <div className={"flex flew-row gap-x-2 items-center"}>
-                        <CambioIcon />{props.cambio}
+                        <CambioIcon/>{props.cambio}
                     </div>
                     <div className={"flex flew-row gap-x-2 items-center"}>
                         <PostiIcon/>{props.posti}
