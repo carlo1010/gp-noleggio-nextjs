@@ -10,13 +10,13 @@ export default function noleggioFurgoni() {
     return (
         <>
 
-        <HeroBanner imageUrl={'/flotta-furgoni.png'}/>
+            <HeroBanner imageUrl={'/flotta-furgoni.png'}/>
 
-        <IntroFurgoni
-            title="Noleggio furgoni - Scopri la flotta furgoni di Piccirillo Rent, adatta per ogni esigenza"
-            subtitle="Con Piccirillo Rent troverai sempre l'offerta di noleggio furgoni giusta per te"
-            body="Piccirillo Rent è un punto di riferimento nel noleggio di veicoli, offrendo soluzioni versatili per ogni tipo di esigenza, ovunque ti trovi..."
-        />
+            <IntroFurgoni
+                title="Noleggio furgoni - Scopri la flotta furgoni di Piccirillo Rent, adatta per ogni esigenza"
+                subtitle="Con Piccirillo Rent troverai sempre l'offerta di noleggio furgoni giusta per te"
+                body="Piccirillo Rent è un punto di riferimento nel noleggio di veicoli, offrendo soluzioni versatili per ogni tipo di esigenza, ovunque ti trovi..."
+            />
             <PromoSplit
                 title={`Noleggio il furgone perfetto con Piccirillo Rent:
 Flessibile, conveniente e senza pensieri!`}
@@ -51,15 +51,15 @@ Per questo, proponiamo soluzioni su misura: ritiro e riconsegna in sedi differen
                 imageAspectClassName="aspect-[4/3]"
                 imageRoundedClassName="rounded-br-xl rounded-tl-xl"
             />
-            <PromoSplit title={"Scopri le offerte e i servizi Piccirillo Rent per il noleggio di furgoni"} body={"Hai bisogno di un furgone a noleggio per motivi professionali o per esigenze personali? Piccirillo Rent ti offre la soluzione ideale: un’ampia scelta di veicoli commerciali, dalle dimensioni compatte a quelle più capienti, adatti a qualsiasi tipo di trasporto. Scegli la massima flessibilità con formule pensate per coprire periodi brevi – perfette per esigenze improvvise o trasporti urgenti.  Organizza i tuoi spostamenti anche nelle ore serali – una soluzione utile se preferisci agire fuori dagli orari tradizionali. Rendi i tuoi viaggi più comodi con la possibilità di inserire un secondo conducente – utile per alternarsi alla guida durante tragitti più lunghi.  Effettua il noleggio in una località e riconsegna in un’altra" +
-                " – una soluzione comoda per chi ha bisogno di spostarsi senza tornare al punto di partenza. Scegli anche formule più estese – ideali per chi necessita del mezzo per periodi continuativi, sia per esigenze aziendali che personali."} ctaLabel={"Prenota Ora"} ctaHref={"/noleggio-furgoni/business2"} imageSrc={"/furgoni-neri.png"} imageAlt={"furgoni neri iveco"} imageSide="left"  />
-            
+            <PromoSplit title={"Scopri le offerte e i servizi Piccirillo Rent per il noleggio di furgoni"}
+                        body={"Hai bisogno di un furgone a noleggio per motivi professionali o per esigenze personali? Piccirillo Rent ti offre la soluzione ideale: un’ampia scelta di veicoli commerciali, dalle dimensioni compatte a quelle più capienti, adatti a qualsiasi tipo di trasporto. Scegli la massima flessibilità con formule pensate per coprire periodi brevi – perfette per esigenze improvvise o trasporti urgenti.  Organizza i tuoi spostamenti anche nelle ore serali – una soluzione utile se preferisci agire fuori dagli orari tradizionali. Rendi i tuoi viaggi più comodi con la possibilità di inserire un secondo conducente – utile per alternarsi alla guida durante tragitti più lunghi.  Effettua il noleggio in una località e riconsegna in un’altra" +
+                            " – una soluzione comoda per chi ha bisogno di spostarsi senza tornare al punto di partenza. Scegli anche formule più estese – ideali per chi necessita del mezzo per periodi continuativi, sia per esigenze aziendali che personali."}
+                        ctaLabel={"Prenota Ora"} ctaHref={"/noleggio-furgoni/business2"} imageSrc={"/furgoni-neri.png"}
+                        imageAlt={"furgoni neri iveco"} imageSide="left"/>
 
 
-
-
-        <Footer/>
-        <ComeFunziona/>
+            <Footer/>
+            <ComeFunziona/>
 
         </>
     )

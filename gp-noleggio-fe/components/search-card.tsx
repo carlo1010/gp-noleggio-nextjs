@@ -26,21 +26,30 @@ import {
 } from "@/components/ui/select"
 import {listaAgenzia} from "@/hook/useAgenzia";
 import {useEffect, useState} from "react";
+import {format, parse, parseISO} from "date-fns";
+import {useRouter} from "next/navigation";
 
 
 export default function SearchCard() {
     // STATE VARIABLES
+    const router = useRouter()
+
     const [customerType, setCustomerType] = useState<"private" | "business">("private");
     const [vehicleType, setVehicleType] = useState<"car" | "van">("car");
 
     const [sameOffice, setSameOffice] = useState(true);
-    const [pickupDate, setPickupDate] = useState<Date | undefined>();
+    const [pickupDate, setPickupDate] = useState<Date>(new Date());
     const [pickupOpen, setPickupOpen] = useState(false);
-    const [dropoffDate, setDropoffDate] = useState<Date | undefined>();
+
+    const [dropoffDate, setDropoffDate] = useState<Date>(new Date());
     const [dropoffOpen, setDropoffOpen] = useState(false);
+
     const [hasPromo, setHasPromo] = useState(false);
-    const [dropoffTime, setDropoffTime] = useState<string | undefined>();
-    const [pickupTime, setPickupTime] = useState<string | undefined>();
+    const [codePromo, setCodePromo] = useState<string  | undefined> ();
+
+    const [dropoffTime, setDropoffTime] = useState<string>();
+    const [pickupTime, setPickupTime] = useState<string>();
+
     const [stessoUfficioChecked, setStessoUfficioChecked] = useState<boolean>(true);
     const [pickupOfficeId, setPickupOfficeId] = useState<string | undefined>();
     const [dropoffOfficeId, setDropoffOfficeId] = useState<string | undefined>();
@@ -53,7 +62,30 @@ export default function SearchCard() {
 
     const {isPending: isLoadingAgenzie, data: agenzie,} = listaAgenzia()
 
-    console.log(agenzie)
+
+
+    function handleSearch() {
+        const payloadUrl = {
+            pickupDate: format(pickupDate, "yyyy-MM-dd"),
+            dropoffDate: format(dropoffDate, "yyyy-MM-dd"),
+            customerType,
+            vehicleType,
+            pickupOfficeId: String(pickupOfficeId),
+            dropoffOfficeId: String(
+                sameOffice ? pickupOfficeId : dropoffOfficeId
+            ),
+            ...(codePromo && { codePromo }),
+        };
+
+        const params = new URLSearchParams(payloadUrl);
+        const url = `/ricerca-risultati?${params.toString()}`;
+
+        router.push(url);
+
+        console.log(url);
+    }
+
+
 
     useEffect(() => {
         if (sameOffice) {
@@ -62,11 +94,7 @@ export default function SearchCard() {
     }, [sameOffice, pickupOfficeId]);
 
     return (
-        <form
-            className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full max-w-5xl p-8 space-y-6"
-            method="GET"
-            action=""
-        >
+        <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full max-w-5xl p-8 space-y-6">
             {/* RIGA 1: SELETTORI */}
             <div className="grid grid-cols-4 gap-x-3 gap-y-6">
 
@@ -216,6 +244,7 @@ export default function SearchCard() {
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0" align="start">
                                     <Calendar mode="single" selected={pickupDate} onSelect={(d) => {
+                                        console.log(d)
                                         setPickupDate(d);
                                         setPickupOpen(false)
                                     }}/>
@@ -272,6 +301,7 @@ export default function SearchCard() {
                                     <PopoverContent className="w-auto p-0" align="start">
                                         <Calendar mode="single" selected={dropoffDate} onSelect={(d) => {
                                             setDropoffDate(d);
+                                            console.log(dropoffDate)
                                             setDropoffOpen(false)
                                         }}/>
                                     </PopoverContent>
@@ -470,6 +500,12 @@ export default function SearchCard() {
                                     type="text"
                                     placeholder="Inserisci codice"
                                     className="h-9 w-32 rounded-br-sm rounded-tl-sm border border-gray-300 px-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none"
+                                    value={codePromo}
+                                    onInput={(e: any) =>{
+                                        setCodePromo(e.target.value)
+                                        console.log(codePromo)
+                                    } }
+
                                 />
                             </div>
                         )}
@@ -480,12 +516,12 @@ export default function SearchCard() {
                     It stays on the same row as long as the content in col-span-3 doesn't overflow.
                 */}
                 <div className="col-span-1">
-                    <Button
-                        className="w-full h-12 bg-[#0700DE] hover:bg-[#0500b0] rounded-tl-sm rounded-br-sm text-lg font-bold transition-all">
+                    <Button onClick={() => handleSearch()} type='button'
+                            className="w-full h-12 bg-[#0700DE] hover:bg-[#0500b0] rounded-tl-sm rounded-br-sm text-lg font-bold transition-all">
                         Cerca
                     </Button>
                 </div>
             </div>
-        </form>
+        </div>
     );
 }

@@ -6,12 +6,27 @@ import FiltroAuto from "@/components/filtro-auto";
 import {SceltaTariffa} from "@/components/scelta-tariffa";
 import {useState} from "react";
 import {listaVeicoli} from "@/hook/useVeicoli";
+import {useSearchParams} from "next/navigation";
+
 
 export default function RicercsRisultati() {
 
     const [open, setOpen] = useState(false);
 
-    const {isPending: isLoadingVeicoli, data: veicoli,} = listaVeicoli("2025-12-20", "2025-12-20")
+    const sp = useSearchParams();
+
+    const pickupDate = sp.get("pickupDate");       // string | null
+    const dropoffDate = sp.get("dropoffDate");     // string | null
+    const customerType = sp.get("customerType");
+    const vehicleType = sp.get("vehicleType");
+    const pickupOfficeId = sp.get("pickupOfficeId");
+    const dropoffOfficeId = sp.get("dropoffOfficeId");
+    const codePromo = sp.get("codePromo");
+
+
+    const {isPending: isLoadingVeicoli, data: veicoli} = listaVeicoli(pickupDate, dropoffDate)
+
+    console.log("veicoli", veicoli)
 
 
     return (
@@ -31,11 +46,14 @@ export default function RicercsRisultati() {
 
             <div className="container mx-auto py-4 space-y-10">
                 <FiltroAuto/>
-                <CardNoleggio imageUrl={"/fiat-500.png"} nome={"Fiat-500"} cambio={"Automatico"} posti={4}
-                              ariaCondizionata={true}
-                              eta={"26+"} porte={3}
-                              openDialog={() => setOpen(true)}
-                              alimentazione={"diesel"} prezzoTotale={"372"} prezzoGiornaliero={"25  "}/>
+
+                {veicoli && veicoli.map(veicoli => (
+                    <CardNoleggio imageUrl={veicoli.urlImmagine} nome={veicoli.descrizioneClasse} cambio={"Automatico"} posti={4}
+                                  ariaCondizionata={true}
+                                  eta={"26+"} porte={3}
+                                  openDialog={() => setOpen(true)}
+                                  alimentazione={"diesel"} prezzoTotale={veicoli.totalTariffaWeb} prezzoGiornaliero={veicoli.tariffaWeb}/>
+                ))}
 
             </div>
         </>

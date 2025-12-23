@@ -12,6 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {useSearchParams} from "next/navigation";
 
 type FiltersState = {
     cambio: string; // "all" | "manuale" | "automatico" ...
@@ -29,13 +30,24 @@ const defaultState: FiltersState = {
     sort: "price_desc",
 };
 
+
+
 export default function FiltroAuto() {
+
+
     const [filters, setFilters] = React.useState<FiltersState>(defaultState);
 
     // Frontend-only: qui puoi poi agganciare useEffect per chiamare API quando vorrai
     // React.useEffect(() => { console.log(filters); }, [filters]);
-
     const reset = () => setFilters(defaultState);
+    const searchParams = useSearchParams()
+
+
+    function handleSearchChange() {
+
+    }
+
+
 
     return (
         <section className="w-full">
@@ -69,7 +81,7 @@ export default function FiltroAuto() {
                         {/* Posti */}
                         <Select
                             value={filters.posti}
-                            onValueChange={(v) => setFilters((s) => ({...s, posti: v}))}
+
                         >
                             <SelectTrigger
                                 className="h-10 w-[120px] border-0 bg-transparent px-0 text-sm font-semibold shadow-none focus:ring-0">
@@ -150,7 +162,7 @@ export default function FiltroAuto() {
                             type="button"
                             variant="ghost"
                             size="icon"
-                            onClick={reset}
+                            onClick={handleSearchChange}
                             className="h-10 w-10 rounded-full"
                             aria-label="Reset filtri"
                             title="Reset filtri"
