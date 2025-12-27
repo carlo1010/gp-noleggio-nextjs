@@ -66,6 +66,7 @@ export default function SearchCard() {
 
     function handleSearch() {
         const payloadUrl = {
+            step: 2,
             pickupDate: format(pickupDate, "yyyy-MM-dd"),
             dropoffDate: format(dropoffDate, "yyyy-MM-dd"),
             customerType,

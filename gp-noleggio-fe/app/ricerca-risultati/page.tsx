@@ -1,63 +1,83 @@
 "use client";
 
-import StepStatus from "@/components/checkout/stepstatus";
-import CardNoleggio from "@/components/card-noleggio";
-import FiltroAuto from "@/components/filtro-auto";
-import {SceltaTariffa} from "@/components/scelta-tariffa";
-import {useState} from "react";
-import {listaVeicoli} from "@/hook/useVeicoli";
 import {useSearchParams} from "next/navigation";
+import {useMemo, useState} from "react";
 
+import SceltaVeicolo from "@/app/ricerca-risultati/_components/sceltaVeicolo";
+
+import {TuteleDisponibili, TutelaKey, TutelePrezzi} from "./_components/tuteleDisponibili";
+import {ExtraTutelaCards} from "@/app/ricerca-risultati/_components/extra";
+import ExtraDisponibili from "@/app/ricerca-risultati/_components/extraDisponibili";
 
 export default function RicercsRisultati() {
-
-    const [open, setOpen] = useState(false);
-
     const sp = useSearchParams();
+    const step = sp.get("step");
 
-    const pickupDate = sp.get("pickupDate");       // string | null
-    const dropoffDate = sp.get("dropoffDate");     // string | null
-    const customerType = sp.get("customerType");
-    const vehicleType = sp.get("vehicleType");
-    const pickupOfficeId = sp.get("pickupOfficeId");
-    const dropoffOfficeId = sp.get("dropoffOfficeId");
-    const codePromo = sp.get("codePromo");
+    const [openExtra, setOpenExtra] = useState(false);
+    const [selectedExtra, setSelectedExtra] = useState<"basic" | "medium" | "premium">("basic");
+
+    const [tutelaSelezionata, setTutelaSelezionata] = useState<TutelaKey | null>(null);
+
+    const prezzi: TutelePrezzi = useMemo(
+        () => ({
+            danni: 32.2,
+            furto: 32.2,
+            assistenza: 32.2,
+        }),
+        []
+    );
+
+    function handleToggle(key: TutelaKey) {
+        setTutelaSelezionata((prev) => (prev === key ? null : key));
+    }
+
+    function handleInfo(key: TutelaKey) {
+        console.log("Scopri di più:", key);
+        // qui poi puoi aprire un Dialog informativo
+    }
+
+    // 🔁 STEP RENDER
+    if (step === "2") {
+        return <SceltaVeicolo/>;
+    }
+
+    if (step === "3") {
+        return (
+            <div className="container mx-auto">
+                {/* Sezione tutele (pagina) */}
+                <TuteleDisponibili
+                    selected={tutelaSelezionata}
+                    prezzi={prezzi}
+                    onToggle={handleToggle}
+                    onInfo={handleInfo}
+                    title="Formule di Tutela disponibili"
+                />
 
 
-    const {isPending: isLoadingVeicoli, data: veicoli} = listaVeicoli(pickupDate, dropoffDate)
+                <div className="font-bold text-sm text-black py-4">
+                    Extra Disponibili
+                        <div className=" grid grid-cols-2 gap-x-4 py-4">
 
-    console.log("veicoli", veicoli)
 
+                            <ExtraDisponibili codice={"1"} titolo={"Guidatore Addizionale"} prezzo={"200"}
+                                              descrizione={"adsdsdsadsda"} isquantity={true}
+                                              onchange={function (): void {
+                                                  throw new Error("Function not implemented.");
+                                              }}/>
 
-    return (
-        <>
-            <section className=" bg-[#f7f7f7] pt-[80px]">
-                <div className="container mx-auto py-4">
-                    <StepStatus/>
+                            <ExtraDisponibili codice={"1"} titolo={"Guidatore Addizionale"} prezzo={"200"}
+                                              descrizione={"adsdsdsadsda"} isquantity={false}
+                                              onchange={function (): void {
+                                                  throw new Error("Function not implemented.");
+                                              }}/>
+                        </div>
+
                 </div>
 
-            </section>
-
-            <SceltaTariffa imageUrl={"/fiat-500.png"} nome={"Fiat - 500"} cambio={"Manuale"} posti={0}
-                           ariaCondizionata={false} eta={"26"} porte={0}
-                           alimentazione={"Diesel"} prezzoGiornalieroRitiro={"30"} prezzoGiornalieroOnline={"15"}
-                           open={open} onOpenChange={() => setOpen(false)}/>
-
-
-            <div className="container mx-auto py-4 space-y-10">
-                <FiltroAuto/>
-
-                {veicoli && veicoli.map(veicoli => (
-                    <CardNoleggio imageUrl={veicoli.urlImmagine} nome={veicoli.descrizioneClasse} cambio={"Automatico"} posti={4}
-                                  ariaCondizionata={true}
-                                  eta={"26+"} porte={3}
-                                  openDialog={() => setOpen(true)}
-                                  alimentazione={"diesel"} prezzoTotale={veicoli.totalTariffaWeb} prezzoGiornaliero={veicoli.tariffaWeb}/>
-                ))}
-
             </div>
-        </>
+        );
+    }
 
-    )
-
+    // fallback
+    return <SceltaVeicolo/>;
 }
