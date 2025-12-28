@@ -35,40 +35,42 @@ export default function Header({dark = false}: HeaderProps) {
             <header
                 className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
                     isScrolled
-                        ? "bg-white/90 backdrop-blur-md shadow-md py-2"
+                        ? "bg-white/90 backdrop-blur-md shadow-md py-3 md:py-2"
                         : "bg-transparent py-4"
                 }`}
             >
-                <div className={`container mx-auto flex items-center justify-between transition-all duration-300 ${
-                    isScrolled ? "h-14" : "h-20"
+                <div className={`container mx-auto px-4 md:px-6 flex items-center justify-between transition-all duration-300 ${
+                    isScrolled ? "h-16 md:h-14" : "h-20"
                 }`}>
                     {/* LOGO */}
-                    <div className="flex flex-col">
+                    <div className={`flex flex-col relative z-50 transition-all duration-300 ${
+                        isScrolled ? "mt-[5px] md:mt-0" : "mt-0"
+                    }`}>
                         <Link href="/">
                             <Image
                                 src={(dark || isScrolled) ? "/logo-rent-colori.png" : "/logo-rent.png"}
-                                width={isScrolled ? 200 : 266}
-                                height={isScrolled ? 33 : 44}
+                                width={isScrolled ? 160 : 200}
+                                height={isScrolled ? 26 : 33}
                                 alt="logo gruppo piccirillo rent"
-                                className="transition-all duration-300"
+                                className="transition-all duration-300 md:w-[266px] md:h-auto"
                             />
                         </Link>
                     </div>
 
                     {/* DESTRA */}
                     <div
-                        className={`flex items-center gap-8 transition-colors duration-300 ${
+                        className={`flex items-center gap-4 md:gap-8 transition-colors duration-300 ${
                             (dark || isScrolled) ? "text-black" : "text-white"
                         }`}
                     >
                         <Link href="#" className="flex items-center gap-2 text-sm">
                             <Info width={20} height={20}/>
-                            <span className="font-bold">Aiuto</span>
+                            <span className="font-bold hidden md:inline">Aiuto</span>
                         </Link>
 
                         <div className="flex items-center gap-2 text-sm cursor-pointer">
                             <Flag width={20} height={20}/>
-                            <span className="font-bold">IT</span>
+                            <span className="font-bold hidden md:inline">IT</span>
                         </div>
 
                         {/* LOGIN BUTTON */}
@@ -86,7 +88,7 @@ export default function Header({dark = false}: HeaderProps) {
                             aria-expanded={loginOpen}
                         >
                             <LogIn width={20} height={20}/>
-                            Login
+                            <span className="hidden md:inline">Login</span>
                         </button>
                         {/* MENU BUTTON (aligned with OfferBanner behavior + label) */}
                         <button
@@ -100,12 +102,12 @@ export default function Header({dark = false}: HeaderProps) {
                             }
                             aria-label="Apri menu"
                             aria-expanded={menuOpen}
-                            className="flex items-center gap-2 text-sm font-bold cursor-pointer group"
+                            className="flex items-center gap-2 text-sm font-bold cursor-pointer group pr-1 md:pr-0"
                         >
 
                             <Menu width={20} height={20}/>
 
-                            <span>Menu</span>
+                            <span className="hidden md:inline">Menu</span>
                         </button>
                     </div>
                 </div>

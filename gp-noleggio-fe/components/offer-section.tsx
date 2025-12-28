@@ -11,40 +11,40 @@ export default function OffersSection() {
                 {/* GRID OFFERTA - Added h-full and items-stretch logic */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
 
-                {/* CARD GRANDE (OCCUPA 2 COLONNE) */}
-                <div className="relative md:col-span-2 min-h-[300px] overflow-hidden rounded-tl-3xl rounded-br-3xl shadow-md cursor-pointer hover:scale-[1.01] transition">
-                    <Image
-                        src="/vacanza.jpg"
-                        alt="Noleggio Vacanza"
-                        fill
-                        className="object-cover"
-                    />
-                    <BadgePromo topText="Fino al" bottomText="30%" />
-                    <div className="absolute bottom-5 left-5 z-10 bg-black/60 rounded-tl-xl rounded-br-xl px-4 py-2">
-                        <div className="text-white text-left leading-tight">
-                            <div className="text-2xl font-medium">Noleggio Vacanza</div>
+                    {/* CARD GRANDE (OCCUPA 2 COLONNE) */}
+                    <div className="relative md:col-span-2 aspect-4/3 md:aspect-auto min-h-[250px] md:min-h-[300px] overflow-hidden rounded-tl-3xl rounded-br-3xl shadow-md cursor-pointer hover:scale-[1.01] transition">
+                        <Image
+                            src="/vacanza.jpg"
+                            alt="Noleggio Vacanza"
+                            fill
+                            className="object-cover"
+                        />
+                        <BadgePromo topText="Fino al" bottomText="30%" />
+                        <div className="absolute bottom-5 left-5 z-10 bg-black/60 rounded-tl-xl rounded-br-xl px-4 py-2">
+                            <div className="text-white text-left leading-tight">
+                                <div className="text-2xl font-medium">Noleggio Vacanza</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* CARD PICCOLA 1 */}
-                <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
-                    <Image
-                        src="/furgoni.jpg"
-                        alt="Noleggio Furgoni"
-                        fill
-                        className="object-cover"
-                    />
-                    <BadgePromo topText="Fino al" bottomText="10%" />
-                    <div className="absolute bottom-5 left-5 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
-                        <div className="text-white text-left leading-tight">
-                            <div className="text-2xl font-medium">Noleggio Furgoni</div>
+                    {/* CARD PICCOLA 1 */}
+                    <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
+                        <Image
+                            src="/furgoni.jpg"
+                            alt="Noleggio Furgoni"
+                            fill
+                            className="object-cover"
+                        />
+                        <BadgePromo topText="Fino al" bottomText="10%" />
+                        <div className="absolute bottom-5 left-5 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
+                            <div className="text-white text-left leading-tight">
+                                <div className="text-2xl font-medium">Noleggio Furgoni</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* CARD PICCOLA 2 */}
-                <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
+                    {/* CARD PICCOLA 2 */}
+                    <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
                     <Image
                         src="/business.jpg"
                         alt="Noleggio Business"

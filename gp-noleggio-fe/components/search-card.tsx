@@ -41,7 +41,7 @@ export default function SearchCard() {
     const [hasPromo, setHasPromo] = useState(false);
     const [dropoffTime, setDropoffTime] = useState<string | undefined>();
     const [pickupTime, setPickupTime] = useState<string | undefined>();
-    const [stessoUfficioChecked, setStessoUfficioChecked] = useState<boolean>(true);
+    // const [stessoUfficioChecked, setStessoUfficioChecked] = useState<boolean>(true);
     const [pickupOfficeId, setPickupOfficeId] = useState<string | undefined>();
     const [dropoffOfficeId, setDropoffOfficeId] = useState<string | undefined>();
 
@@ -63,28 +63,28 @@ export default function SearchCard() {
 
     return (
         <form
-            className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full max-w-5xl p-8 space-y-6"
+            className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full max-w-5xl p-6 md:p-8 space-y-6"
             method="GET"
             action=""
         >
             {/* RIGA 1: SELETTORI */}
-            <div className="grid grid-cols-4 gap-x-3 gap-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
                 {/* SELETTORE: PRIVATO / AZIENDA */}
-                <div className="flex col-span-1 flex-col gap-2">
+                <div className="flex flex-col gap-2">
                     <span className="text-sm font-semibold">Scegli un’opzione</span>
                     <RadioGroup
-                        className="flex flex-row gap-0 border max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="flex flex-row gap-0 border w-full md:max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={customerType}
                         onValueChange={(val) => setCustomerType(val as "private" | "business")}
                     >
                         {/* Option: Privato */}
                         <div
-                            className={`transition-colors border-r ${customerType === "private" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            className={`flex-1 transition-colors border-r ${customerType === "private" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
                             <RadioGroupItem className="sr-only" value="private" id="r-private"/>
                             <Label
                                 htmlFor="r-private"
-                                className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${customerType === "private" ? "text-white" : "text-gray-700"}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${customerType === "private" ? "text-white" : "text-gray-700"}`}
                             >
                                 <User className='w-4 h-4'/> Privato
                             </Label>
@@ -92,11 +92,11 @@ export default function SearchCard() {
 
                         {/* Option: Azienda */}
                         <div
-                            className={`transition-colors ${customerType === "business" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            className={`flex-1 transition-colors ${customerType === "business" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
                             <RadioGroupItem className="sr-only" value="business" id="r-business"/>
                             <Label
                                 htmlFor="r-business"
-                                className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${customerType === "business" ? "text-white" : "text-gray-700"}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${customerType === "business" ? "text-white" : "text-gray-700"}`}
                             >
                                 <Building className='w-4 h-4'/> Azienda
                             </Label>
@@ -105,20 +105,20 @@ export default function SearchCard() {
                 </div>
 
                 {/* SELETTORE: AUTO / FURGONI */}
-                <div className="flex col-span-1 flex-col gap-2">
+                <div className="flex flex-col gap-2">
                     <span className="text-sm font-semibold">Scegli il tipo di veicolo</span>
                     <RadioGroup
-                        className="flex flex-row gap-0 border max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="flex flex-row gap-0 border w-full md:max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={vehicleType}
                         onValueChange={(val) => setVehicleType(val as "car" | "van")}
                     >
                         {/* Option: Auto */}
                         <div
-                            className={`transition-colors border-r ${vehicleType === "car" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            className={`flex-1 transition-colors border-r ${vehicleType === "car" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
                             <RadioGroupItem className="sr-only" value="car" id="r-car"/>
                             <Label
                                 htmlFor="r-car"
-                                className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${vehicleType === "car" ? "text-white" : "text-gray-700"}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${vehicleType === "car" ? "text-white" : "text-gray-700"}`}
                             >
                                 <Car className='w-4 h-4'/> Auto
                             </Label>
@@ -126,28 +126,25 @@ export default function SearchCard() {
 
                         {/* Option: Furgoni */}
                         <div
-                            className={`transition-colors ${vehicleType === "van" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            className={`flex-1 transition-colors ${vehicleType === "van" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
                             <RadioGroupItem className="sr-only" value="van" id="r-van"/>
                             <Label
                                 htmlFor="r-van"
-                                className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${vehicleType === "van" ? "text-white" : "text-gray-700"}`}
+                                className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${vehicleType === "van" ? "text-white" : "text-gray-700"}`}
                             >
                                 <Truck className='w-4 h-4'/> Furgoni
                             </Label>
                         </div>
                     </RadioGroup>
                 </div>
-
-                <div className="col-span-1"></div>
-                <div className="col-span-1"></div>
             </div>
 
             {/* MAIN SEARCH GRID */}
-            <div className="grid grid-cols-3 gap-x-3 gap-y-6 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
 
                 {/* CITTÀ RITIRO */}
-                <div className="col-span-1 space-y-2">
-                    <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <Label htmlFor="pickup-city" className="font-semibold">
                             {sameOffice ? "Città ritiro e riconsegna" : "Città ritiro"}
                         </Label>
@@ -197,7 +194,7 @@ export default function SearchCard() {
                 </div>
 
                 {/* DATA/ORA RITIRO */}
-                <div className="col-span-1 space-y-2">
+                <div className="space-y-2">
                     <Label className="font-semibold text-sm">Data e ora del ritiro</Label>
                     <div className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden group">
                         {/* LEFT SIDE: DATE PICKER */}
@@ -237,7 +234,7 @@ export default function SearchCard() {
                                 </SelectTrigger>
                                 <SelectContent
                                     position="popper"
-                                    className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
+                                    className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
                                 >
                                     <SelectItem value="09:00">09:00</SelectItem>
                                     <SelectItem value="10:00">10:00</SelectItem>
@@ -251,7 +248,7 @@ export default function SearchCard() {
 
                 {/* DATA/ORA CONSEGNA (SE STESSO UFFICIO) */}
                 {sameOffice && (
-                    <div className="col-span-1 space-y-2 animate-in fade-in duration-300">
+                    <div className="space-y-2 animate-in fade-in duration-300">
                         <Label className="font-semibold text-sm">Data e ora della consegna</Label>
                         <div className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden">
 
@@ -294,7 +291,7 @@ export default function SearchCard() {
                                     </SelectTrigger>
                                     <SelectContent
                                         position="popper"
-                                        className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
+                                        className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
                                     >
                                         <SelectItem value="09:00">09:00</SelectItem>
                                         <SelectItem value="10:00">10:00</SelectItem>
@@ -314,7 +311,7 @@ export default function SearchCard() {
                         <div className="col-span-1"></div>
 
                         {/* ROW 2, COL 1: Città Riconsegna */}
-                        <div className="col-span-1 space-y-2 animate-in slide-in-from-top-2 duration-300">
+                        <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
                             <Label htmlFor="dropoff-city" className="font-semibold">Città riconsegna</Label>
                             <div className="relative">
                                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE]">
@@ -357,7 +354,7 @@ export default function SearchCard() {
                         </div>
 
                         {/* ROW 2, COL 2: Data e ora della consegna (Fixed split) */}
-                        <div className="col-span-1 space-y-2 animate-in slide-in-from-top-2 duration-300">
+    <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
                             <Label className="font-semibold text-sm">Data e ora della consegna</Label>
                             <div
                                 className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden">
@@ -400,7 +397,7 @@ export default function SearchCard() {
                                         </SelectTrigger>
                                         <SelectContent
                                             position="popper"
-                                            className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
+                                            className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
                                         >
                                             <SelectItem value="09:00">09:00</SelectItem>
                                             <SelectItem value="10:00">10:00</SelectItem>
@@ -419,11 +416,11 @@ export default function SearchCard() {
             </div>
 
             {/* FILTRI BASSO & PROMO */}
-            <div className="grid grid-cols-4 pt-4 items-center gap-y-4">
+            <div className="flex flex-col md:grid md:grid-cols-4 pt-4 items-center gap-y-6 md:gap-y-4">
                 {/* This container spans 3 columns.
                     It holds Age, Country, and the Promo logic.
                 */}
-                <div className="flex justify-start gap-x-12 flex-row col-span-3">
+                <div className="flex flex-col md:flex-row justify-start gap-y-4 md:gap-x-12 md:col-span-3 w-full">
                     {/* COLONNA 1 - ETÀ */}
                     <div className="flex items-center">
                         <label className="flex items-center gap-1 text-sm text-gray-800 cursor-pointer">

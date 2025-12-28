@@ -12,11 +12,11 @@ interface HeroBannerProps {
 export default function HeroBanner(props: HeroBannerProps) {
 
     return (
-        <section className="relative min-h-[450px] md:min-h-[600px] lg:min-h-[750px] flex items-end">
+        <section className="relative min-h-[700px] md:min-h-[600px] lg:min-h-[750px] flex items-end pt-40 md:pt-0">
             <OfferBanner/>
             <Image src={props.imageUrl} alt={"logo hero banner"} fill className="object-cover" priority/>
 
-            <div className="relative w-full flex justify-center pb-16 px-4">
+            <div className="relative w-full flex justify-center pb-16 px-4 mt-8 md:mt-0">
                 <SearchCard/>
             </div>
         </section>
