@@ -2,7 +2,6 @@
 import {
     Building,
     Car,
-    Info,
     MapPin,
     Truck,
     User,
@@ -63,12 +62,12 @@ export default function SearchCard() {
 
     return (
         <form
-            className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full max-w-5xl p-6 md:p-8 space-y-6"
+            className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full max-w-5xl p-5 md:p-8 space-y-4 md:space-y-6 min-h-[580px] md:min-h-0"
             method="GET"
             action=""
         >
             {/* RIGA 1: SELETTORI */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
 
                 {/* SELETTORE: PRIVATO / AZIENDA */}
                 <div className="flex flex-col gap-2">
@@ -140,22 +139,22 @@ export default function SearchCard() {
             </div>
 
             {/* MAIN SEARCH GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-end">
 
                 {/* CITTÀ RITIRO */}
-                <div className="space-y-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <Label htmlFor="pickup-city" className="font-semibold">
+                <div className="space-y-1.5 md:space-y-2">
+                    <div className="flex flex-row items-center justify-between gap-2">
+                        <Label htmlFor="pickup-city" className="font-semibold text-sm">
                             {sameOffice ? "Città ritiro e riconsegna" : "Città ritiro"}
                         </Label>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                             <Checkbox
                                 id="same-office"
                                 checked={sameOffice}
                                 onCheckedChange={(val) => setSameOffice(val as boolean)}
                             />
-                            <Label className='text-xs cursor-pointer' htmlFor="same-office">Riconsegna nello stesso
-                                ufficio</Label>
+                            <Label className='text-[12px] md:text-s cursor-pointer' htmlFor="same-office">Riconsegna
+                                stesso ufficio</Label>
                         </div>
                     </div>
                     <div className="relative">
@@ -354,7 +353,7 @@ export default function SearchCard() {
                         </div>
 
                         {/* ROW 2, COL 2: Data e ora della consegna (Fixed split) */}
-    <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                        <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
                             <Label className="font-semibold text-sm">Data e ora della consegna</Label>
                             <div
                                 className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden">
@@ -416,17 +415,16 @@ export default function SearchCard() {
             </div>
 
             {/* FILTRI BASSO & PROMO */}
-            <div className="flex flex-col md:grid md:grid-cols-4 pt-4 items-center gap-y-6 md:gap-y-4">
-                {/* This container spans 3 columns.
-                    It holds Age, Country, and the Promo logic.
-                */}
-                <div className="flex flex-col md:flex-row justify-start gap-y-4 md:gap-x-12 md:col-span-3 w-full">
+            <div className="flex flex-col md:grid md:grid-cols-4 pt-2 md:pt-4 items-center gap-y-4 md:gap-y-4">
+                {/* Fixed height on this container prevents shifting when input appears */}
+                <div
+                    className="flex flex-row justify-between md:justify-start items-center gap-x-4 md:gap-x-12 md:col-span-3 w-full h-10">
                     {/* COLONNA 1 - ETÀ */}
                     <div className="flex items-center">
                         <label className="flex items-center gap-1 text-sm text-gray-800 cursor-pointer">
                             <span>Età</span>
                             <select
-                                className="bg-transparent border-none outline-none font-semibold pr-4 cursor-pointer"
+                                className="bg-transparent border-none outline-none font-semibold pr-2 cursor-pointer"
                                 defaultValue="26+">
                                 <option value="26+">26+</option>
                                 <option value="30+">30+</option>
@@ -434,49 +432,37 @@ export default function SearchCard() {
                         </label>
                     </div>
 
-                    {/* COLONNA 2 - VIVO IN
-                    <div className="flex items-center">
-                        <label className="flex items-center gap-1 text-sm text-gray-800 cursor-pointer">
-                            <span>Vivo in</span>
-                            <select
-                                className="bg-transparent border-none outline-none font-semibold pr-4 cursor-pointer"
-                                defaultValue="IT">
-                                <option value="IT">Italia</option>
-                            </select>
-                        </label>
-                    </div>
-*/}
                     {/* COLONNA 3 - CODICE PROMO CHECKBOX & INPUT */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 md:gap-4">
                         <div className="flex items-center gap-2 text-sm text-gray-800">
                             <Checkbox
                                 id="hasPromo"
                                 checked={hasPromo}
                                 onCheckedChange={(val) => setHasPromo(val as boolean)}
                             />
-                            <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap">
-                                Ho un <span className="font-semibold">Codice Promozionale</span>
+                            <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-xs md:text-sm">
+                                <span className="hidden xs:inline">Ho un </span><span
+                                className="font-semibold">Promo</span>
                             </label>
-                            <Info className="w-4 h-4 text-gray-400 shrink-0"/>
                         </div>
 
-                        {/* DYNAMIC PROMO INPUT */}
-                        {hasPromo && (
-                            <div className="animate-in fade-in zoom-in-95 duration-200">
-                                <input
-                                    type="text"
-                                    placeholder="Inserisci codice"
-                                    className="h-9 w-32 rounded-br-sm rounded-tl-sm border border-gray-300 px-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none"
-                                />
-                            </div>
-                        )}
+                        {/* DYNAMIC PROMO INPUT - Wrapped to maintain layout */}
+                        <div className="w-24 md:w-32 h-8">
+                            {hasPromo && (
+                                <div className="animate-in fade-in zoom-in-95 duration-200">
+                                    <input
+                                        type="text"
+                                        placeholder="Codice"
+                                        className="h-8 w-full rounded-br-sm rounded-tl-sm border border-gray-300 px-2 text-xs md:text-sm focus:ring-1 focus:ring-[#0700DE] outline-none"
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 
-                {/* COLONNA 4: BOTTONE CERCA
-                    It stays on the same row as long as the content in col-span-3 doesn't overflow.
-                */}
-                <div className="col-span-1">
+                {/* COLONNA 4: BOTTONE CERCA */}
+                <div className="w-full md:col-span-1">
                     <Button
                         className="w-full h-12 bg-[#0700DE] hover:bg-[#0500b0] rounded-tl-sm rounded-br-sm text-lg font-bold transition-all">
                         Cerca

@@ -1,5 +1,7 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
+import React, {useState, useEffect} from "react";
 
 const fleetItems = [
     {
@@ -43,6 +45,49 @@ const fleetItems = [
 ];
 
 export default function FleetSection() {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+    // Minimum distance for a swipe to be registered
+    const minSwipeDistance = 50;
+
+    const onTouchStart = (e: React.TouchEvent) => {
+        setTouchEnd(null);
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const onTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const onTouchEnd = () => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe || isRightSwipe) {
+            setIsAutoPlaying(false);
+            if (isLeftSwipe) {
+                setCurrentIndex((prev) => (prev + 1) % fleetItems.length);
+            } else {
+                setCurrentIndex((prev) => (prev - 1 + fleetItems.length) % fleetItems.length);
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (!isAutoPlaying) return;
+
+        const interval = setInterval(() => {
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % fleetItems.length);
+        }, 5000);
+
+        return () => clearInterval(interval);
+    }, [isAutoPlaying]);
+
     return (
         <section className="w-full relative bg-white px-3 pb-8 md:pb-0">
             {/* ===== FASCIA GRIGIA ===== */}
@@ -50,39 +95,77 @@ export default function FleetSection() {
                 <div className="container mx-auto px-4 pt-14 pb-10 md:pb-0">
                     <h2 className="text-3xl font-bold mb-10 text-center md:text-left">La flotta</h2>
 
-                    {/* GRID PRINCIPALE */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-10">
-                        {fleetItems.map((item, index) => (
+                    {/* MOBILE CAROUSEL */}
+                    <div
+                        className="md:hidden flex flex-col items-center overflow-hidden"
+                        onTouchStart={onTouchStart}
+                        onTouchMove={onTouchMove}
+                        onTouchEnd={onTouchEnd}
+                    >
+                        <div
+                            key={currentIndex}
+                            className="w-full min-h-[350px] flex flex-col items-center text-center animate-in fade-in slide-in-from-right-5 duration-700"
+                        >
+                            <h3 className="text-xl font-semibold">{fleetItems[currentIndex].title}</h3>
+                            <p className="mt-3 text-sm text-gray-600 leading-relaxed">
+                                {fleetItems[currentIndex].desc}
+                            </p>
+                            <Link
+                                href={fleetItems[currentIndex].href}
+                                className="mt-4 inline-block text-sm font-semibold text-[#0700DE]"
+                            >
+                                Scopri di più
+                            </Link>
+                            <div className="mt-8 h-40 flex items-center justify-center">
+                                <Image
+                                    src={fleetItems[currentIndex].img}
+                                    alt={fleetItems[currentIndex].imgAlt}
+                                    width={fleetItems[currentIndex].width}
+                                    height={fleetItems[currentIndex].height}
+                                    className="object-contain cursor-pointer"
+                                    onClick={() => setIsAutoPlaying(false)}
+                                />
+                            </div>
+                        </div>
+
+
+                        {/* CUSTOM INDICATORS */}
+                        <div className="flex items-center gap-2 mt-6">
+                            {fleetItems.map((_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => {
+                                        setCurrentIndex(index);
+                                        setIsAutoPlaying(false);
+                                    }}
+                                    className={`h-2 transition-all duration-300 rounded-full ${
+                                        currentIndex === index
+                                            ? "w-8 bg-[#0700DE]"
+                                            : "w-2 bg-gray-300"
+                                    }`}
+                                    aria-label={`Go to slide ${index + 1}`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* GRID PRINCIPALE (Desktop Only) */}
+                    <div className="hidden md:grid md:grid-cols-4 gap-10">
+                        {fleetItems.map((item) => (
                             <div
                                 key={item.title}
-                                className={`flex flex-col items-center text-center pb-8 md:pb-0 ${
-                                    index !== fleetItems.length - 1 ? "border-b md:border-b-0 border-gray-200" : ""
-                                }`}
+                                className="flex flex-col items-center text-center pb-8 md:pb-0"
                             >
                                 <h3 className="text-xl font-semibold">{item.title}</h3>
-
-                                {/* Descrizione */}
                                 <p className="mt-3 text-sm text-gray-600 leading-relaxed md:min-h-[60px]">
                                     {item.desc}
                                 </p>
-
                                 <Link
                                     href={item.href}
                                     className="mt-4 inline-block text-sm font-semibold text-[#0700DE]"
                                 >
                                     Scopri di più
                                 </Link>
-
-                                {/* Immagine visibile SOLO su Mobile (vicino al testo) */}
-                                <div className="mt-8 md:hidden">
-                                    <Image
-                                        src={item.img}
-                                        alt={item.imgAlt}
-                                        width={item.width}
-                                        height={item.height}
-                                        className="object-contain"
-                                    />
-                                </div>
                             </div>
                         ))}
                     </div>

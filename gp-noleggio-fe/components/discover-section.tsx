@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { promises as fs } from 'fs';
+import {promises as fs} from 'fs';
 import path from 'path';
+import DiscoverCarouselWrapper from "./discover-carousel-wrapper";
 
 // 1. Define the Interface for Type Safety
 interface DiscoverItem {
@@ -33,7 +34,11 @@ export default async function DiscoverSection() {
                     Scopri il mondo Piccirillo Rent
                 </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                {/* MOBILE CAROUSEL WRAPPER (Client Component) */}
+                <DiscoverCarouselWrapper items={items}/>
+
+                {/* DESKTOP GRID (Server-Side Rendered) */}
+                <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                     {items.map((item) => (
                         <article key={item.id} className="flex flex-col group">
                             {/* Immagine con Hover Effect */}
