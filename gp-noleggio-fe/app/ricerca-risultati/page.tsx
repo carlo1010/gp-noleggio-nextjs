@@ -1,45 +1,83 @@
 "use client";
 
-import StepStatus from "@/components/checkout/stepstatus";
-import CardNoleggio from "@/components/card-noleggio";
-import FiltroAuto from "@/components/filtro-auto";
-import {SceltaTariffa} from "@/components/scelta-tariffa";
-import {useState} from "react";
-import {listaVeicoli} from "@/hook/useVeicoli";
+import {useSearchParams} from "next/navigation";
+import {useMemo, useState} from "react";
+
+import SceltaVeicolo from "@/app/ricerca-risultati/_components/sceltaVeicolo";
+
+import {TuteleDisponibili, TutelaKey, TutelePrezzi} from "./_components/tuteleDisponibili";
+import {ExtraTutelaCards} from "@/app/ricerca-risultati/_components/extra";
+import ExtraDisponibili from "@/app/ricerca-risultati/_components/extraDisponibili";
 
 export default function RicercsRisultati() {
+    const sp = useSearchParams();
+    const step = sp.get("step");
 
-    const [open, setOpen] = useState(false);
+    const [openExtra, setOpenExtra] = useState(false);
+    const [selectedExtra, setSelectedExtra] = useState<"basic" | "medium" | "premium">("basic");
 
-    const {isPending: isLoadingVeicoli, data: veicoli,} = listaVeicoli("2025-12-20", "2025-12-20")
+    const [tutelaSelezionata, setTutelaSelezionata] = useState<TutelaKey | null>(null);
+
+    const prezzi: TutelePrezzi = useMemo(
+        () => ({
+            danni: 32.2,
+            furto: 32.2,
+            assistenza: 32.2,
+        }),
+        []
+    );
+
+    function handleToggle(key: TutelaKey) {
+        setTutelaSelezionata((prev) => (prev === key ? null : key));
+    }
+
+    function handleInfo(key: TutelaKey) {
+        console.log("Scopri di più:", key);
+        // qui poi puoi aprire un Dialog informativo
+    }
+
+    // 🔁 STEP RENDER
+    if (step === "2") {
+        return <SceltaVeicolo/>;
+    }
+
+    if (step === "3") {
+        return (
+            <div className="container mx-auto">
+                {/* Sezione tutele (pagina) */}
+                <TuteleDisponibili
+                    selected={tutelaSelezionata}
+                    prezzi={prezzi}
+                    onToggle={handleToggle}
+                    onInfo={handleInfo}
+                    title="Formule di Tutela disponibili"
+                />
 
 
-    return (
-        <>
-            <section className=" bg-[#f7f7f7] pt-[80px]">
-                <div className="container mx-auto py-4">
-                    <StepStatus/>
+                <div className="font-bold text-sm text-black py-4">
+                    Extra Disponibili
+                        <div className=" grid grid-cols-2 gap-x-4 py-4">
+
+
+                            <ExtraDisponibili codice={"1"} titolo={"Guidatore Addizionale"} prezzo={"200"}
+                                              descrizione={"adsdsdsadsda"} isquantity={true}
+                                              onchange={function (): void {
+                                                  throw new Error("Function not implemented.");
+                                              }}/>
+
+                            <ExtraDisponibili codice={"1"} titolo={"Guidatore Addizionale"} prezzo={"200"}
+                                              descrizione={"adsdsdsadsda"} isquantity={false}
+                                              onchange={function (): void {
+                                                  throw new Error("Function not implemented.");
+                                              }}/>
+                        </div>
+
                 </div>
 
-            </section>
-
-            <SceltaTariffa imageUrl={"/fiat-500.png"} nome={"Fiat - 500"} cambio={"Manuale"} posti={0}
-                           ariaCondizionata={false} eta={"26"} porte={0}
-                           alimentazione={"Diesel"} prezzoGiornalieroRitiro={"30"} prezzoGiornalieroOnline={"15"}
-                           open={open} onOpenChange={() => setOpen(false)}/>
-
-
-            <div className="container mx-auto py-4 space-y-10">
-                <FiltroAuto/>
-                <CardNoleggio imageUrl={"/fiat-500.png"} nome={"Fiat-500"} cambio={"Automatico"} posti={4}
-                              ariaCondizionata={true}
-                              eta={"26+"} porte={3}
-                              openDialog={() => setOpen(true)}
-                              alimentazione={"diesel"} prezzoTotale={"372"} prezzoGiornaliero={"25  "}/>
-
             </div>
-        </>
+        );
+    }
 
-    )
-
+    // fallback
+    return <SceltaVeicolo/>;
 }

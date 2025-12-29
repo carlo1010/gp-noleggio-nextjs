@@ -19,6 +19,7 @@ import {PatenteIcon} from "@/components/svg/patenteicon";
 import PorteIcon from "@/components/svg/porteicon";
 import {Check, X} from "lucide-react";
 import {formatPrice} from "@/lib/formatPrice";
+import {useRouter, useSearchParams} from "next/navigation";
 
 interface SceltaTariffaProps {
     imageUrl: string;
@@ -31,15 +32,35 @@ interface SceltaTariffaProps {
     alimentazione: string;
     prezzoGiornalieroRitiro: string;
     prezzoGiornalieroOnline: string;
+    prezzoTotaleOnline: string;
+    prezzoTotaleRitiro: string;
+
 
     open: boolean;
     onOpenChange: (event: boolean) => void;
 }
 
 export function SceltaTariffa(props: SceltaTariffaProps) {
+
+    const sp = useSearchParams();
+    const router = useRouter();
+    function  NextStep(tipopagamento:string, prezzogiornaliero:string, prezzototale:string ) {
+        const params = new URLSearchParams(sp.toString());
+
+        params.set("step", "3");
+        params.set("tipopagamento", tipopagamento);
+        params.set("prezzogiornaliero", prezzogiornaliero);
+        params.set("prezzototale", prezzototale);
+
+        router.push(`/ricerca-risultati?${params.toString()}`)
+
+
+    }
+
     return (
         <Dialog open={props.open} onOpenChange={props.onOpenChange}>
             <DialogContent showCloseButton={false} className="min-w-[60vw] p-8">
+                <DialogTitle></DialogTitle>
                 <div className="flex flex-row gap-x-10 ">
                     <div className="flex flex-col w-1/2 justify-between">
                         <div className={"flex items-center text-primary font-bold "}>
@@ -110,7 +131,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
                                 <p className={"font-bold"}>{formatPrice(props.prezzoGiornalieroRitiro)}</p>
                                 <p className={"font-bold text-sm "}>al giorno</p>
                             </div>
-                            <Button className=" text-sm">
+                            <Button onClick={() => NextStep('ritiro', props.prezzoGiornalieroRitiro, props.prezzoTotaleRitiro)} className=" text-sm">
                                 Seleziona
                             </Button>
 
@@ -151,10 +172,14 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
 
                         <div className={"flex flex-row justify-between  p-4"}>
                             <div>
-                                <p className={"font-bold"}> {formatPrice(props.prezzoGiornalieroRitiro)}</p>
+                                <p className={"font-bold"}> {formatPrice(props.prezzoGiornalieroOnline)}</p>
                                 <p className={"font-bold text-sm "}>al giorno</p>
                             </div>
-                            <Button className=" text-sm">
+                            <Button
+                                onClick={() => NextStep('web', props.prezzoGiornalieroOnline, props.prezzoTotaleOnline)}
+                                className="text-sm"
+                            >
+
                                 Seleziona
                             </Button>
 
