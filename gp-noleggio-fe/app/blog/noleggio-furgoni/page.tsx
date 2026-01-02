@@ -9,7 +9,12 @@ export default function Page() {
         <>
             <Header/>
             <OfferBar/>
-            <HeroBanner imageUrl={'/hero/sfondo-hero-furgoni.png'}/>
+            <HeroBanner
+                imageUrl={'/hero/sfondo-hero-furgoni.png'}
+                title="Noleggio Furgoni"
+                description="con te in ogni situazione"
+                promo={{topText: "Fino al", bottomText: "10%"}}
+            />
             <ContentSection/>
             <VantaggiIcone/>
         </>

@@ -440,9 +440,9 @@ export default function SearchCard() {
                                 checked={hasPromo}
                                 onCheckedChange={(val) => setHasPromo(val as boolean)}
                             />
-                            <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-xs md:text-sm">
+                            <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-s md:text-sm">
                                 <span className="hidden xs:inline">Ho un </span><span
-                                className="font-semibold">Promo</span>
+                                className="font-semibold">Codice sconto</span>
                             </label>
                         </div>
 
