@@ -1,45 +1,43 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 
-// ✅ usa i tuoi svg (quelli verdi)
 import MartelloIcon from "@/components/svg/martello";
-import FuocoIcon from "@/components/svg/fuoco";
+import FuocoIcon from "@/components/svg/fuoco"; // <-- se è FuocoIcon ok, lascia il tuo import
 import CamioncinoRifiuti from "@/components/svg/camioncinoRifiuti";
+
 import {formatPrice} from "@/lib/formatPrice";
 import {
     Dialog,
-    DialogClose,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
+import {useCheckoutStore} from "@/store/checkout.store";
 
 export type TutelaKey = "danni" | "furto" | "assistenza";
+export type TutelePrezzi = Record<TutelaKey, number>;
 
 type TutelaItem = {
-    key: TutelaKey;
-    title: string;
+    key: TutelaKey;         // ✅ id interno
+    title: string;          // ✅ nome visibile
     icon: React.ReactNode;
 };
-
-export type TutelePrezzi = Record<TutelaKey, number>;
 
 const tutele: TutelaItem[] = [
     {
         key: "danni",
         title: "Esclusione di responsabilità per danni al veicolo",
-        icon: <MartelloIcon />,
+        icon: <MartelloIcon/>,
     },
     {
         key: "furto",
         title: "Esclusione di responsabilità per furto e incendio",
-        icon: <FuocoIcon />,
+        icon: <FuocoIcon/>,
     },
     {
         key: "assistenza",
@@ -48,99 +46,99 @@ const tutele: TutelaItem[] = [
     },
 ];
 
-
-
 export function TuteleDisponibili({
-                                      selected,
                                       prezzi,
-                                      onToggle,
-                                      onInfo,
                                       title = "Formule di Tutela disponibili",
                                   }: {
-    selected: TutelaKey | null; // una selezione; se vuoi multi, lo faccio a Set
-    prezzi: TutelePrezzi; // ✅
-    onToggle: (key: TutelaKey) => void;
-    onInfo?: (key: TutelaKey) => void;
+    prezzi: TutelePrezzi;
     title?: string;
 }) {
+    // ✅ selezione dallo store (stessa struttura degli extra)
+    const extra = useCheckoutStore((s) => s.extra);
+
+    // ✅ toggle nello store (come per extra)
+    const toggleExtra = useCheckoutStore((s) => s.toggleExtra);
+
     return (
-        <div className="flex justify-center">
-            <div className="w-full  ">
-                <div className="text-center font-semibold mb-6">{title}</div>
+        <div className="w-full">
+            <div className="text-lg font-semibold mb-6 text-left">{title}</div>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3 ">
-                    {tutele.map((t) => {
-                        const isSelected = selected === t.key;
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {tutele.map((t) => {
+                    const codice = t.key;              // ✅ id interno (non stampato)
+                    const nome = t.title;              // ✅ visibile
+                    const prezzo = prezzi[codice] ?? 0;
 
-                        return (
+                    const qty = extra[codice]?.quantita ?? 0; // ✅ nello store: chiave = id
+                    const isSelected = qty > 0;
+
+                    return (
+                        <div
+                            key={codice}
+                            className={[
+                                "rounded-br-xl rounded-tl-xl bg-[#F7F7F7] shadow-sm",
+                                "p-7 min-h-[230px]",
+                                "flex flex-col",
+                                isSelected ? "border-2 border-primary" : "border border-gray-200",
+                            ].join(" ")}
+                        >
+                            {/* Titolo (solo nome, non id) */}
                             <div
-                                key={t.key}
-                                className={[
-                                    "rounded-br-xl rounded-tl-xl bg-[#F7F7F7] shadow-sm",
-                                    "p-7 min-h-[230px]",
-                                    "flex flex-col items-center text-center",
-                                    isSelected ? "border-2 border-primary" : "border border-gray-200",
-                                ].join(" ")}
-                            >
-                                {/* ICON */}
-                                <div className=" flex  gap-x-2 items-center justify-start text-left text-gray-900  text-lg font-bold leading-snug max-w-[400px]">
-                                    {t.icon}
-                                    {t.title}
-                                </div>
-
-                                {/* LINK */}
-                                <Dialog>
-
-                                        <DialogTrigger asChild>
-                                            <Button variant="ghost" className={"underline"}>Scopri di più</Button>
-                                        </DialogTrigger>
-                                        <DialogContent className="sm:max-w-[425px]">
-                                            <DialogHeader>
-                                                <DialogTitle>Edit profile</DialogTitle>
-                                                <DialogDescription>
-                                                    Make changes to your profile here. Click save when you&apos;re
-                                                    done.
-                                                </DialogDescription>
-                                            </DialogHeader>
-
-
-                                        </DialogContent>
-
-                                </Dialog>
-
-                                {/* PREZZO (props) */}
-                                <div className="mt-4 text-sm font-semibold text-gray-900">
-                                    {formatPrice(prezzi[t.key])}{" "}
-                                    <span className="text-gray-600 font-normal">/ totali</span>
-                                </div>
-
-                                {/* CTA */}
-                                <div className="mt-auto pt-5 w-full flex justify-center">
-                                    {isSelected ? (
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                            disabled
-                                            className="h-10 w-[130px]"
-                                        >
-                                            Aggiunto
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            type="button"
-                                            className="h-10 w-[130px]"
-                                            onClick={() => onToggle(t.key)}
-                                        >
-                                            Aggiungi
-                                        </Button>
-                                    )}
-                                </div>
+                                className="flex gap-x-3 items-start text-left text-gray-900 text-lg font-bold leading-snug">
+                                <div className="shrink-0">{t.icon}</div>
+                                <div>{nome}</div>
                             </div>
-                        );
-                    })}
-                </div>
+
+                            {/* Dialog */}
+                            <div className="mt-3">
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="ghost" className="px-0 underline">
+                                            Scopri di più
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-[520px]">
+                                        <DialogHeader>
+                                            <DialogTitle>{nome}</DialogTitle>
+                                            <DialogDescription>
+                                                Qui mettiamo la descrizione corretta della tutela.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                    </DialogContent>
+                                </Dialog>
+                            </div>
+
+                            {/* Prezzo */}
+                            <div className="mt-4 text-sm font-semibold text-gray-900">
+                                {formatPrice(prezzo)}{" "}
+                                <span className="text-gray-600 font-normal">/ totali</span>
+                            </div>
+
+                            {/* CTA */}
+                            <div className="mt-auto pt-6 flex justify-center">
+                                <Button
+                                    type="button"
+                                    className="h-10 w-[130px]"
+                                    variant={isSelected ? "secondary" : "default"}
+                                    onClick={() => {
+                                        // ✅ salvi nello store: {titolo:nome, prezzo, quantita(0/1)}
+                                        toggleExtra(codice, nome, prezzo);
+
+                                        console.log("[TUTELA][TOGGLE]", {
+                                            id: codice,
+                                            nome,
+                                            prezzo,
+                                            nextQty: isSelected ? 0 : 1,
+                                        });
+                                    }}
+                                >
+                                    {isSelected ? "Rimuovi" : "Aggiungi"}
+                                </Button>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );
 }
-

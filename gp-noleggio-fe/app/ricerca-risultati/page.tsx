@@ -6,17 +6,22 @@ import {useMemo, useState} from "react";
 import SceltaVeicolo from "@/app/ricerca-risultati/_components/sceltaVeicolo";
 
 import {TuteleDisponibili, TutelaKey, TutelePrezzi} from "./_components/tuteleDisponibili";
-import {ExtraTutelaCards} from "@/app/ricerca-risultati/_components/extra";
+import PacchettiProtection, {ExtraTutelaCards} from "@/app/ricerca-risultati/_components/extra";
 import ExtraDisponibili from "@/app/ricerca-risultati/_components/extraDisponibili";
+import CheckoutTopBar from "@/app/ricerca-risultati/_components/topBarExtra";
+import {useCheckoutStore} from "@/store/checkout.store";
 
 export default function RicercsRisultati() {
     const sp = useSearchParams();
     const step = sp.get("step");
+    const checkout = useCheckoutStore((s) => s);
+    console.log("CHECKOUT STATE:", checkout);
+
 
     const [openExtra, setOpenExtra] = useState(false);
     const [selectedExtra, setSelectedExtra] = useState<"basic" | "medium" | "premium">("basic");
 
-    const [tutelaSelezionata, setTutelaSelezionata] = useState<TutelaKey | null>(null);
+    const [tuteleSelezionate, setTuteleSelezionate] = useState<TutelaKey []>([]);
 
     const prezzi: TutelePrezzi = useMemo(
         () => ({
@@ -28,7 +33,9 @@ export default function RicercsRisultati() {
     );
 
     function handleToggle(key: TutelaKey) {
-        setTutelaSelezionata((prev) => (prev === key ? null : key));
+        setTuteleSelezionate((prev) =>
+            prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+        );
     }
 
     function handleInfo(key: TutelaKey) {
@@ -45,8 +52,16 @@ export default function RicercsRisultati() {
         return (
             <div className="container mx-auto">
                 {/* Sezione tutele (pagina) */}
+                <CheckoutTopBar totale={83.4}/>
+                <PacchettiProtection
+                    medium={{day: 23.85, total: 47.7}}
+                    premium={{day: 27.62, total: 75.25}}
+                    onChange={(key) => {
+                        console.log("Selezionato:", key);
+                    }}
+                />
                 <TuteleDisponibili
-                    selected={tutelaSelezionata}
+                    selected={tuteleSelezionate}
                     prezzi={prezzi}
                     onToggle={handleToggle}
                     onInfo={handleInfo}
@@ -54,23 +69,30 @@ export default function RicercsRisultati() {
                 />
 
 
-                <div className="font-bold text-sm text-black py-4">
+                <div className="font-semibold text-xl text-black py-4">
                     Extra Disponibili
-                        <div className=" grid grid-cols-2 gap-x-4 py-4">
+                    <div className=" grid grid-cols-2 gap-x-4 py-6">
 
 
-                            <ExtraDisponibili codice={"1"} titolo={"Guidatore Addizionale"} prezzo={"200"}
-                                              descrizione={"adsdsdsadsda"} isquantity={true}
-                                              onchange={function (): void {
-                                                  throw new Error("Function not implemented.");
-                                              }}/>
+                        <ExtraDisponibili
+                            codice="driver_add"
+                            titolo="Guidatore Addizionale"
+                            prezzo="200"
+                            descrizione="adsdsdsadsda"
+                            isquantity={true}
+                            onchange={(value) => console.log("quantity changed:", value)}
+                        />
 
-                            <ExtraDisponibili codice={"1"} titolo={"Guidatore Addizionale"} prezzo={"200"}
-                                              descrizione={"adsdsdsadsda"} isquantity={false}
-                                              onchange={function (): void {
-                                                  throw new Error("Function not implemented.");
-                                              }}/>
-                        </div>
+                        <ExtraDisponibili
+                            codice="gps"
+                            titolo="GPS"
+                            prezzo="20"
+                            descrizione="adsdsdsadsda"
+                            isquantity={false}
+                            onchange={(value) => console.log("toggle changed:", value)}
+                        />
+
+                    </div>
 
                 </div>
 
