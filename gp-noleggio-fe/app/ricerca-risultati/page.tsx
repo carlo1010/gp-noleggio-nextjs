@@ -11,6 +11,7 @@ import ExtraDisponibili from "@/app/ricerca-risultati/_components/extraDisponibi
 import CheckoutTopBar from "@/app/ricerca-risultati/_components/topBarExtra";
 import {useCheckoutStore} from "@/store/checkout.store";
 
+
 export default function RicercsRisultati() {
     const sp = useSearchParams();
     const step = sp.get("step");
@@ -23,7 +24,8 @@ export default function RicercsRisultati() {
     const [selectedExtra, setSelectedExtra] = useState<"basic" | "medium" | "premium">("basic");
 
     const [tuteleSelezionate, setTuteleSelezionate] = useState<TutelaKey []>([]);
-
+    const setPacchettoConPrezzo = useCheckoutStore((s) => s.setPacchettoConPrezzo);
+    
     const prezzi: TutelePrezzi = useMemo(
         () => ({
             danni: 32.2,
@@ -59,6 +61,13 @@ export default function RicercsRisultati() {
                     premium={{day: 27.62, total: 75.25}}
                     onChange={(key) => {
                         console.log("Selezionato:", key);
+
+                        if (key === "basic") setPacchettoConPrezzo("basic", 0);
+                        if (key === "medium") setPacchettoConPrezzo("medium", 23.85);
+                        if (key === "premium") setPacchettoConPrezzo("premium", 27.62);
+
+
+                        console.log("DOPO", useCheckoutStore.getState().protezioni);
                     }}
                 />
                 <TuteleDisponibili

@@ -27,6 +27,8 @@ export type CheckoutState = {
 
     protezioni: {
         pacchetto: PacchettoTipo;
+        prezzoGiorno: number;
+        prezzoTotale: number;
         opzioni: string[]; // es: ["danni","furto"] o codici
     };
 
@@ -94,6 +96,9 @@ type CheckoutActions = {
 
     // reset
     resetCheckout: () => void;
+    setPacchettoConPrezzo: (pacchetto: PacchettoTipo, prezzoGiorno: number) => void;
+
+
 };
 
 const initialCheckoutState: CheckoutState = {
@@ -118,6 +123,8 @@ const initialCheckoutState: CheckoutState = {
 
     protezioni: {
         pacchetto: "basic",
+        prezzoGiorno: 0,
+        prezzoTotale: 0,
         opzioni: [],
     },
 
@@ -137,6 +144,23 @@ const initialCheckoutState: CheckoutState = {
         tokenCarta: undefined,
         terminiAccettati: false,
     },
+};
+
+
+const parseYMDToLocalDate = (yMD: string) => {
+    const [y, m, d] = yMD.split('-');
+    return new Date(y, m - 1, d)
+};
+const calcGiorniNoleggio = (dataInizio?: string, dataFine?: string) => {
+    if (!dataInizio || !dataFine) return 1;
+    const start = parseYMDToLocalDate(dataInizio);
+    const end = parseYMDToLocalDate(dataFine);
+
+    const ms = end.getTime() - start.getTime();
+    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+
+    // se stesso giorno => 1
+    return Math.max(1, days);
 };
 
 export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, get) => ({
@@ -195,7 +219,7 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
         set((s) => ({protezioni: {...s.protezioni, opzioni: []}})),
 
     // extra
-    
+
 
     setExtra: (codice, titolo, prezzo, quantita) =>
         set((s) => ({
@@ -274,6 +298,8 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
         const s = get();
 
         const base = s.tariffa?.prezzoTotale ?? 0;
+        const giorni = calcGiorniNoleggio(s.search.ritiro.data, s.search.riconsegna.data);
+        const protezioniTot = (s.protezioni?.prezzoGiorno ?? 0) * giorni;
 
         const extraTot = Object.values(s.extra ?? {}).reduce((acc, item) => {
             const prezzo = Number(item.prezzo) || 0;
@@ -281,10 +307,25 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
             return acc + prezzo * qta;
         }, 0);
 
-        return base + extraTot;
+        return base + extraTot + protezioniTot;
     },
 
 
     // reset
     resetCheckout: () => set({...initialCheckoutState}),
+    setPacchettoConPrezzo: (pacchetto, prezzoGiorno) => {
+        const s = get();
+        const giorni = calcGiorniNoleggio(s.search.ritiro.data, s.search.riconsegna.data);
+
+        set({
+            protezioni: {
+                ...s.protezioni,
+                pacchetto,
+                prezzoGiorno,
+                prezzoTotale: prezzoGiorno * giorni,
+            },
+        });
+
+    },
+
 }));

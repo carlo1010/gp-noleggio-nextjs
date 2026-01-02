@@ -112,6 +112,9 @@ export default function PacchettiProtection({
 
     const select = (key: ProtectionKey) => {
         setPacchetto(key);
+        onChange?.(key);
+        console.log("[PacchettiProtection] selected:", key);
+
     };
 
 
