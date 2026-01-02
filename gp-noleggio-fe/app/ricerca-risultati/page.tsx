@@ -16,6 +16,7 @@ export default function RicercsRisultati() {
     const step = sp.get("step");
     const checkout = useCheckoutStore((s) => s);
     console.log("CHECKOUT STATE:", checkout);
+    const totale = useCheckoutStore((s) => s.getTotale());
 
 
     const [openExtra, setOpenExtra] = useState(false);
@@ -52,7 +53,7 @@ export default function RicercsRisultati() {
         return (
             <div className="container mx-auto">
                 {/* Sezione tutele (pagina) */}
-                <CheckoutTopBar totale={83.4}/>
+                <CheckoutTopBar totale={totale}/>
                 <PacchettiProtection
                     medium={{day: 23.85, total: 47.7}}
                     premium={{day: 27.62, total: 75.25}}

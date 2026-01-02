@@ -29,12 +29,21 @@ import {
 
 import {listaAgenzia} from "@/hook/useAgenzia";
 import {useEffect, useMemo, useState} from "react";
-import {startOfDay, isBefore} from "date-fns";
+import { format, startOfDay, isBefore } from "date-fns";
 import {useRouter} from "next/navigation";
 import {useCheckoutStore} from "@/store/checkout.store";
 
+
+
+
+
 export default function SearchCard() {
     const router = useRouter();
+    const parseYMDToLocalDate = (ymd: string) => {
+        const [y, m, d] = ymd.split("-").map(Number);
+        return new Date(y, m - 1, d); // ✅ locale, no shift
+    };
+
 
     // ====== STORE (state) ======
     const tipoCliente = useCheckoutStore((s) => s.search.tipoCliente); // "privato" | "azienda"
@@ -57,8 +66,9 @@ export default function SearchCard() {
     // ====== DERIVATI ======
     const stessoUfficio = riconsegna.stessoUfficio;
 
-    const pickupDate = ritiro.data ? new Date(ritiro.data) : new Date();
-    const dropoffDate = riconsegna.data ? new Date(riconsegna.data) : new Date();
+    const pickupDate = ritiro.data ? parseYMDToLocalDate(ritiro.data) : new Date();
+    const dropoffDate = riconsegna.data ? parseYMDToLocalDate(riconsegna.data) : new Date();
+
 
     const pickupTime = ritiro.ora || undefined;
     const dropoffTime = riconsegna.ora || undefined;
@@ -73,8 +83,9 @@ export default function SearchCard() {
     const [dropoffOpen, setDropoffOpen] = useState(false);
     const [country, setCountry] = useState<"italia" | "estero">("italia");
 
-    const pickupDateStr = pickupDate.toISOString().slice(0, 10);
-    const dropoffDateStr = dropoffDate.toISOString().slice(0, 10);
+    const pickupDateStr = format(pickupDate, "yyyy-MM-dd");
+    const dropoffDateStr = format(dropoffDate, "yyyy-MM-dd");
+
 
     // errori UI (solo per mostrare bordo rosso / messaggio)
     const [errors, setErrors] = useState<{
@@ -107,7 +118,7 @@ export default function SearchCard() {
 
         if (isBefore(d, p)) {
             // setto nello store
-            setRiconsegna({data: ritiro.data});
+            setRiconsegna({ data: format(pickupDate, "yyyy-MM-dd") });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ritiro.data]);
@@ -132,7 +143,7 @@ export default function SearchCard() {
         const payloadUrl: Record<string, string> = {
             step: "2",
             pickupDate: pickupDateStr,
-            dropoffDate: pickupDateStr,
+            dropoffDate: dropoffDateStr,
             tipoCliente,
             tipoVeicolo,
             pickupOfficeId: String(pickupOfficeId),
@@ -340,7 +351,7 @@ export default function SearchCard() {
                                         onSelect={(d) => {
                                             if (!d) return;
                                             // salvo nello store
-                                            setRitiro({data: d.toISOString().slice(0, 10)});
+                                            setRitiro({ data: format(d, "yyyy-MM-dd") });
                                             setPickupOpen(false);
                                         }}
                                         disabled={disablePickupDate}
@@ -416,7 +427,7 @@ export default function SearchCard() {
                                         selected={dropoffDate}
                                         onSelect={(d) => {
                                             if (!d) return;
-                                            setRiconsegna({data: d.toISOString().slice(0, 10)});
+                                            setRiconsegna({ data: format(d, "yyyy-MM-dd") });
                                             setDropoffOpen(false);
                                         }}
                                         disabled={disableDropoffDate}

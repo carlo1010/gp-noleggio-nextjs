@@ -56,30 +56,34 @@ type CheckoutActions = {
     // search (granulare)
     setTipoCliente: (tipoCliente: ClienteTipo) => void;
     setTipoVeicolo: (tipoVeicolo: VeicoloTipo) => void;
-
     setRitiro: (patch: Partial<CheckoutState["search"]["ritiro"]>) => void;
     setRiconsegna: (patch: Partial<CheckoutState["search"]["riconsegna"]>) => void;
-
     setEta: (eta: number) => void;
     setCodicePromo: (codicePromo?: string) => void;
 
     // veicolo
     setVeicolo: (veicolo: any) => void;
-    // tariffa
-    setTariffa: (payload: { tipo: "web" | "ritiro"; prezzoGiorno: number; prezzoTotale: number }) => void;
 
+    // tariffa
+    setTariffa: (payload: {
+        tipo: "web" | "ritiro";
+        prezzoGiorno: number;
+        prezzoTotale: number;
+    }) => void;
 
     // protezioni
     setPacchetto: (pacchetto: PacchettoTipo) => void;
     toggleProtezioneOpzione: (codice: string) => void;
     clearProtezioniOpzioni: () => void;
 
-    // extra (qty / toggle)
+    // extra
     setExtra: (codice: string, titolo: string, prezzo: number, quantita: number) => void;
     incExtra: (codice: string, titolo: string, prezzo: number) => void;
     decExtra: (codice: string) => void;
     toggleExtra: (codice: string, titolo: string, prezzo: number) => void;
 
+    // totale
+    getTotale: () => number;
 
     // conducente
     setConducente: (patch: Partial<CheckoutState["conducente"]>) => void;
@@ -264,6 +268,22 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
 
     setTokenCarta: (token) =>
         set((s) => ({pagamento: {...s.pagamento, tokenCarta: token}})),
+
+
+    getTotale: () => {
+        const s = get();
+
+        const base = s.tariffa?.prezzoTotale ?? 0;
+
+        const extraTot = Object.values(s.extra ?? {}).reduce((acc, item) => {
+            const prezzo = Number(item.prezzo) || 0;
+            const qta = Number(item.quantita) || 0;
+            return acc + prezzo * qta;
+        }, 0);
+
+        return base + extraTot;
+    },
+
 
     // reset
     resetCheckout: () => set({...initialCheckoutState}),
