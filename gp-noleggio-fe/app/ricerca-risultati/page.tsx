@@ -25,7 +25,7 @@ export default function RicercsRisultati() {
 
     const [tuteleSelezionate, setTuteleSelezionate] = useState<TutelaKey []>([]);
     const setPacchettoConPrezzo = useCheckoutStore((s) => s.setPacchettoConPrezzo);
-    
+
     const prezzi: TutelePrezzi = useMemo(
         () => ({
             danni: 32.2,
@@ -60,15 +60,10 @@ export default function RicercsRisultati() {
                     medium={{day: 23.85, total: 47.7}}
                     premium={{day: 27.62, total: 75.25}}
                     onChange={(key) => {
-                        console.log("Selezionato:", key);
-
-                        if (key === "basic") setPacchettoConPrezzo("basic", 0);
-                        if (key === "medium") setPacchettoConPrezzo("medium", 23.85);
-                        if (key === "premium") setPacchettoConPrezzo("premium", 27.62);
-
-
-                        console.log("DOPO", useCheckoutStore.getState().protezioni);
-                    }}
+                        console.log("[PAGE] Selezionato:", key);
+                        console.log("[PAGE] Dopo:", useCheckoutStore.getState().protezioni);
+                    }
+                    }
                 />
                 <TuteleDisponibili
                     selected={tuteleSelezionate}

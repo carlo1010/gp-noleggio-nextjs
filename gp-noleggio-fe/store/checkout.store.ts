@@ -96,7 +96,8 @@ type CheckoutActions = {
 
     // reset
     resetCheckout: () => void;
-    setPacchettoConPrezzo: (pacchetto: PacchettoTipo, prezzoGiorno: number) => void;
+    setPacchettoConPrezzo: (pacchetto: PacchettoTipo, prezzoGiorno: number, prezzoTotale: number) => void;
+    clearStep3: () => void;
 
 
 };
@@ -200,6 +201,18 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
             },
         })),
 
+    clearStep3: () =>
+        set((s) => ({
+            protezioni: {
+                ...s.protezioni,
+                pacchetto: "basic",
+                prezzoGiorno: 0,
+                prezzoTotale: 0,
+                opzioni: [],
+            },
+            extra: {},
+        })),
+
 
     // protezioni
     setPacchetto: (pacchetto) =>
@@ -298,8 +311,7 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
         const s = get();
 
         const base = s.tariffa?.prezzoTotale ?? 0;
-        const giorni = calcGiorniNoleggio(s.search.ritiro.data, s.search.riconsegna.data);
-        const protezioniTot = (s.protezioni?.prezzoGiorno ?? 0) * giorni;
+        const protezioniTot = s.protezioni?.prezzoTotale ?? 0;
 
         const extraTot = Object.values(s.extra ?? {}).reduce((acc, item) => {
             const prezzo = Number(item.prezzo) || 0;
@@ -307,25 +319,20 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
             return acc + prezzo * qta;
         }, 0);
 
-        return base + extraTot + protezioniTot;
+        return base + protezioniTot + extraTot;
     },
 
 
     // reset
     resetCheckout: () => set({...initialCheckoutState}),
-    setPacchettoConPrezzo: (pacchetto, prezzoGiorno) => {
-        const s = get();
-        const giorni = calcGiorniNoleggio(s.search.ritiro.data, s.search.riconsegna.data);
-
-        set({
+    setPacchettoConPrezzo: (pacchetto, prezzoGiorno, prezzoTotale) =>
+        set((s) => ({
             protezioni: {
                 ...s.protezioni,
                 pacchetto,
                 prezzoGiorno,
-                prezzoTotale: prezzoGiorno * giorni,
+                prezzoTotale,
             },
-        });
-
-    },
+        })),
 
 }));
