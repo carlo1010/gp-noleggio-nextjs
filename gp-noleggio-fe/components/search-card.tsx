@@ -3,7 +3,6 @@
 import {
     Building,
     Car,
-    Info,
     MapPin,
     Truck,
     User,
@@ -320,7 +319,7 @@ export default function SearchCard() {
                 </div>
 
                 {/* DATA/ORA RITIRO */}
-                <div className="col-span-1 space-y-2">
+                <div className="space-y-2">
                     <Label className="font-semibold text-sm">Data e ora del ritiro</Label>
 
                     <div
@@ -380,7 +379,7 @@ export default function SearchCard() {
 
                                 <SelectContent
                                     position="popper"
-                                    className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
+                                    className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
                                 >
                                     <SelectItem value="09:00">09:00</SelectItem>
                                     <SelectItem value="10:00">10:00</SelectItem>
@@ -573,10 +572,10 @@ export default function SearchCard() {
                                     // se checked true, non faccio nulla: l’input appare e l’utente scrive
                                 }}
                             />
-                            <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap">
-                                Ho un <span className="font-semibold">Codice Promozionale</span>
+                            <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-s md:text-sm">
+                                <span className="hidden xs:inline">Ho un </span><span
+                                className="font-semibold">Codice sconto</span>
                             </label>
-                            <Info className="w-4 h-4 text-gray-400 shrink-0"/>
                         </div>
 
                         {hasPromo && (

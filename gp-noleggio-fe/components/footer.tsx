@@ -12,7 +12,6 @@ export default function Footer() {
                 <div className="flex justify-start flex-col w-1/2 gap-y-2">
                     <div className="bg-white rounded-br-3xl rounded-tl-3xl p-2 max-w-max">
                         <Image src={'/car-key.png'} alt={'chiavi'} width={76} height={76}/>
-                        4
                     </div>
                     <p className="text-3xl font-bold">Scopri dove noleggiare auto e furgoni Piccirillo Rent</p>
                     <p><span className={"text-[#0700DE]"}>74</span> sedi in Italia</p>

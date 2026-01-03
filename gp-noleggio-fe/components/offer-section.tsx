@@ -4,46 +4,47 @@ import BadgePromo from "@/components/badge-promo";
 
 export default function OffersSection() {
     return (
-        <section className="w-full py-6 px-4 md:px-35 bg-white">
-            <h2 className="text-2xl font-bold mb-6">Le offerte del momento</h2>
+        <section className="w-full bg-white">
+            <div className="container mx-auto px-4 py-6">
+                <h2 className="text-2xl font-bold mb-6">Le offerte del momento</h2>
 
-            {/* GRID OFFERTA - Added h-full and items-stretch logic */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                {/* GRID OFFERTA - Added h-full and items-stretch logic */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
 
-                {/* CARD GRANDE (OCCUPA 2 COLONNE) */}
-                <div className="relative md:col-span-2 min-h-[300px] overflow-hidden rounded-tl-3xl rounded-br-3xl shadow-md cursor-pointer hover:scale-[1.01] transition">
-                    <Image
-                        src="/vacanza.jpg"
-                        alt="Noleggio Vacanza"
-                        fill
-                        className="object-cover"
-                    />
-                    <BadgePromo topText="Fino al" bottomText="30%" />
-                    <div className="absolute bottom-5 left-5 z-10 bg-black/60 rounded-tl-xl rounded-br-xl px-4 py-2">
-                        <div className="text-white text-left leading-tight">
-                            <div className="text-2xl font-medium">Noleggio Vacanza</div>
+                    {/* CARD GRANDE (OCCUPA 2 COLONNE) */}
+                    <div className="relative md:col-span-2 aspect-4/3 md:aspect-auto min-h-[250px] md:min-h-[300px] overflow-hidden rounded-tl-3xl rounded-br-3xl shadow-md cursor-pointer hover:scale-[1.01] transition">
+                        <Image
+                            src="/vacanza.jpg"
+                            alt="Noleggio Vacanza"
+                            fill
+                            className="object-cover"
+                        />
+                        <BadgePromo topText="Fino al" bottomText="30%" />
+                        <div className="absolute bottom-5 left-5 z-10 bg-black/60 rounded-tl-xl rounded-br-xl px-4 py-2">
+                            <div className="text-white text-left leading-tight">
+                                <div className="text-2xl font-medium">Noleggio Vacanza</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* CARD PICCOLA 1 */}
-                <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
-                    <Image
-                        src="/furgoni.jpg"
-                        alt="Noleggio Furgoni"
-                        fill
-                        className="object-cover"
-                    />
-                    <BadgePromo topText="Fino al" bottomText="10%" />
-                    <div className="absolute bottom-5 left-5 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
-                        <div className="text-white text-left leading-tight">
-                            <div className="text-2xl font-medium">Noleggio Furgoni</div>
+                    {/* CARD PICCOLA 1 */}
+                    <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
+                        <Image
+                            src="/furgoni.jpg"
+                            alt="Noleggio Furgoni"
+                            fill
+                            className="object-cover"
+                        />
+                        <BadgePromo topText="Fino al" bottomText="10%" />
+                        <div className="absolute bottom-5 left-5 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
+                            <div className="text-white text-left leading-tight">
+                                <div className="text-2xl font-medium">Noleggio Furgoni</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* CARD PICCOLA 2 */}
-                <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
+                    {/* CARD PICCOLA 2 */}
+                    <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
                     <Image
                         src="/business.jpg"
                         alt="Noleggio Business"
@@ -57,10 +58,10 @@ export default function OffersSection() {
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
 
-            {/* SECONDA RIGA: TESTO + IMMAGINE VANTAGGI */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-center">
+                {/* SECONDA RIGA: TESTO + IMMAGINE VANTAGGI */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-center">
                 <div className="md:col-span-2">
                     <span className="text-xs font-semibold text-gray-500 uppercase">IL MEGLIO</span>
                     <h3 className="text-2xl font-bold mt-2 mb-4">Viaggia in tranquillità, scegli il meglio</h3>
@@ -91,6 +92,7 @@ export default function OffersSection() {
                             </div>
                         ))}
                     </div>
+                </div>
                 </div>
             </div>
         </section>

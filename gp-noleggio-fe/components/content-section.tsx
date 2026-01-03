@@ -1,7 +1,7 @@
 export default function ContenutoVacanza() {
     return (
         <section className="bg-white">
-            <div className="mx-auto w-full max-w-[1200px] px-18 py-20">
+            <div className="container mx-auto px-4 py-20">
                 <h2 className="text-2xl font-bold text-gray-900">
                     Lorem ipsum
                 </h2>

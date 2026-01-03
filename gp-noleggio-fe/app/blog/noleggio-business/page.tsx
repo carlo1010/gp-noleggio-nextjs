@@ -7,7 +7,13 @@ export default function Page() {
     return (
         <>
             <OfferBar/>
-            <HeroBanner imageUrl={'/hero/sfondo-hero-business.png'}/>
+            <HeroBanner
+                imageUrl={'/hero/sfondo-hero-business.png'}
+                title="Noleggio Business"
+                description="viaggia per affari in sicurezza"
+                promo={{topText: "Fino al", bottomText: "30%"}}
+            />
+
             <ContentSection/>
             <VantaggiIcone/>
         </>
