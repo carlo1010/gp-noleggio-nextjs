@@ -1,4 +1,5 @@
 "use client";
+
 import {
     Building,
     Car,
@@ -8,8 +9,9 @@ import {
     CalendarArrowUp,
     CalendarArrowDown,
     ClockArrowUp,
-    ClockArrowDown
+    ClockArrowDown,
 } from "lucide-react";
+
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
 import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
@@ -22,141 +24,253 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+
 import {listaAgenzia} from "@/hook/useAgenzia";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
+import { format, startOfDay, isBefore } from "date-fns";
+import {useRouter} from "next/navigation";
+import {useCheckoutStore} from "@/store/checkout.store";
+
+
+
 
 
 export default function SearchCard() {
-    // STATE VARIABLES
-    const [customerType, setCustomerType] = useState<"private" | "business">("private");
-    const [vehicleType, setVehicleType] = useState<"car" | "van">("car");
+    const router = useRouter();
+    const parseYMDToLocalDate = (ymd: string) => {
+        const [y, m, d] = ymd.split("-").map(Number);
+        return new Date(y, m - 1, d); // ✅ locale, no shift
+    };
 
-    const [sameOffice, setSameOffice] = useState(true);
-    const [pickupDate, setPickupDate] = useState<Date | undefined>();
+
+    // ====== STORE (state) ======
+    const tipoCliente = useCheckoutStore((s) => s.search.tipoCliente); // "privato" | "azienda"
+    const tipoVeicolo = useCheckoutStore((s) => s.search.tipoVeicolo); // "auto" | "furgone"
+    const eta = useCheckoutStore((s) => s.search.eta);
+
+    const ritiro = useCheckoutStore((s) => s.search.ritiro);
+    const riconsegna = useCheckoutStore((s) => s.search.riconsegna);
+
+    const codicePromo = useCheckoutStore((s) => s.search.codicePromo);
+
+    // ====== STORE (actions) ======
+    const setTipoCliente = useCheckoutStore((s) => s.setTipoCliente);
+    const setTipoVeicolo = useCheckoutStore((s) => s.setTipoVeicolo);
+    const setEta = useCheckoutStore((s) => s.setEta);
+    const setRitiro = useCheckoutStore((s) => s.setRitiro);
+    const setRiconsegna = useCheckoutStore((s) => s.setRiconsegna);
+    const setCodicePromo = useCheckoutStore((s) => s.setCodicePromo);
+
+    // ====== DERIVATI ======
+    const stessoUfficio = riconsegna.stessoUfficio;
+
+    const pickupDate = ritiro.data ? parseYMDToLocalDate(ritiro.data) : new Date();
+    const dropoffDate = riconsegna.data ? parseYMDToLocalDate(riconsegna.data) : new Date();
+
+
+    const pickupTime = ritiro.ora || undefined;
+    const dropoffTime = riconsegna.ora || undefined;
+
+    const pickupOfficeId = ritiro.luogo || undefined;
+    const dropoffOfficeId = riconsegna.luogo || undefined;
+
+    const hasPromo = Boolean(codicePromo);
+
+    // ====== UI STATE ======
     const [pickupOpen, setPickupOpen] = useState(false);
-    const [dropoffDate, setDropoffDate] = useState<Date | undefined>();
     const [dropoffOpen, setDropoffOpen] = useState(false);
-    const [hasPromo, setHasPromo] = useState(false);
-    const [dropoffTime, setDropoffTime] = useState<string | undefined>();
-    const [pickupTime, setPickupTime] = useState<string | undefined>();
-    // const [stessoUfficioChecked, setStessoUfficioChecked] = useState<boolean>(true);
-    const [pickupOfficeId, setPickupOfficeId] = useState<string | undefined>();
-    const [dropoffOfficeId, setDropoffOfficeId] = useState<string | undefined>();
+    const [country, setCountry] = useState<"italia" | "estero">("italia");
+
+    const pickupDateStr = format(pickupDate, "yyyy-MM-dd");
+    const dropoffDateStr = format(dropoffDate, "yyyy-MM-dd");
 
 
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const dayAfterTomorrow = new Date();
-    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+    // errori UI (solo per mostrare bordo rosso / messaggio)
+    const [errors, setErrors] = useState<{
+        pickupOffice?: boolean;
+        dropoffOffice?: boolean;
+        pickupTime?: boolean;
+        dropoffTime?: boolean;
+    }>({});
 
-    const {isPending: isLoadingAgenzie, data: agenzie,} = listaAgenzia()
+    const {isPending: isLoadingAgenzie, data: agenzie} = listaAgenzia();
 
-    console.log(agenzie)
+    // oggi "pulito" a mezzanotte
+    const today = useMemo(() => startOfDay(new Date()), []);
 
+    // min dropoff = pickup (stesso giorno consentito)
+    const minDropoffDate = useMemo(() => startOfDay(pickupDate), [pickupDate]);
+
+    // se stesso ufficio -> riconsegna.luogo segue ritiro.luogo
     useEffect(() => {
-        if (sameOffice) {
-            setDropoffOfficeId(pickupOfficeId);
+        if (stessoUfficio && ritiro.luogo) {
+            setRiconsegna({luogo: ritiro.luogo});
         }
-    }, [sameOffice, pickupOfficeId]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stessoUfficio, ritiro.luogo]);
+
+    // se pickupDate va oltre dropoffDate, riallineo dropoffDate
+    useEffect(() => {
+        const p = startOfDay(pickupDate);
+        const d = startOfDay(dropoffDate);
+
+        if (isBefore(d, p)) {
+            // setto nello store
+            setRiconsegna({ data: format(pickupDate, "yyyy-MM-dd") });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ritiro.data]);
+
+    function validateBeforeSearch() {
+        const nextErrors: typeof errors = {};
+
+        if (!pickupOfficeId) nextErrors.pickupOffice = true;
+        if (!stessoUfficio && !dropoffOfficeId) nextErrors.dropoffOffice = true;
+
+        if (!pickupTime) nextErrors.pickupTime = true;
+        if (!dropoffTime) nextErrors.dropoffTime = true;
+
+        setErrors(nextErrors);
+        return Object.keys(nextErrors).length === 0;
+    }
+
+    function handleSearch() {
+        if (!validateBeforeSearch()) return;
+
+        // Qui continui a passare i parametri in url come prima (step 2)
+        const payloadUrl: Record<string, string> = {
+            step: "2",
+            pickupDate: pickupDateStr,
+            dropoffDate: dropoffDateStr,
+            tipoCliente,
+            tipoVeicolo,
+            pickupOfficeId: String(pickupOfficeId),
+            dropoffOfficeId: String(stessoUfficio ? pickupOfficeId : dropoffOfficeId),
+            pickupTime: String(pickupTime),
+            dropoffTime: String(dropoffTime),
+            eta: String(eta),
+        };
+
+        if (codicePromo) payloadUrl.codicePromo = codicePromo;
+
+        setRitiro({data: pickupDateStr});
+        setRiconsegna({data: dropoffDateStr});
+
+        const params = new URLSearchParams(payloadUrl);
+        const url = `/ricerca-risultati?${params.toString()}`;
+
+        console.log("[SEARCH URL]", url);
+        console.log("[STORE search]", useCheckoutStore.getState().search);
+
+        router.push(url);
+    }
+
+    // helpers per disabilitare le date nel calendario
+    const disablePickupDate = (date: Date) => isBefore(startOfDay(date), today);
+
+    const disableDropoffDate = (date: Date) => {
+        const d = startOfDay(date);
+        if (isBefore(d, today)) return true;
+        if (isBefore(d, minDropoffDate)) return true;
+        return false;
+    };
 
     return (
-        <form
-            className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full max-w-5xl p-5 md:p-8 space-y-4 md:space-y-6 min-h-[580px] md:min-h-0"
-            method="GET"
-            action=""
-        >
+        <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full max-w-5xl p-8 space-y-6">
             {/* RIGA 1: SELETTORI */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
-
-                {/* SELETTORE: PRIVATO / AZIENDA */}
-                <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-4 gap-x-3 gap-y-6">
+                {/* PRIVATO / AZIENDA */}
+                <div className="flex col-span-1 flex-col gap-2">
                     <span className="text-sm font-semibold">Scegli un’opzione</span>
+
+
                     <RadioGroup
-                        className="flex flex-row gap-0 border w-full md:max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
-                        value={customerType}
-                        onValueChange={(val) => setCustomerType(val as "private" | "business")}
+                        className="flex flex-row gap-0 border max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
+                        value={tipoCliente}
+                        onValueChange={(val) => setTipoCliente(val as "privato" | "azienda")}
                     >
-                        {/* Option: Privato */}
                         <div
-                            className={`flex-1 transition-colors border-r ${customerType === "private" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="private" id="r-private"/>
-                            <Label
-                                htmlFor="r-private"
-                                className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${customerType === "private" ? "text-white" : "text-gray-700"}`}
-                            >
-                                <User className='w-4 h-4'/> Privato
+                            className={`transition-colors border-r ${tipoCliente === "privato" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="privato" id="r-privato"/>
+                            <Label htmlFor="r-privato"
+                                   className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${tipoCliente === "privato" ? "text-white" : "text-gray-700"}`}>
+                                <User className="w-4 h-4"/> Privato
                             </Label>
                         </div>
 
-                        {/* Option: Azienda */}
                         <div
-                            className={`flex-1 transition-colors ${customerType === "business" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="business" id="r-business"/>
-                            <Label
-                                htmlFor="r-business"
-                                className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${customerType === "business" ? "text-white" : "text-gray-700"}`}
-                            >
-                                <Building className='w-4 h-4'/> Azienda
+                            className={`transition-colors ${tipoCliente === "azienda" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="azienda" id="r-azienda"/>
+                            <Label htmlFor="r-azienda"
+                                   className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
+                                <Building className="w-4 h-4"/> Azienda
                             </Label>
                         </div>
                     </RadioGroup>
+
                 </div>
 
-                {/* SELETTORE: AUTO / FURGONI */}
-                <div className="flex flex-col gap-2">
+                {/* AUTO / FURGONI */}
+                <div className="flex col-span-1 flex-col gap-2">
                     <span className="text-sm font-semibold">Scegli il tipo di veicolo</span>
+
                     <RadioGroup
-                        className="flex flex-row gap-0 border w-full md:max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
-                        value={vehicleType}
-                        onValueChange={(val) => setVehicleType(val as "car" | "van")}
+                        className="flex flex-row gap-0 border max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
+                        value={tipoVeicolo}
+                        onValueChange={(val) => setTipoVeicolo(val as "auto" | "furgone")}
                     >
-                        {/* Option: Auto */}
                         <div
-                            className={`flex-1 transition-colors border-r ${vehicleType === "car" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="car" id="r-car"/>
-                            <Label
-                                htmlFor="r-car"
-                                className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${vehicleType === "car" ? "text-white" : "text-gray-700"}`}
-                            >
-                                <Car className='w-4 h-4'/> Auto
+                            className={`transition-colors border-r ${tipoVeicolo === "auto" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="auto" id="r-auto"/>
+                            <Label htmlFor="r-auto"
+                                   className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${tipoVeicolo === "auto" ? "text-white" : "text-gray-700"}`}>
+                                <Car className="w-4 h-4"/> Auto
                             </Label>
                         </div>
 
-                        {/* Option: Furgoni */}
                         <div
-                            className={`flex-1 transition-colors ${vehicleType === "van" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="van" id="r-van"/>
-                            <Label
-                                htmlFor="r-van"
-                                className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${vehicleType === "van" ? "text-white" : "text-gray-700"}`}
-                            >
-                                <Truck className='w-4 h-4'/> Furgoni
+                            className={`transition-colors ${tipoVeicolo === "furgone" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="furgone" id="r-furgone"/>
+                            <Label htmlFor="r-furgone"
+                                   className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${tipoVeicolo === "furgone" ? "text-white" : "text-gray-700"}`}>
+                                <Truck className="w-4 h-4"/> Furgoni
                             </Label>
                         </div>
                     </RadioGroup>
                 </div>
+
+                <div className="col-span-1"/>
+                <div className="col-span-1"/>
             </div>
 
             {/* MAIN SEARCH GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-end">
-
+            <div className="grid grid-cols-3 gap-x-3 gap-y-6 items-end">
                 {/* CITTÀ RITIRO */}
-                <div className="space-y-1.5 md:space-y-2">
-                    <div className="flex flex-row items-center justify-between gap-2">
-                        <Label htmlFor="pickup-city" className="font-semibold text-sm">
-                            {sameOffice ? "Città ritiro e riconsegna" : "Città ritiro"}
+                <div className="col-span-1 space-y-2">
+                    <div className="flex items-center justify-between">
+                        <Label htmlFor="pickup-city" className="font-semibold">
+                            {stessoUfficio ? "Città ritiro e riconsegna" : "Città ritiro"}
                         </Label>
-                        <div className="flex items-center gap-2">
+
+                        <div className="flex items-center gap-3">
                             <Checkbox
                                 id="same-office"
-                                checked={sameOffice}
-                                onCheckedChange={(val) => setSameOffice(val as boolean)}
+                                checked={stessoUfficio}
+                                onCheckedChange={(val) => {
+                                    const checked = val as boolean;
+                                    setRiconsegna({
+                                        stessoUfficio: checked,
+                                        luogo: checked ? (ritiro.luogo || "") : riconsegna.luogo,
+                                    });
+                                }}
                             />
-                            <Label className='text-[12px] md:text-s cursor-pointer' htmlFor="same-office">Riconsegna
-                                stesso ufficio</Label>
+                            <Label className="text-xs cursor-pointer" htmlFor="same-office">
+                                Riconsegna nello stesso ufficio
+                            </Label>
                         </div>
                     </div>
+
                     <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE] z-10">
                             <MapPin className="w-4 h-4"/>
@@ -164,24 +278,34 @@ export default function SearchCard() {
 
                         <Select
                             value={pickupOfficeId}
-                            onValueChange={setPickupOfficeId}
+                            onValueChange={(v) => {
+                                setRitiro({luogo: v});
+                                if (riconsegna.stessoUfficio) setRiconsegna({luogo: v});
+                                setErrors((e) => ({...e, pickupOffice: false}));
+                            }}
                             disabled={isLoadingAgenzie}
                         >
                             <SelectTrigger
-                                className="w-full h-14 rounded-none rounded-br-sm rounded-tl-sm border border-gray-300 pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none">
+                                className={[
+                                    "w-full h-14 rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none",
+                                    errors.pickupOffice ? "border-red-500" : "border-gray-300",
+                                ].join(" ")}
+                            >
                                 <SelectValue
-                                    placeholder={isLoadingAgenzie ? "Caricamento agenzie..." : "Seleziona punto ritiro"}
+                                    placeholder={
+                                        isLoadingAgenzie ? "Caricamento agenzie..." : "Seleziona punto ritiro"
+                                    }
                                 />
                             </SelectTrigger>
 
                             <SelectContent>
-                                {(agenzie ?? []).map((a) => (
+                                {(agenzie ?? []).map((a: any) => (
                                     <SelectItem key={a.codiceAgenzia} value={a.codiceAgenzia}>
                                         <div className="flex flex-col">
                                             <span className="font-medium">{a.descrizioneAgenzia}</span>
                                             <span className="text-xs text-gray-500">
-              {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
-            </span>
+                        {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
+                      </span>
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -189,14 +313,22 @@ export default function SearchCard() {
                         </Select>
                     </div>
 
-
+                    {errors.pickupOffice && (
+                        <p className="text-xs text-red-600">Seleziona una sede di ritiro.</p>
+                    )}
                 </div>
 
                 {/* DATA/ORA RITIRO */}
                 <div className="space-y-2">
                     <Label className="font-semibold text-sm">Data e ora del ritiro</Label>
-                    <div className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden group">
-                        {/* LEFT SIDE: DATE PICKER */}
+
+                    <div
+                        className={[
+                            "flex h-11 rounded-tl-sm rounded-br-sm border overflow-hidden group",
+                            errors.pickupTime ? "border-red-500" : "border-gray-300",
+                        ].join(" ")}
+                    >
+                        {/* DATE */}
                         <div className="w-1/2 border-r border-gray-300">
                             <Popover open={pickupOpen} onOpenChange={setPickupOpen}>
                                 <PopoverTrigger asChild>
@@ -206,31 +338,45 @@ export default function SearchCard() {
                                     >
                                         <CalendarArrowUp className="w-4 h-4 text-[#0700DE] mr-2 shrink-0"/>
                                         <span className="truncate text-sm">
-                            {pickupDate ? pickupDate.toLocaleDateString() : tomorrow.toLocaleDateString()}
-                        </span>
+                      {pickupDate ? pickupDate.toLocaleDateString() : ""}
+                    </span>
                                     </Button>
                                 </PopoverTrigger>
+
                                 <PopoverContent className="w-auto p-0" align="start">
-                                    <Calendar mode="single" selected={pickupDate} onSelect={(d) => {
-                                        setPickupDate(d);
-                                        setPickupOpen(false)
-                                    }}/>
+                                    <Calendar
+                                        mode="single"
+                                        selected={pickupDate}
+                                        onSelect={(d) => {
+                                            if (!d) return;
+                                            // salvo nello store
+                                            setRitiro({ data: format(d, "yyyy-MM-dd") });
+                                            setPickupOpen(false);
+                                        }}
+                                        disabled={disablePickupDate}
+                                    />
                                 </PopoverContent>
                             </Popover>
                         </div>
 
-                        {/* RIGHT SIDE: TIME SELECT */}
+                        {/* TIME */}
                         <div
                             className="w-1/2 flex items-center justify-center bg-white hover:bg-gray-50 transition-colors relative">
-                            <Select value={pickupTime} onValueChange={setPickupTime}>
+                            <Select
+                                value={pickupTime}
+                                onValueChange={(v) => {
+                                    setRitiro({ora: v});
+                                    setErrors((e) => ({...e, pickupTime: false}));
+                                }}
+                            >
                                 <SelectTrigger
-                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none"
-                                >
+                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none">
                                     <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
                                         <ClockArrowUp className="w-4 h-4 text-[#0700DE] shrink-0"/>
                                         <SelectValue placeholder="Ora"/>
                                     </div>
                                 </SelectTrigger>
+
                                 <SelectContent
                                     position="popper"
                                     className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
@@ -243,202 +389,188 @@ export default function SearchCard() {
                             </Select>
                         </div>
                     </div>
+
+                    {errors.pickupTime && (
+                        <p className="text-xs text-red-600">Seleziona l’ora di ritiro.</p>
+                    )}
                 </div>
 
-                {/* DATA/ORA CONSEGNA (SE STESSO UFFICIO) */}
-                {sameOffice && (
-                    <div className="space-y-2 animate-in fade-in duration-300">
-                        <Label className="font-semibold text-sm">Data e ora della consegna</Label>
-                        <div className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden">
+                {/* DATA/ORA CONSEGNA: SEMPRE (sia stesso ufficio che non) */}
+                <div className="col-span-1 space-y-2 animate-in fade-in duration-300">
+                    <Label className="font-semibold text-sm">Data e ora della consegna</Label>
 
-                            {/* LEFT SIDE: DATE PICKER */}
-                            <div className="w-1/2 border-r border-gray-300">
-                                <Popover open={dropoffOpen} onOpenChange={setDropoffOpen}>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="ghost"
-                                            className="h-full w-full rounded-none px-3 flex items-center justify-start hover:bg-gray-50 shadow-none border-none m-0"
-                                        >
-                                            <CalendarArrowDown className='w-4 h-4 text-[#0700DE] mr-2 shrink-0'/>
-                                            <span className="truncate text-sm">
-                                {dropoffDate ? dropoffDate.toLocaleDateString() : dayAfterTomorrow.toLocaleDateString()}
-                            </span>
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0" align="start">
-                                        <Calendar mode="single" selected={dropoffDate} onSelect={(d) => {
-                                            setDropoffDate(d);
-                                            setDropoffOpen(false)
-                                        }}/>
-                                    </PopoverContent>
-                                </Popover>
-                            </div>
+                    <div
+                        className={[
+                            "flex h-11 rounded-tl-sm rounded-br-sm border overflow-hidden",
+                            errors.dropoffTime ? "border-red-500" : "border-gray-300",
+                        ].join(" ")}
+                    >
+                        {/* DATE */}
+                        <div className="w-1/2 border-r border-gray-300">
+                            <Popover open={dropoffOpen} onOpenChange={setDropoffOpen}>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        className="h-full w-full rounded-none px-3 flex items-center justify-start hover:bg-gray-50 shadow-none border-none m-0"
+                                    >
+                                        <CalendarArrowDown className="w-4 h-4 text-[#0700DE] mr-2 shrink-0"/>
+                                        <span className="truncate text-sm">
+                      {dropoffDate ? dropoffDate.toLocaleDateString() : ""}
+                    </span>
+                                    </Button>
+                                </PopoverTrigger>
 
-                            {/* RIGHT SIDE: TIME SELECT */}
-                            {/* This wrapper div handles the background color and centering */}
-                            <div
-                                className="w-1/2 flex items-center justify-center bg-white hover:bg-gray-50 transition-colors relative">
-                                <Select value={dropoffTime} onValueChange={setDropoffTime}>
-                                    <SelectTrigger
-                                        className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none"
-                                    >
-                                        <div
-                                            className="flex items-center justify-center w-full h-full gap-2 leading-none">
-                                            <ClockArrowDown className="w-4 h-4 text-[#0700DE] shrink-0"/>
-                                            <SelectValue placeholder="Ora"/>
-                                        </div>
-                                    </SelectTrigger>
-                                    <SelectContent
-                                        position="popper"
-                                        className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
-                                    >
-                                        <SelectItem value="09:00">09:00</SelectItem>
-                                        <SelectItem value="10:00">10:00</SelectItem>
-                                        <SelectItem value="11:00">11:00</SelectItem>
-                                        <SelectItem value="12:00">12:00</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                    <Calendar
+                                        mode="single"
+                                        selected={dropoffDate}
+                                        onSelect={(d) => {
+                                            if (!d) return;
+                                            setRiconsegna({ data: format(d, "yyyy-MM-dd") });
+                                            setDropoffOpen(false);
+                                        }}
+                                        disabled={disableDropoffDate}
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+
+                        {/* TIME */}
+                        <div
+                            className="w-1/2 flex items-center justify-center bg-white hover:bg-gray-50 transition-colors relative">
+                            <Select
+                                value={dropoffTime}
+                                onValueChange={(v) => {
+                                    setRiconsegna({ora: v});
+                                    setErrors((e) => ({...e, dropoffTime: false}));
+                                }}
+                            >
+                                <SelectTrigger
+                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none">
+                                    <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
+                                        <ClockArrowDown className="w-4 h-4 text-[#0700DE] shrink-0"/>
+                                        <SelectValue placeholder="Ora"/>
+                                    </div>
+                                </SelectTrigger>
+
+                                <SelectContent
+                                    position="popper"
+                                    className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
+                                >
+                                    <SelectItem value="09:00">09:00</SelectItem>
+                                    <SelectItem value="10:00">10:00</SelectItem>
+                                    <SelectItem value="11:00">11:00</SelectItem>
+                                    <SelectItem value="12:00">12:00</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
-                )}
 
-                {/* NUOVA RIGA: CITTÀ RICONSEGNA + DATA CONSEGNA (SE DIVERSO UFFICIO) */}
-                {!sameOffice && (
-                    <>
-                        {/* ROW 1, COL 3: SPACER (Keeps City/Date on Row 2) */}
-                        <div className="col-span-1"></div>
+                    {errors.dropoffTime && (
+                        <p className="text-xs text-red-600">Seleziona l’ora di consegna.</p>
+                    )}
+                </div>
 
-                        {/* ROW 2, COL 1: Città Riconsegna */}
-                        <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
-                            <Label htmlFor="dropoff-city" className="font-semibold">Città riconsegna</Label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE]">
-                                    <MapPin className="w-4 h-4"/>
-                                </div>
-                                <Select
-                                    value={dropoffOfficeId}
-                                    onValueChange={setDropoffOfficeId}
-                                    disabled={isLoadingAgenzie}
+                {/* SE dropoff diverso ufficio: mostra selettore sede riconsegna */}
+                {!stessoUfficio && (
+                    <div className="col-span-1 space-y-2 animate-in slide-in-from-top-2 duration-300">
+                        <Label htmlFor="dropoff-city" className="font-semibold">
+                            Città riconsegna
+                        </Label>
+
+                        <div className="relative">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE]">
+                                <MapPin className="w-4 h-4"/>
+                            </div>
+
+                            <Select
+                                value={dropoffOfficeId}
+                                onValueChange={(v) => {
+                                    setRiconsegna({luogo: v});
+                                    setErrors((e) => ({...e, dropoffOffice: false}));
+                                }}
+                                disabled={isLoadingAgenzie}
+                            >
+                                <SelectTrigger
+                                    className={[
+                                        "w-full h-14 rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none",
+                                        errors.dropoffOffice ? "border-red-500" : "border-gray-300",
+                                    ].join(" ")}
                                 >
-                                    <SelectTrigger
-                                        className="w-full h-14  rounded-none rounded-br-sm rounded-tl-sm border border-gray-300 pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none">
-                                        <SelectValue
-                                            placeholder={
-                                                isLoadingAgenzie
-                                                    ? "Caricamento agenzie..."
-                                                    : "Seleziona punto riconsegna"
-                                            }
-                                        />
-                                    </SelectTrigger>
+                                    <SelectValue
+                                        placeholder={
+                                            isLoadingAgenzie ? "Caricamento agenzie..." : "Seleziona punto riconsegna"
+                                        }
+                                    />
+                                </SelectTrigger>
 
-                                    <SelectContent>
-                                        {(agenzie ?? []).map((a: any) => (
-                                            <SelectItem key={a.codiceAgenzia} value={a.codiceAgenzia}>
-                                                <div className="flex flex-col">
-                                                    <span className="font-medium">{a.descrizioneAgenzia}</span>
-                                                    <span className="text-xs text-gray-500">
-              {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
-            </span>
-                                                </div>
-                                            </SelectItem>
-
-
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-
-
-                            </div>
-                        </div>
-
-                        {/* ROW 2, COL 2: Data e ora della consegna (Fixed split) */}
-                        <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
-                            <Label className="font-semibold text-sm">Data e ora della consegna</Label>
-                            <div
-                                className="flex h-11 rounded-tl-sm rounded-br-sm border border-gray-300 overflow-hidden">
-
-                                {/* LEFT SIDE: DATE */}
-                                <div className="w-1/2 border-r border-gray-300">
-                                    <Popover open={dropoffOpen} onOpenChange={setDropoffOpen}>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant="ghost"
-                                                className="h-full w-full rounded-none px-3 flex items-center justify-start hover:bg-gray-50 shadow-none border-none m-0"
-                                            >
-                                                <CalendarArrowDown className='w-4 h-4 text-[#0700DE] mr-2 shrink-0'/>
-                                                <span className="truncate text-sm">
-                                    {dropoffDate ? dropoffDate.toLocaleDateString() : dayAfterTomorrow.toLocaleDateString()}
-                                </span>
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar mode="single" selected={dropoffDate} onSelect={(d) => {
-                                                setDropoffDate(d);
-                                                setDropoffOpen(false)
-                                            }}/>
-                                        </PopoverContent>
-                                    </Popover>
-                                </div>
-
-                                {/* RIGHT SIDE: ORA (Fixed centering and background) */}
-                                <div
-                                    className="w-1/2 flex items-center justify-center bg-white hover:bg-gray-50 transition-colors relative">
-                                    <Select value={dropoffTime} onValueChange={setDropoffTime}>
-                                        <SelectTrigger
-                                            className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none"
-                                        >
-                                            <div
-                                                className="flex items-center justify-center w-full h-full gap-2 leading-none">
-                                                <ClockArrowDown className="w-4 h-4 text-[#0700DE] shrink-0"/>
-                                                <SelectValue placeholder="Ora"/>
+                                <SelectContent>
+                                    {(agenzie ?? []).map((a: any) => (
+                                        <SelectItem key={a.codiceAgenzia} value={a.codiceAgenzia}>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{a.descrizioneAgenzia}</span>
+                                                <span className="text-xs text-gray-500">
+                          {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
+                        </span>
                                             </div>
-                                        </SelectTrigger>
-                                        <SelectContent
-                                            position="popper"
-                                            className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
-                                        >
-                                            <SelectItem value="09:00">09:00</SelectItem>
-                                            <SelectItem value="10:00">10:00</SelectItem>
-                                            <SelectItem value="11:00">11:00</SelectItem>
-                                            <SelectItem value="12:00">12:00</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
 
-                        {/* ROW 2, COL 3: Empty Spacer to keep layout tight */}
-                        <div className="col-span-1"></div>
-                    </>
+                        {errors.dropoffOffice && (
+                            <p className="text-xs text-red-600">Seleziona una sede di riconsegna.</p>
+                        )}
+                    </div>
                 )}
             </div>
 
             {/* FILTRI BASSO & PROMO */}
-            <div className="flex flex-col md:grid md:grid-cols-4 pt-2 md:pt-4 items-center gap-y-4 md:gap-y-4">
-                {/* Fixed height on this container prevents shifting when input appears */}
-                <div
-                    className="flex flex-row justify-between md:justify-start items-center gap-x-4 md:gap-x-12 md:col-span-3 w-full h-10">
-                    {/* COLONNA 1 - ETÀ */}
-                    <div className="flex items-center">
-                        <label className="flex items-center gap-1 text-sm text-gray-800 cursor-pointer">
-                            <span>Età</span>
-                            <select
-                                className="bg-transparent border-none outline-none font-semibold pr-2 cursor-pointer"
-                                defaultValue="26+">
-                                <option value="26+">26+</option>
-                                <option value="30+">30+</option>
-                            </select>
-                        </label>
+            <div className="grid grid-cols-4 pt-4 items-center gap-y-4">
+                <div className="flex justify-start gap-x-12 flex-row col-span-3">
+                    {/* ETA */}
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-700">Età</span>
+                        <Select value={String(eta)} onValueChange={(v) => setEta(Number(v))}>
+                            <SelectTrigger
+                                className="h-10 w-[90px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
+                                <SelectValue placeholder="Età"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="18">18+</SelectItem>
+                                <SelectItem value="21">21+</SelectItem>
+                                <SelectItem value="26">26+</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
 
-                    {/* COLONNA 3 - CODICE PROMO CHECKBOX & INPUT */}
-                    <div className="flex items-center gap-2 md:gap-4">
+                    {/* VIVO IN (resta locale) */}
+                    <div className="flex items-center gap-3">
+                        <span className="text-sm text-gray-700">Vivo in</span>
+                        <Select value={country} onValueChange={setCountry}>
+                            <SelectTrigger
+                                className="h-10 w-[140px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
+                                <SelectValue placeholder="Paese"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="italia">Italia</SelectItem>
+                                <SelectItem value="estero">Estero</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* CODICE PROMO */}
+                    <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 text-sm text-gray-800">
                             <Checkbox
                                 id="hasPromo"
                                 checked={hasPromo}
-                                onCheckedChange={(val) => setHasPromo(val as boolean)}
+                                onCheckedChange={(val) => {
+                                    const checked = val as boolean;
+                                    if (!checked) setCodicePromo(undefined);
+                                    // se checked true, non faccio nulla: l’input appare e l’utente scrive
+                                }}
                             />
                             <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-s md:text-sm">
                                 <span className="hidden xs:inline">Ho un </span><span
@@ -446,29 +578,30 @@ export default function SearchCard() {
                             </label>
                         </div>
 
-                        {/* DYNAMIC PROMO INPUT - Wrapped to maintain layout */}
-                        <div className="w-24 md:w-32 h-8">
-                            {hasPromo && (
-                                <div className="animate-in fade-in zoom-in-95 duration-200">
-                                    <input
-                                        type="text"
-                                        placeholder="Codice"
-                                        className="h-8 w-full rounded-br-sm rounded-tl-sm border border-gray-300 px-2 text-xs md:text-sm focus:ring-1 focus:ring-[#0700DE] outline-none"
-                                    />
-                                </div>
-                            )}
-                        </div>
+                        {hasPromo && (
+                            <div className="animate-in fade-in zoom-in-95 duration-200">
+                                <input
+                                    type="text"
+                                    placeholder="Inserisci codice"
+                                    className="h-9 w-32 rounded-br-sm rounded-tl-sm border border-gray-300 px-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none"
+                                    value={codicePromo ?? ""}
+                                    onChange={(e) => setCodicePromo(e.target.value || undefined)}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                {/* COLONNA 4: BOTTONE CERCA */}
-                <div className="w-full md:col-span-1">
+                <div className="col-span-1">
                     <Button
-                        className="w-full h-12 bg-[#0700DE] hover:bg-[#0500b0] rounded-tl-sm rounded-br-sm text-lg font-bold transition-all">
+                        onClick={handleSearch}
+                        type="button"
+                        className="w-full h-12 bg-[#0700DE] hover:bg-[#0500b0] rounded-tl-sm rounded-br-sm text-lg font-bold transition-all"
+                    >
                         Cerca
                     </Button>
                 </div>
             </div>
-        </form>
+        </div>
     );
 }
