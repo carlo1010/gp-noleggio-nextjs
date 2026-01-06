@@ -10,7 +10,7 @@ import DiscoverSection from "@/components/discover-section";
 
 export default function Home() {
     return (
-        <main className="min-h-screen bg-black w-full">
+        <main className="min-h-dvh bg-black w-full">
 
 
             <HeroBanner imageUrl={'/logo-banner.png'}/>
