@@ -1,35 +1,31 @@
 "use client";
 
-import {useSearchParams} from "next/navigation";
-import {useMemo, useState} from "react";
-import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useMemo, useState, useEffect } from "react";
 
 import SceltaVeicolo from "@/app/ricerca-risultati/_components/sceltaVeicolo";
 
-import {TuteleDisponibili, TutelaKey, TutelePrezzi} from "./_components/tuteleDisponibili";
-import PacchettiProtection, {ExtraTutelaCards} from "@/app/ricerca-risultati/_components/extra";
+import { TuteleDisponibili, TutelaKey, TutelePrezzi } from "./_components/tuteleDisponibili";
+import PacchettiProtection from "@/app/ricerca-risultati/_components/extra";
 import ExtraDisponibili from "@/app/ricerca-risultati/_components/extraDisponibili";
 import CheckoutTopBar from "@/app/ricerca-risultati/_components/topBarExtra";
-import {useCheckoutStore} from "@/store/checkout.store";
-
-
-
-
+import { useCheckoutStore } from "@/store/checkout.store";
+import Step4Checkout from "@/app/ricerca-risultati/_components/step4Checkout";
 
 export default function RicercsRisultati() {
     const sp = useSearchParams();
     const step = sp.get("step");
+
+    // ===== STORE =====
     const checkout = useCheckoutStore((s) => s);
-    console.log("CHECKOUT STATE:", checkout);
     const totale = useCheckoutStore((s) => s.getTotale());
     const clearStep3 = useCheckoutStore((s) => s.clearStep3);
-
-
-    const [openExtra, setOpenExtra] = useState(false);
-    const [selectedExtra, setSelectedExtra] = useState<"basic" | "medium" | "premium">("basic");
-
-    const [tuteleSelezionate, setTuteleSelezionate] = useState<TutelaKey []>([]);
     const setPacchettoConPrezzo = useCheckoutStore((s) => s.setPacchettoConPrezzo);
+
+    console.log("CHECKOUT STATE:", checkout);
+
+    // ===== STATE LOCALE =====
+    const [tuteleSelezionate, setTuteleSelezionate] = useState<TutelaKey[]>([]);
 
     const prezzi: TutelePrezzi = useMemo(
         () => ({
@@ -40,6 +36,13 @@ export default function RicercsRisultati() {
         []
     );
 
+    // 🔁 quando torno allo STEP 2 pulisco SEMPRE protezioni + extra
+    useEffect(() => {
+        if (step === "2") {
+            clearStep3();
+        }
+    }, [step, clearStep3]);
+
     function handleToggle(key: TutelaKey) {
         setTuteleSelezionate((prev) =>
             prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
@@ -48,29 +51,35 @@ export default function RicercsRisultati() {
 
     function handleInfo(key: TutelaKey) {
         console.log("Scopri di più:", key);
-        // qui poi puoi aprire un Dialog informativo
     }
 
-    // 🔁 STEP RENDER
+    // 🔁 RENDER IN BASE ALLO STEP
     if (step === "2") {
-        clearStep3();
-        return <SceltaVeicolo/>;
+        return <SceltaVeicolo />;
     }
 
     if (step === "3") {
         return (
             <div className="container mx-auto">
-                {/* Sezione tutele (pagina) */}
-                <CheckoutTopBar totale={totale}/>
+                {/* Top bar con totale calcolato da Zustand */}
+                <CheckoutTopBar totale={totale} />
+
+                {/* Pacchetti protezione */}
                 <PacchettiProtection
-                    medium={{day: 23.85, total: 47.7}}
-                    premium={{day: 27.62, total: 75.25}}
+                    medium={{ day: 23.85, total: 47.7 }}
+                    premium={{ day: 27.62, total: 75.25 }}
                     onChange={(key) => {
-                        console.log("[PAGE] Selezionato:", key);
-                        console.log("[PAGE] Dopo:", useCheckoutStore.getState().protezioni);
-                    }
-                    }
+                        console.log("Selezionato:", key);
+
+                        if (key === "basic") setPacchettoConPrezzo("basic", 0, 0);
+                        if (key === "medium") setPacchettoConPrezzo("medium", 23.85, 47.7);
+                        if (key === "premium") setPacchettoConPrezzo("premium", 27.62, 75.25);
+
+                        console.log("DOPO", useCheckoutStore.getState().protezioni);
+                    }}
                 />
+
+                {/* Tutele singole */}
                 <TuteleDisponibili
                     selected={tuteleSelezionate}
                     prezzi={prezzi}
@@ -79,12 +88,10 @@ export default function RicercsRisultati() {
                     title="Formule di Tutela disponibili"
                 />
 
-
+                {/* Extra */}
                 <div className="font-semibold text-xl text-black py-4">
                     Extra Disponibili
-                    <div className=" grid grid-cols-2 gap-x-4 py-6">
-
-
+                    <div className="grid grid-cols-2 gap-x-4 py-6">
                         <ExtraDisponibili
                             codice="driver_add"
                             titolo="Guidatore Addizionale"
@@ -102,15 +109,21 @@ export default function RicercsRisultati() {
                             isquantity={false}
                             onchange={(value) => console.log("toggle changed:", value)}
                         />
-
                     </div>
-
                 </div>
-
             </div>
         );
     }
 
-    // fallback
-    return <SceltaVeicolo/>;
+    if (step === "4") {
+        return (
+            <div className="container mx-auto">
+                <Step4Checkout />
+            </div>
+        );
+    }
+
+    // fallback: se non c'è step, vado alla scelta veicolo
+    return <SceltaVeicolo />;
 }
+

@@ -1,11 +1,11 @@
 "use client";
 
-import {PencilLine} from "lucide-react";
-import {useRouter, useSearchParams} from "next/navigation";
-import {useMemo} from "react";
+import { PencilLine } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 
-import {useCheckoutStore} from "@/store/checkout.store";
-import {formatPrice} from "@/lib/formatPrice";
+import { useCheckoutStore } from "@/store/checkout.store";
+import { formatPrice } from "@/lib/formatPrice";
 
 export default function StepStatus() {
     const router = useRouter();
@@ -13,6 +13,9 @@ export default function StepStatus() {
 
     const clearStep3 = useCheckoutStore((s) => s.clearStep3);
 
+    // ===== STEP ATTIVO (default 1 se non c'è ?step= )
+    const stepParam = sp.get("step");
+    const activeStep = stepParam ? Number(stepParam) : 1;
 
     // ---- Stato da Zustand
     const ritiro = useCheckoutStore((s) => s.search.ritiro);
@@ -36,17 +39,15 @@ export default function StepStatus() {
     }, [extra]);
 
     const extraCount = useMemo(() => {
-        // conta quanti extra diversi sono attivi (quantita > 0)
         return Object.values(extra ?? {}).filter((x) => (x?.quantita ?? 0) > 0).length;
     }, [extra]);
 
     const pacchettoLabel = useMemo(() => {
-        // basic/medium/premium -> label (se vuoi puoi mettere mapping più carino)
         return protezioni?.pacchetto ? protezioni.pacchetto : "—";
     }, [protezioni?.pacchetto]);
 
     // ---- Navigazione matite
-    const goToStep = (step: 1 | 2 | 3) => {
+    const goToStep = (step: 1 | 2 | 3 | 4) => {
         const params = new URLSearchParams(sp.toString());
 
         // ✅ se torno allo STEP 2, resetto SEMPRE pacchetti + tutele + extra
@@ -55,17 +56,19 @@ export default function StepStatus() {
         }
 
         if (step === 1) {
-            // torno alla home
+            // torno alla home con gli stessi query params (se vuoi)
             params.delete("step");
             const qs = params.toString();
             router.push(qs ? `/?${qs}` : "/");
             return;
         }
 
+        // ✅ STEP 4: pagina diversa (metti la tua route)
+
+
         params.set("step", String(step));
         router.push(`/ricerca-risultati?${params.toString()}`);
     };
-
 
     // ---- Helpers per testo (fallback se non c’è dato)
     const luogoRitiro = ritiro?.luogoLabel || "—";
@@ -79,17 +82,29 @@ export default function StepStatus() {
 
     const protezioniPrezzo = protezioni?.prezzoTotale ? formatPrice(protezioni.prezzoTotale) : "Incluso";
 
+    // ===== CLASSI UI
+    const boxBase =
+        "rounded-tl-3xl rounded-br-3xl bg-white p-4 space-y-2 flex flex-col justify-between border-2 transition-all";
+
+    const boxClass = (n: number) =>
+        `${boxBase} ${activeStep === n ? "border-primary" : "border-transparent"}`;
+
+    const badgeClass = (n: number) =>
+        `flex items-center justify-center rounded-full text-white w-6 h-6 ${
+            activeStep === n ? "bg-primary" : "bg-[#D9D9D9]"
+        }`;
+
+    const titleClass = (n: number) =>
+        `font-bold uppercase text-sm ${activeStep === n ? "text-primary" : "text-[#686868]"}`;
+
     return (
         <div className="grid grid-cols-6 gap-x-4">
             {/* STEP 1 */}
-            <div
-                className="col-span-2 rounded-tl-3xl flex flex-col justify-between rounded-br-3xl bg-white p-4 space-y-2">
+            <div className={`col-span-2 ${boxClass(1)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
-                        <div className="flex item-center justify-center rounded-full bg-[#D9D9D9] text-white w-6 h-6">
-                            1
-                        </div>
-                        <p className="font-bold text-[#686868] uppercase text-sm">PUNTO DI NOLEGGIO</p>
+                        <div className={badgeClass(1)}>1</div>
+                        <p className={titleClass(1)}>PUNTO DI NOLEGGIO</p>
                     </div>
 
                     <button
@@ -98,7 +113,7 @@ export default function StepStatus() {
                         className="cursor-pointer"
                         aria-label="Modifica punto di noleggio"
                     >
-                        <PencilLine className="text-primary w-4 h-4"/>
+                        <PencilLine className="text-primary w-4 h-4" />
                     </button>
                 </div>
 
@@ -117,14 +132,11 @@ export default function StepStatus() {
             </div>
 
             {/* STEP 2 */}
-            <div
-                className="col-span-1 rounded-tl-3xl flex flex-col justify-between rounded-br-3xl bg-white p-4 space-y-2">
+            <div className={`col-span-1 ${boxClass(2)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
-                        <div className="flex item-center justify-center rounded-full bg-[#D9D9D9] text-white w-6 h-6">
-                            2
-                        </div>
-                        <p className="font-bold text-[#686868] uppercase text-sm">SCELTA VEICOLO</p>
+                        <div className={badgeClass(2)}>2</div>
+                        <p className={titleClass(2)}>SCELTA VEICOLO</p>
                     </div>
 
                     <button
@@ -133,7 +145,7 @@ export default function StepStatus() {
                         className="cursor-pointer"
                         aria-label="Modifica veicolo"
                     >
-                        <PencilLine className="text-primary w-4 h-4"/>
+                        <PencilLine className="text-primary w-4 h-4" />
                     </button>
                 </div>
 
@@ -144,14 +156,11 @@ export default function StepStatus() {
             </div>
 
             {/* STEP 3 */}
-            <div
-                className="col-span-2 rounded-tl-3xl flex flex-col justify-between rounded-br-3xl bg-white p-4 space-y-2">
+            <div className={`col-span-2 ${boxClass(3)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
-                        <div className="flex item-center justify-center rounded-full bg-[#D9D9D9] text-white w-6 h-6">
-                            3
-                        </div>
-                        <p className="font-bold text-[#686868] uppercase text-sm">EXTRA</p>
+                        <div className={badgeClass(3)}>3</div>
+                        <p className={titleClass(3)}>EXTRA</p>
                     </div>
 
                     <button
@@ -160,7 +169,7 @@ export default function StepStatus() {
                         className="cursor-pointer"
                         aria-label="Modifica extra"
                     >
-                        <PencilLine className="text-primary w-4 h-4"/>
+                        <PencilLine className="text-primary w-4 h-4" />
                     </button>
                 </div>
 
@@ -178,18 +187,21 @@ export default function StepStatus() {
             </div>
 
             {/* STEP 4 (riepilogo) */}
-            <div
-                className="col-span-1 rounded-tl-3xl flex flex-col justify-between rounded-br-3xl bg-white p-4 space-y-2">
+            <div className={`col-span-1 ${boxClass(4)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
-                        <div className="flex item-center justify-center rounded-full bg-[#D9D9D9] text-white w-6 h-6">
-                            4
-                        </div>
-                        <p className="font-bold text-[#686868] uppercase text-sm">RIEPILOGO</p>
+                        <div className={badgeClass(4)}>4</div>
+                        <p className={titleClass(4)}>RIEPILOGO</p>
                     </div>
 
-                    {/* se vuoi anche qui cliccare -> step 4 in futuro */}
-                    <PencilLine className="text-primary w-4 h-4 opacity-40"/>
+                    <button
+                        type="button"
+                        onClick={() => goToStep(4)}
+                        className="cursor-pointer"
+                        aria-label="Vai al riepilogo"
+                    >
+                        <PencilLine className="text-primary w-4 h-4" />
+                    </button>
                 </div>
 
                 <div className="flex flex-col items-start justify-start w-full">

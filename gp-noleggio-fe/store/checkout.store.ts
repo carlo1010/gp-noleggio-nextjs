@@ -43,6 +43,10 @@ export type CheckoutState = {
         telefono: string;
         codiceFiscale: string;
         numeroVolo?: string;
+
+        privacyInfo: boolean;   // ricevere info/offerte + trattamento dati
+        marketing: boolean;     // consenso marketing partner ecc
+        programmaFedelta?: string;
     };
 
     pagamento: {
@@ -139,6 +143,11 @@ const initialCheckoutState: CheckoutState = {
         telefono: "",
         codiceFiscale: "",
         numeroVolo: undefined,
+
+
+        privacyInfo: false,
+        marketing: false,
+        programmaFedelta: "",
     },
 
     pagamento: {
