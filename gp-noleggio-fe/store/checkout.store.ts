@@ -10,8 +10,8 @@ export type CheckoutState = {
     search: {
         tipoCliente: ClienteTipo;
         tipoVeicolo: VeicoloTipo;
-        ritiro: { luogo: string; data: string; ora: string };
-        riconsegna: { luogo: string; data: string; ora: string; stessoUfficio: boolean };
+        ritiro: { luogo: string; luogoLabel: string; data: string; ora: string };
+        riconsegna: { luogo: string; luogoLabel: string; data: string; ora: string; stessoUfficio: boolean };
         eta: number;
         codicePromo?: string;
     };
@@ -108,8 +108,8 @@ const initialCheckoutState: CheckoutState = {
     search: {
         tipoCliente: "privato",
         tipoVeicolo: "auto",
-        ritiro: {luogo: "", data: "", ora: ""},
-        riconsegna: {luogo: "", data: "", ora: "", stessoUfficio: true},
+        ritiro: {luogo: "", luogoLabel: "", data: "", ora: ""},
+        riconsegna: {luogo: "", luogoLabel: "", data: "", ora: "", stessoUfficio: true},
         eta: 18,
         codicePromo: undefined,
     },

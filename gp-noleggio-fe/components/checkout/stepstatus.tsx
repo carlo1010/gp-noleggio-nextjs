@@ -68,8 +68,8 @@ export default function StepStatus() {
 
 
     // ---- Helpers per testo (fallback se non c’è dato)
-    const luogoRitiro = ritiro?.luogo || "—";
-    const luogoRiconsegna = riconsegna?.luogo || "—";
+    const luogoRitiro = ritiro?.luogoLabel || "—";
+    const luogoRiconsegna = riconsegna?.luogoLabel || "—";
 
     const dataRitiro = ritiro?.data || "—";
     const dataRiconsegna = riconsegna?.data || "—";

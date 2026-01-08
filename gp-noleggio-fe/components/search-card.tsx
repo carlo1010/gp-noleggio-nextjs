@@ -28,12 +28,9 @@ import {
 
 import {listaAgenzia} from "@/hook/useAgenzia";
 import {useEffect, useMemo, useState} from "react";
-import { format, startOfDay, isBefore } from "date-fns";
+import {format, startOfDay, isBefore} from "date-fns";
 import {useRouter} from "next/navigation";
 import {useCheckoutStore} from "@/store/checkout.store";
-
-
-
 
 
 export default function SearchCard() {
@@ -105,10 +102,13 @@ export default function SearchCard() {
     // se stesso ufficio -> riconsegna.luogo segue ritiro.luogo
     useEffect(() => {
         if (stessoUfficio && ritiro.luogo) {
-            setRiconsegna({luogo: ritiro.luogo});
+            setRiconsegna({
+                luogo: ritiro.luogo,
+                luogoLabel: ritiro.luogoLabel,
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stessoUfficio, ritiro.luogo]);
+    }, [stessoUfficio, ritiro.luogo, ritiro.luogoLabel]);
 
     // se pickupDate va oltre dropoffDate, riallineo dropoffDate
     useEffect(() => {
@@ -117,7 +117,7 @@ export default function SearchCard() {
 
         if (isBefore(d, p)) {
             // setto nello store
-            setRiconsegna({ data: format(pickupDate, "yyyy-MM-dd") });
+            setRiconsegna({data: format(pickupDate, "yyyy-MM-dd")});
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ritiro.data]);
@@ -262,7 +262,9 @@ export default function SearchCard() {
                                     setRiconsegna({
                                         stessoUfficio: checked,
                                         luogo: checked ? (ritiro.luogo || "") : riconsegna.luogo,
+                                        luogoLabel: checked ? (ritiro.luogoLabel || "") : riconsegna.luogoLabel,
                                     });
+
                                 }}
                             />
                             <Label className="text-xs cursor-pointer" htmlFor="same-office">
@@ -279,10 +281,23 @@ export default function SearchCard() {
                         <Select
                             value={pickupOfficeId}
                             onValueChange={(v) => {
-                                setRitiro({luogo: v});
-                                if (riconsegna.stessoUfficio) setRiconsegna({luogo: v});
+                                const agenzia = (agenzie ?? []).find((a: any) => a.codiceAgenzia === v);
+
+                                setRitiro({
+                                    luogo: v,
+                                    luogoLabel: agenzia?.descrizioneAgenzia ?? v,
+                                });
+
+                                if (riconsegna.stessoUfficio) {
+                                    setRiconsegna({
+                                        luogo: v,
+                                        luogoLabel: agenzia?.descrizioneAgenzia ?? v,
+                                    });
+                                }
+
                                 setErrors((e) => ({...e, pickupOffice: false}));
                             }}
+
                             disabled={isLoadingAgenzie}
                         >
                             <SelectTrigger
@@ -350,7 +365,7 @@ export default function SearchCard() {
                                         onSelect={(d) => {
                                             if (!d) return;
                                             // salvo nello store
-                                            setRitiro({ data: format(d, "yyyy-MM-dd") });
+                                            setRitiro({data: format(d, "yyyy-MM-dd")});
                                             setPickupOpen(false);
                                         }}
                                         disabled={disablePickupDate}
@@ -368,6 +383,7 @@ export default function SearchCard() {
                                     setRitiro({ora: v});
                                     setErrors((e) => ({...e, pickupTime: false}));
                                 }}
+
                             >
                                 <SelectTrigger
                                     className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none">
@@ -426,7 +442,7 @@ export default function SearchCard() {
                                         selected={dropoffDate}
                                         onSelect={(d) => {
                                             if (!d) return;
-                                            setRiconsegna({ data: format(d, "yyyy-MM-dd") });
+                                            setRiconsegna({data: format(d, "yyyy-MM-dd")});
                                             setDropoffOpen(false);
                                         }}
                                         disabled={disableDropoffDate}
@@ -486,9 +502,16 @@ export default function SearchCard() {
                             <Select
                                 value={dropoffOfficeId}
                                 onValueChange={(v) => {
-                                    setRiconsegna({luogo: v});
+                                    const agenzia = (agenzie ?? []).find((a: any) => a.codiceAgenzia === v);
+
+                                    setRiconsegna({
+                                        luogo: v,
+                                        luogoLabel: agenzia?.descrizioneAgenzia ?? v,
+                                    });
+
                                     setErrors((e) => ({...e, dropoffOffice: false}));
                                 }}
+
                                 disabled={isLoadingAgenzie}
                             >
                                 <SelectTrigger
