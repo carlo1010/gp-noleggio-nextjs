@@ -2,6 +2,7 @@
 
 import {useSearchParams} from "next/navigation";
 import {useMemo, useState} from "react";
+import { useEffect } from "react";
 
 import SceltaVeicolo from "@/app/ricerca-risultati/_components/sceltaVeicolo";
 
@@ -12,12 +13,16 @@ import CheckoutTopBar from "@/app/ricerca-risultati/_components/topBarExtra";
 import {useCheckoutStore} from "@/store/checkout.store";
 
 
+
+
+
 export default function RicercsRisultati() {
     const sp = useSearchParams();
     const step = sp.get("step");
     const checkout = useCheckoutStore((s) => s);
     console.log("CHECKOUT STATE:", checkout);
     const totale = useCheckoutStore((s) => s.getTotale());
+    const clearStep3 = useCheckoutStore((s) => s.clearStep3);
 
 
     const [openExtra, setOpenExtra] = useState(false);
@@ -48,6 +53,7 @@ export default function RicercsRisultati() {
 
     // 🔁 STEP RENDER
     if (step === "2") {
+        clearStep3();
         return <SceltaVeicolo/>;
     }
 
