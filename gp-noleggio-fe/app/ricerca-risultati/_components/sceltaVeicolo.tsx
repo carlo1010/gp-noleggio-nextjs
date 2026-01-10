@@ -1,15 +1,15 @@
 "use client";
 
-import {useState} from "react";
-import {useSearchParams} from "next/navigation";
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import StepStatus from "@/components/checkout/stepstatus";
 import CardNoleggio from "@/components/card-noleggio";
 import FiltroAuto from "@/components/filtro-auto";
-import {SceltaTariffa} from "@/components/scelta-tariffa";
-import {listaVeicoli} from "@/hook/useVeicoli";
-import {useRouter} from "next/navigation";
-import {findIndex} from "eslint-config-next";
+import { SceltaTariffa } from "@/components/scelta-tariffa";
+import { listaVeicoli } from "@/hook/useVeicoli";
+import { useRouter } from "next/navigation";
+import { findIndex } from "eslint-config-next";
 
 export default function SceltaVeicolo() {
     const [open, setOpen] = useState(false);
@@ -27,7 +27,7 @@ export default function SceltaVeicolo() {
     const prezzo = sp.get("prezzo") ?? "all";
     const sort = sp.get("sort") ?? "price_desc";
 
-    const {isPending: isLoadingVeicoli, data: veicoli} = listaVeicoli({
+    const { isPending: isLoadingVeicoli, data: veicoli } = listaVeicoli({
         datainizio: pickupDate,
         datafine: dropoffDate,
         cambio,
@@ -59,7 +59,7 @@ export default function SceltaVeicolo() {
                         prezzoGiornalieroRitiro={veicolo.tariffaBanco}
                         prezzoGiornalieroOnline={veicolo.tariffaWeb}
                         prezzoTotaleRitiro={veicolo.totalTariffaBanco}
-                        prezzoTotaleOnline={veicolo.tariffaWeb}
+                        prezzoTotaleOnline={veicolo.totalTariffaWeb}
                         open={open}
                         onOpenChange={() => setOpen(false)}
                     />
@@ -68,7 +68,7 @@ export default function SceltaVeicolo() {
 
 
             <div className="container mx-auto py-4 space-y-10">
-                <FiltroAuto/>
+                <FiltroAuto />
 
                 {isLoadingVeicoli && (
                     <div className="text-sm text-muted-foreground">

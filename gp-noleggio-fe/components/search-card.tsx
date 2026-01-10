@@ -393,7 +393,7 @@ export default function SearchCard() {
 
                                 <SelectContent
                                     position="popper"
-                                    className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
+                                    className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
                                 >
                                     <SelectItem value="09:00">09:00</SelectItem>
                                     <SelectItem value="10:00">10:00</SelectItem>
