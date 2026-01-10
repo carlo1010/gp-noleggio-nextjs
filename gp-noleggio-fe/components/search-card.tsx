@@ -12,12 +12,12 @@ import {
     ClockArrowDown,
 } from "lucide-react";
 
-import {Checkbox} from "@/components/ui/checkbox";
-import {Label} from "@/components/ui/label";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {Popover, PopoverTrigger, PopoverContent} from "@/components/ui/popover";
-import {Calendar} from "@/components/ui/calendar";
-import {Button} from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
 import {
     Select,
     SelectContent,
@@ -26,11 +26,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-import {listaAgenzia} from "@/hook/useAgenzia";
-import {useEffect, useMemo, useState} from "react";
-import {format, startOfDay, isBefore} from "date-fns";
-import {useRouter} from "next/navigation";
-import {useCheckoutStore} from "@/store/checkout.store";
+import { listaAgenzia } from "@/hook/useAgenzia";
+import { useEffect, useMemo, useState } from "react";
+import { format, startOfDay, isBefore } from "date-fns";
+import { useRouter } from "next/navigation";
+import { useCheckoutStore } from "@/store/checkout.store";
 
 
 export default function SearchCard() {
@@ -72,12 +72,14 @@ export default function SearchCard() {
     const pickupOfficeId = ritiro.luogo || undefined;
     const dropoffOfficeId = riconsegna.luogo || undefined;
 
-    const hasPromo = Boolean(codicePromo);
+
 
     // ====== UI STATE ======
     const [pickupOpen, setPickupOpen] = useState(false);
     const [dropoffOpen, setDropoffOpen] = useState(false);
     const [country, setCountry] = useState<"italia" | "estero">("italia");
+    // Gestione locale della checkbox promo
+    const [hasPromo, setHasPromo] = useState(!!codicePromo);
 
     const pickupDateStr = format(pickupDate, "yyyy-MM-dd");
     const dropoffDateStr = format(dropoffDate, "yyyy-MM-dd");
@@ -91,7 +93,7 @@ export default function SearchCard() {
         dropoffTime?: boolean;
     }>({});
 
-    const {isPending: isLoadingAgenzie, data: agenzie} = listaAgenzia();
+    const { isPending: isLoadingAgenzie, data: agenzie } = listaAgenzia();
 
     // oggi "pulito" a mezzanotte
     const today = useMemo(() => startOfDay(new Date()), []);
@@ -117,7 +119,7 @@ export default function SearchCard() {
 
         if (isBefore(d, p)) {
             // setto nello store
-            setRiconsegna({data: format(pickupDate, "yyyy-MM-dd")});
+            setRiconsegna({ data: format(pickupDate, "yyyy-MM-dd") });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ritiro.data]);
@@ -154,8 +156,8 @@ export default function SearchCard() {
 
         if (codicePromo) payloadUrl.codicePromo = codicePromo;
 
-        setRitiro({data: pickupDateStr});
-        setRiconsegna({data: dropoffDateStr});
+        setRitiro({ data: pickupDateStr });
+        setRiconsegna({ data: dropoffDateStr });
 
         const params = new URLSearchParams(payloadUrl);
         const url = `/ricerca-risultati?${params.toString()}`;
@@ -177,34 +179,33 @@ export default function SearchCard() {
     };
 
     return (
-        <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full max-w-5xl p-8 space-y-6">
-            {/* RIGA 1: SELETTORI */}
-            <div className="grid grid-cols-4 gap-x-3 gap-y-6">
+        <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full p-8 space-y-6">
+            {/* RIGA 1: SELETTORI - DESIGN FOGLIA (LEAF) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* PRIVATO / AZIENDA */}
-                <div className="flex col-span-1 flex-col gap-2">
+                <div className="flex flex-col gap-2">
                     <span className="text-sm font-semibold">Scegli un’opzione</span>
 
-
                     <RadioGroup
-                        className="flex flex-row gap-0 border max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="grid grid-cols-2 gap-0 border w-[280px] rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={tipoCliente}
                         onValueChange={(val) => setTipoCliente(val as "privato" | "azienda")}
                     >
                         <div
-                            className={`transition-colors border-r ${tipoCliente === "privato" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="privato" id="r-privato"/>
+                            className={`transition-colors border-r flex justify-center ${tipoCliente === "privato" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="privato" id="r-privato" />
                             <Label htmlFor="r-privato"
-                                   className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${tipoCliente === "privato" ? "text-white" : "text-gray-700"}`}>
-                                <User className="w-4 h-4"/> Privato
+                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoCliente === "privato" ? "text-white" : "text-gray-700"}`}>
+                                <User className="w-4 h-4" /> Privato
                             </Label>
                         </div>
 
                         <div
-                            className={`transition-colors ${tipoCliente === "azienda" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="azienda" id="r-azienda"/>
+                            className={`transition-colors flex justify-center ${tipoCliente === "azienda" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="azienda" id="r-azienda" />
                             <Label htmlFor="r-azienda"
-                                   className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
-                                <Building className="w-4 h-4"/> Azienda
+                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
+                                <Building className="w-4 h-4" /> Azienda
                             </Label>
                         </div>
                     </RadioGroup>
@@ -212,36 +213,33 @@ export default function SearchCard() {
                 </div>
 
                 {/* AUTO / FURGONI */}
-                <div className="flex col-span-1 flex-col gap-2">
+                <div className="flex flex-col gap-2">
                     <span className="text-sm font-semibold">Scegli il tipo di veicolo</span>
 
                     <RadioGroup
-                        className="flex flex-row gap-0 border max-w-max rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="grid grid-cols-2 gap-0 border w-[280px] rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={tipoVeicolo}
                         onValueChange={(val) => setTipoVeicolo(val as "auto" | "furgone")}
                     >
                         <div
-                            className={`transition-colors border-r ${tipoVeicolo === "auto" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="auto" id="r-auto"/>
+                            className={`transition-colors border-r flex justify-center ${tipoVeicolo === "auto" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="auto" id="r-auto" />
                             <Label htmlFor="r-auto"
-                                   className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${tipoVeicolo === "auto" ? "text-white" : "text-gray-700"}`}>
-                                <Car className="w-4 h-4"/> Auto
+                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoVeicolo === "auto" ? "text-white" : "text-gray-700"}`}>
+                                <Car className="w-4 h-4" /> Auto
                             </Label>
                         </div>
 
                         <div
-                            className={`transition-colors ${tipoVeicolo === "furgone" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="furgone" id="r-furgone"/>
+                            className={`transition-colors flex justify-center ${tipoVeicolo === "furgone" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="furgone" id="r-furgone" />
                             <Label htmlFor="r-furgone"
-                                   className={`flex items-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium ${tipoVeicolo === "furgone" ? "text-white" : "text-gray-700"}`}>
-                                <Truck className="w-4 h-4"/> Furgoni
+                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoVeicolo === "furgone" ? "text-white" : "text-gray-700"}`}>
+                                <Truck className="w-4 h-4" /> Furgoni
                             </Label>
                         </div>
                     </RadioGroup>
                 </div>
-
-                <div className="col-span-1"/>
-                <div className="col-span-1"/>
             </div>
 
             {/* MAIN SEARCH GRID */}
@@ -275,7 +273,7 @@ export default function SearchCard() {
 
                     <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE] z-10">
-                            <MapPin className="w-4 h-4"/>
+                            <MapPin className="w-4 h-4" />
                         </div>
 
                         <Select
@@ -295,7 +293,7 @@ export default function SearchCard() {
                                     });
                                 }
 
-                                setErrors((e) => ({...e, pickupOffice: false}));
+                                setErrors((e) => ({ ...e, pickupOffice: false }));
                             }}
 
                             disabled={isLoadingAgenzie}
@@ -319,8 +317,8 @@ export default function SearchCard() {
                                         <div className="flex flex-col">
                                             <span className="font-medium">{a.descrizioneAgenzia}</span>
                                             <span className="text-xs text-gray-500">
-                        {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
-                      </span>
+                                                {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
+                                            </span>
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -351,10 +349,10 @@ export default function SearchCard() {
                                         variant="ghost"
                                         className="h-full w-full rounded-none px-3 flex items-center justify-start hover:bg-gray-50 shadow-none border-none m-0"
                                     >
-                                        <CalendarArrowUp className="w-4 h-4 text-[#0700DE] mr-2 shrink-0"/>
+                                        <CalendarArrowUp className="w-4 h-4 text-[#0700DE] mr-2 shrink-0" />
                                         <span className="truncate text-sm">
-                      {pickupDate ? pickupDate.toLocaleDateString() : ""}
-                    </span>
+                                            {pickupDate ? pickupDate.toLocaleDateString() : ""}
+                                        </span>
                                     </Button>
                                 </PopoverTrigger>
 
@@ -365,7 +363,7 @@ export default function SearchCard() {
                                         onSelect={(d) => {
                                             if (!d) return;
                                             // salvo nello store
-                                            setRitiro({data: format(d, "yyyy-MM-dd")});
+                                            setRitiro({ data: format(d, "yyyy-MM-dd") });
                                             setPickupOpen(false);
                                         }}
                                         disabled={disablePickupDate}
@@ -380,16 +378,16 @@ export default function SearchCard() {
                             <Select
                                 value={pickupTime}
                                 onValueChange={(v) => {
-                                    setRitiro({ora: v});
-                                    setErrors((e) => ({...e, pickupTime: false}));
+                                    setRitiro({ ora: v });
+                                    setErrors((e) => ({ ...e, pickupTime: false }));
                                 }}
 
                             >
                                 <SelectTrigger
                                     className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none">
                                     <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
-                                        <ClockArrowUp className="w-4 h-4 text-[#0700DE] shrink-0"/>
-                                        <SelectValue placeholder="Ora"/>
+                                        <ClockArrowUp className="w-4 h-4 text-[#0700DE] shrink-0" />
+                                        <SelectValue placeholder="Ora" />
                                     </div>
                                 </SelectTrigger>
 
@@ -429,10 +427,10 @@ export default function SearchCard() {
                                         variant="ghost"
                                         className="h-full w-full rounded-none px-3 flex items-center justify-start hover:bg-gray-50 shadow-none border-none m-0"
                                     >
-                                        <CalendarArrowDown className="w-4 h-4 text-[#0700DE] mr-2 shrink-0"/>
+                                        <CalendarArrowDown className="w-4 h-4 text-[#0700DE] mr-2 shrink-0" />
                                         <span className="truncate text-sm">
-                      {dropoffDate ? dropoffDate.toLocaleDateString() : ""}
-                    </span>
+                                            {dropoffDate ? dropoffDate.toLocaleDateString() : ""}
+                                        </span>
                                     </Button>
                                 </PopoverTrigger>
 
@@ -442,7 +440,7 @@ export default function SearchCard() {
                                         selected={dropoffDate}
                                         onSelect={(d) => {
                                             if (!d) return;
-                                            setRiconsegna({data: format(d, "yyyy-MM-dd")});
+                                            setRiconsegna({ data: format(d, "yyyy-MM-dd") });
                                             setDropoffOpen(false);
                                         }}
                                         disabled={disableDropoffDate}
@@ -457,15 +455,15 @@ export default function SearchCard() {
                             <Select
                                 value={dropoffTime}
                                 onValueChange={(v) => {
-                                    setRiconsegna({ora: v});
-                                    setErrors((e) => ({...e, dropoffTime: false}));
+                                    setRiconsegna({ ora: v });
+                                    setErrors((e) => ({ ...e, dropoffTime: false }));
                                 }}
                             >
                                 <SelectTrigger
                                     className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none">
                                     <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
-                                        <ClockArrowDown className="w-4 h-4 text-[#0700DE] shrink-0"/>
-                                        <SelectValue placeholder="Ora"/>
+                                        <ClockArrowDown className="w-4 h-4 text-[#0700DE] shrink-0" />
+                                        <SelectValue placeholder="Ora" />
                                     </div>
                                 </SelectTrigger>
 
@@ -496,7 +494,7 @@ export default function SearchCard() {
 
                         <div className="relative">
                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE]">
-                                <MapPin className="w-4 h-4"/>
+                                <MapPin className="w-4 h-4" />
                             </div>
 
                             <Select
@@ -509,7 +507,7 @@ export default function SearchCard() {
                                         luogoLabel: agenzia?.descrizioneAgenzia ?? v,
                                     });
 
-                                    setErrors((e) => ({...e, dropoffOffice: false}));
+                                    setErrors((e) => ({ ...e, dropoffOffice: false }));
                                 }}
 
                                 disabled={isLoadingAgenzie}
@@ -533,8 +531,8 @@ export default function SearchCard() {
                                             <div className="flex flex-col">
                                                 <span className="font-medium">{a.descrizioneAgenzia}</span>
                                                 <span className="text-xs text-gray-500">
-                          {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
-                        </span>
+                                                    {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
+                                                </span>
                                             </div>
                                         </SelectItem>
                                     ))}
@@ -558,7 +556,7 @@ export default function SearchCard() {
                         <Select value={String(eta)} onValueChange={(v) => setEta(Number(v))}>
                             <SelectTrigger
                                 className="h-10 w-[90px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
-                                <SelectValue placeholder="Età"/>
+                                <SelectValue placeholder="Età" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="18">18+</SelectItem>
@@ -571,10 +569,10 @@ export default function SearchCard() {
                     {/* VIVO IN (resta locale) */}
                     <div className="flex items-center gap-3">
                         <span className="text-sm text-gray-700">Vivo in</span>
-                        <Select value={country} onValueChange={setCountry}>
+                        <Select value={country} onValueChange={(v) => setCountry(v as "italia" | "estero")}>
                             <SelectTrigger
                                 className="h-10 w-[140px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
-                                <SelectValue placeholder="Paese"/>
+                                <SelectValue placeholder="Paese" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="italia">Italia</SelectItem>
@@ -591,13 +589,13 @@ export default function SearchCard() {
                                 checked={hasPromo}
                                 onCheckedChange={(val) => {
                                     const checked = val as boolean;
+                                    setHasPromo(checked);
                                     if (!checked) setCodicePromo(undefined);
-                                    // se checked true, non faccio nulla: l’input appare e l’utente scrive
                                 }}
                             />
                             <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-s md:text-sm">
                                 <span className="hidden xs:inline">Ho un </span><span
-                                className="font-semibold">Codice sconto</span>
+                                    className="font-semibold">Codice sconto</span>
                             </label>
                         </div>
 

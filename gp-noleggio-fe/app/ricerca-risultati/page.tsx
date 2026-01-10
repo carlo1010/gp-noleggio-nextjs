@@ -81,10 +81,7 @@ export default function RicercsRisultati() {
 
                 {/* Tutele singole */}
                 <TuteleDisponibili
-                    selected={tuteleSelezionate}
                     prezzi={prezzi}
-                    onToggle={handleToggle}
-                    onInfo={handleInfo}
                     title="Formule di Tutela disponibili"
                 />
 

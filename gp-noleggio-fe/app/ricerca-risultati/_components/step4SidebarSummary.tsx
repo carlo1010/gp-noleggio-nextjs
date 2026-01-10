@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { Info } from "lucide-react";
+import { Info, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 import { useCheckoutStore } from "@/store/checkout.store";
 import { formatPrice } from "@/lib/formatPrice";
@@ -11,8 +12,37 @@ import PostiIcon from "@/components/svg/postiIcon";
 import { PatenteIcon } from "@/components/svg/patenteicon";
 import PorteIcon from "@/components/svg/porteicon";
 import AriaIcon from "@/components/svg/ariaicon";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
+//Wrapper principale che include la card bianca + gli accordion sotto
 export default function Step4SidebarSummary() {
+    return (
+        <div className="flex flex-col gap-4 w-full">
+            <SummaryCard />
+            <div className="flex flex-col gap-2">
+                <SimpleAccordion title="Deposito" />
+                <SimpleDivider />
+                <SimpleAccordion title="Politica carburante" />
+                <SimpleDivider />
+                <SimpleAccordion title="Politica di Modifica, Cancellazione e Rimborso" />
+            </div>
+        </div>
+    );
+}
+
+function SimpleDivider() {
+    return <div className="" />;
+}
+
+
+function SummaryCard() {
     const totale = useCheckoutStore((s) => s.getTotale());
 
     const veicolo = useCheckoutStore((s) => s.veicolo);
@@ -51,7 +81,7 @@ export default function Step4SidebarSummary() {
         : "Incluso";
 
     return (
-        <div className="bg-white border rounded-br-2xl rounded-tl-2xl  p-4">
+        <div className="bg-white border rounded-br-2xl rounded-tl-2xl  p-4 shadow-sm">
             {/* HEADER */}
             <div className="flex items-center justify-between">
                 <p className="font-semibold text-sm">Veicolo</p>
@@ -67,8 +97,8 @@ export default function Step4SidebarSummary() {
                     <p className="font-bold text-sm truncate">{nome}</p>
 
                     <span className="inline-flex items-center mt-2 text-[10px] uppercase bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
-            O SIMILE
-          </span>
+                        O SIMILE
+                    </span>
                 </div>
 
                 <div className="relative w-20 h-14 shrink-0">
@@ -104,12 +134,31 @@ export default function Step4SidebarSummary() {
             <div className="my-4 h-px w-full bg-gray-200" />
 
             {/* COSA E' INCLUSO */}
-            <div className="flex items-center gap-2">
-                <p className="text-xs font-bold text-primary uppercase">
-                    COSA È INCLUSO?
-                </p>
-                <Info className="w-4 h-4 text-primary" />
-            </div>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+                        <p className="text-xs font-bold text-primary uppercase underline decoration-dotted underline-offset-2">
+                            COSA È INCLUSO?
+                        </p>
+                        <Info className="w-4 h-4 text-primary" />
+                    </div>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Cosa è incluso?</DialogTitle>
+                        <DialogDescription>
+                            Dettaglio dei servizi inclusi nel noleggio.
+                        </DialogDescription>
+                    </DialogHeader>
+                    {/* Placeholder content */}
+                    <ul className="list-disc pl-5 text-sm space-y-2 text-gray-700 mt-2">
+                        <li>Ritiro e consegna fuori orario (se applicabile)</li>
+                        <li>Chilometraggio illimitato</li>
+                        <li>Assicurazione base (RCA)</li>
+                        <li>Assistenza stradale 24/7</li>
+                    </ul>
+                </DialogContent>
+            </Dialog>
 
             <div className="mt-3 space-y-3 text-[11px]">
                 <div>
@@ -157,13 +206,35 @@ export default function Step4SidebarSummary() {
     );
 }
 
+function SimpleAccordion({ title }: { title: string }) {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <div className="w-full">
+            <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                className="flex items-start justify-between w-full py-2 text-xs font-bold text-gray-900 hover:text-[#0700DE] transition-colors text-left group"
+            >
+                <span className="flex-1 pr-2 break-words">{title}</span>
+                <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${open ? "rotate-180" : ""} mt-0.5 text-gray-500 group-hover:text-[#0700DE]`} />
+            </button>
+            {open && (
+                <div className="text-[11px] text-gray-600 pb-2 break-words">
+                    <p>Contenuto di esempio per {title}...</p>
+                </div>
+            )}
+        </div>
+    );
+}
+
 /** mini componente per allineare icona + testo come in Figma */
 function SpecItem({ icon, text }: { icon: React.ReactNode; text: string }) {
     return (
         <div className="flex items-center gap-1">
-      <span className="w-4 h-4 flex items-center justify-center text-gray-600">
-        {icon}
-      </span>
+            <span className="w-4 h-4 flex items-center justify-center text-gray-600">
+                {icon}
+            </span>
             <span>{text}</span>
         </div>
     );
