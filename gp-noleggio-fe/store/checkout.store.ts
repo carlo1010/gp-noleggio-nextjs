@@ -10,8 +10,8 @@ export type CheckoutState = {
     search: {
         tipoCliente: ClienteTipo;
         tipoVeicolo: VeicoloTipo;
-        ritiro: { luogo: string; data: string; ora: string };
-        riconsegna: { luogo: string; data: string; ora: string; stessoUfficio: boolean };
+        ritiro: { luogo: string; luogoLabel: string; data: string; ora: string };
+        riconsegna: { luogo: string; luogoLabel: string; data: string; ora: string; stessoUfficio: boolean };
         eta: number;
         codicePromo?: string;
     };
@@ -43,6 +43,10 @@ export type CheckoutState = {
         telefono: string;
         codiceFiscale: string;
         numeroVolo?: string;
+
+        privacyInfo: boolean;   // ricevere info/offerte + trattamento dati
+        marketing: boolean;     // consenso marketing partner ecc
+        programmaFedelta?: string;
     };
 
     pagamento: {
@@ -96,7 +100,8 @@ type CheckoutActions = {
 
     // reset
     resetCheckout: () => void;
-    setPacchettoConPrezzo: (pacchetto: PacchettoTipo, prezzoGiorno: number) => void;
+    setPacchettoConPrezzo: (pacchetto: PacchettoTipo, prezzoGiorno: number, prezzoTotale: number) => void;
+    clearStep3: () => void;
 
 
 };
@@ -107,8 +112,8 @@ const initialCheckoutState: CheckoutState = {
     search: {
         tipoCliente: "privato",
         tipoVeicolo: "auto",
-        ritiro: {luogo: "", data: "", ora: ""},
-        riconsegna: {luogo: "", data: "", ora: "", stessoUfficio: true},
+        ritiro: {luogo: "", luogoLabel: "", data: "", ora: ""},
+        riconsegna: {luogo: "", luogoLabel: "", data: "", ora: "", stessoUfficio: true},
         eta: 18,
         codicePromo: undefined,
     },
@@ -138,6 +143,11 @@ const initialCheckoutState: CheckoutState = {
         telefono: "",
         codiceFiscale: "",
         numeroVolo: undefined,
+
+
+        privacyInfo: false,
+        marketing: false,
+        programmaFedelta: "",
     },
 
     pagamento: {
@@ -149,7 +159,7 @@ const initialCheckoutState: CheckoutState = {
 
 const parseYMDToLocalDate = (yMD: string) => {
     const [y, m, d] = yMD.split('-');
-    return new Date(y, m - 1, d)
+    return new Date(Number(y), Number(m) - 1, Number(d));
 };
 const calcGiorniNoleggio = (dataInizio?: string, dataFine?: string) => {
     if (!dataInizio || !dataFine) return 1;
@@ -198,6 +208,18 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
                 ...s.tariffa,
                 ...payload,
             },
+        })),
+
+    clearStep3: () =>
+        set((s) => ({
+            protezioni: {
+                ...s.protezioni,
+                pacchetto: "basic",
+                prezzoGiorno: 0,
+                prezzoTotale: 0,
+                opzioni: [],
+            },
+            extra: {},
         })),
 
 
@@ -298,8 +320,7 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
         const s = get();
 
         const base = s.tariffa?.prezzoTotale ?? 0;
-        const giorni = calcGiorniNoleggio(s.search.ritiro.data, s.search.riconsegna.data);
-        const protezioniTot = (s.protezioni?.prezzoGiorno ?? 0) * giorni;
+        const protezioniTot = s.protezioni?.prezzoTotale ?? 0;
 
         const extraTot = Object.values(s.extra ?? {}).reduce((acc, item) => {
             const prezzo = Number(item.prezzo) || 0;
@@ -307,25 +328,20 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
             return acc + prezzo * qta;
         }, 0);
 
-        return base + extraTot + protezioniTot;
+        return base + protezioniTot + extraTot;
     },
 
 
     // reset
     resetCheckout: () => set({...initialCheckoutState}),
-    setPacchettoConPrezzo: (pacchetto, prezzoGiorno) => {
-        const s = get();
-        const giorni = calcGiorniNoleggio(s.search.ritiro.data, s.search.riconsegna.data);
-
-        set({
+    setPacchettoConPrezzo: (pacchetto, prezzoGiorno, prezzoTotale) =>
+        set((s) => ({
             protezioni: {
                 ...s.protezioni,
                 pacchetto,
                 prezzoGiorno,
-                prezzoTotale: prezzoGiorno * giorni,
+                prezzoTotale,
             },
-        });
-
-    },
+        })),
 
 }));

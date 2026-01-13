@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image";
 import Link from "next/link";
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 const fleetItems = [
     {
@@ -92,7 +92,7 @@ export default function FleetSection() {
         <section className="w-full relative bg-white px-3 pb-8 md:pb-0">
             {/* ===== FASCIA GRIGIA ===== */}
             <div className="bg-gray-50 h-auto md:h-[422px]">
-                <div className="container mx-auto px-4 pt-14 pb-10 md:pb-0">
+                <div className="container mx-auto px-4 pt-14 pb-10 md:pb-0 max-w-[1240px]">
                     <h2 className="text-3xl font-bold mb-10 text-center md:text-left">La flotta</h2>
 
                     {/* MOBILE CAROUSEL */}
@@ -138,11 +138,10 @@ export default function FleetSection() {
                                         setCurrentIndex(index);
                                         setIsAutoPlaying(false);
                                     }}
-                                    className={`h-2 transition-all duration-300 rounded-full ${
-                                        currentIndex === index
-                                            ? "w-8 bg-[#0700DE]"
-                                            : "w-2 bg-gray-300"
-                                    }`}
+                                    className={`h-2 transition-all duration-300 rounded-full ${currentIndex === index
+                                        ? "w-8 bg-[#0700DE]"
+                                        : "w-2 bg-gray-300"
+                                        }`}
                                     aria-label={`Go to slide ${index + 1}`}
                                 />
                             ))}
@@ -173,7 +172,7 @@ export default function FleetSection() {
             </div>
 
             {/* ===== IMMAGINI DESKTOP (FUORI FASCIA) - Visibile solo da MD in su ===== */}
-            <div className="hidden md:block container mx-auto px-4 -mt-24">
+            <div className="hidden md:block container mx-auto px-4 -mt-24 max-w-[1240px]">
                 <div className="grid grid-cols-4 gap-10">
                     {fleetItems.map((item) => (
                         <div key={item.title} className="flex justify-center">

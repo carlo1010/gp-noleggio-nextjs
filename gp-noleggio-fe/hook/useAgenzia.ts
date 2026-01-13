@@ -1,7 +1,7 @@
 "use client";
 
-import {useQuery} from "@tanstack/react-query";
-import {Agenzia} from "@/types/agenzia";
+import { useQuery } from "@tanstack/react-query";
+import { Agenzia } from "@/types/agenzia";
 
 
 export function listaAgenzia() {

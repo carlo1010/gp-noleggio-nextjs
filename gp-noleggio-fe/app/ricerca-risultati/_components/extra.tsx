@@ -103,7 +103,7 @@ export default function PacchettiProtection({
                                             }: PacchettiProtectionProps) {
     // ✅ Basic selezionato di default
     const selected = useCheckoutStore(s => s.protezioni.pacchetto);
-    const setPacchetto = useCheckoutStore(s => s.setPacchetto);
+    const setPacchettoConPrezzo = useCheckoutStore(s => s.setPacchettoConPrezzo);
 
 
     // ✅ Dialog state
@@ -111,10 +111,22 @@ export default function PacchettiProtection({
     const [detailsKey, setDetailsKey] = useState<ProtectionKey>("basic");
 
     const select = (key: ProtectionKey) => {
-        setPacchetto(key);
-        onChange?.(key);
-        console.log("[PacchettiProtection] selected:", key);
+        if (key === "basic") {
+            setPacchettoConPrezzo("basic", 0, 0);
+        }
 
+        if (key === "medium") {
+            setPacchettoConPrezzo("medium", medium.day, medium.total);
+        }
+
+        if (key === "premium") {
+            setPacchettoConPrezzo("premium", premium.day, premium.total);
+        }
+
+        onChange?.(key);
+
+        console.log("[PacchettiProtection] selected:", key);
+        console.log("[PacchettiProtection] store:", useCheckoutStore.getState().protezioni);
     };
 
 

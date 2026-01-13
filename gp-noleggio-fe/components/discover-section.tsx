@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import {promises as fs} from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 import DiscoverCarouselWrapper from "./discover-carousel-wrapper";
 
@@ -29,13 +29,13 @@ export default async function DiscoverSection() {
 
     return (
         <section className="w-full bg-white">
-            <div className="container mx-auto px-4 py-14">
+            <div className="container mx-auto px-4 py-14 max-w-[1240px]">
                 <h2 className="text-3xl md:text-4xl font-bold mb-10">
                     Scopri il mondo Piccirillo Rent
                 </h2>
 
                 {/* MOBILE CAROUSEL WRAPPER (Client Component) */}
-                <DiscoverCarouselWrapper items={items}/>
+                <DiscoverCarouselWrapper items={items} />
 
                 {/* DESKTOP GRID (Server-Side Rendered) */}
                 <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">

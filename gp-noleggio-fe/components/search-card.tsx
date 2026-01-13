@@ -12,12 +12,12 @@ import {
     ClockArrowDown,
 } from "lucide-react";
 
-import {Checkbox} from "@/components/ui/checkbox";
-import {Label} from "@/components/ui/label";
-import {RadioGroup, RadioGroupItem} from "@/components/ui/radio-group";
-import {Popover, PopoverTrigger, PopoverContent} from "@/components/ui/popover";
-import {Calendar} from "@/components/ui/calendar";
-import {Button} from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
 import {
     Select,
     SelectContent,
@@ -26,14 +26,11 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-import {listaAgenzia} from "@/hook/useAgenzia";
-import {useEffect, useMemo, useState} from "react";
+import { listaAgenzia } from "@/hook/useAgenzia";
+import { useEffect, useMemo, useState } from "react";
 import { format, startOfDay, isBefore } from "date-fns";
-import {useRouter} from "next/navigation";
-import {useCheckoutStore} from "@/store/checkout.store";
-
-
-
+import { useRouter } from "next/navigation";
+import { useCheckoutStore } from "@/store/checkout.store";
 
 
 export default function SearchCard() {
@@ -75,13 +72,14 @@ export default function SearchCard() {
     const pickupOfficeId = ritiro.luogo || undefined;
     const dropoffOfficeId = riconsegna.luogo || undefined;
 
-    const [promoChecked, setPromoOpen] = useState(false);
-    const hasPromo = promoChecked || Boolean(codicePromo);
+
 
     // ====== UI STATE ======
     const [pickupOpen, setPickupOpen] = useState(false);
     const [dropoffOpen, setDropoffOpen] = useState(false);
     const [country, setCountry] = useState<"italia" | "estero">("italia");
+    // Gestione locale della checkbox promo
+    const [hasPromo, setHasPromo] = useState(!!codicePromo);
 
     const pickupDateStr = format(pickupDate, "yyyy-MM-dd");
     const dropoffDateStr = format(dropoffDate, "yyyy-MM-dd");
@@ -96,7 +94,7 @@ export default function SearchCard() {
         dropoffTime?: boolean;
     }>({});
 
-    const {isPending: isLoadingAgenzie, data: agenzie} = listaAgenzia();
+    const { isPending: isLoadingAgenzie, data: agenzie } = listaAgenzia();
 
     // oggi "pulito" a mezzanotte
     const today = useMemo(() => startOfDay(new Date()), []);
@@ -107,10 +105,13 @@ export default function SearchCard() {
     // se stesso ufficio -> riconsegna.luogo segue ritiro.luogo
     useEffect(() => {
         if (stessoUfficio && ritiro.luogo) {
-            setRiconsegna({luogo: ritiro.luogo});
+            setRiconsegna({
+                luogo: ritiro.luogo,
+                luogoLabel: ritiro.luogoLabel,
+            });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stessoUfficio, ritiro.luogo]);
+    }, [stessoUfficio, ritiro.luogo, ritiro.luogoLabel]);
 
     // se pickupDate va oltre dropoffDate, riallineo dropoffDate
     useEffect(() => {
@@ -156,8 +157,8 @@ export default function SearchCard() {
 
         if (codicePromo) payloadUrl.codicePromo = codicePromo;
 
-        setRitiro({data: pickupDateStr});
-        setRiconsegna({data: dropoffDateStr});
+        setRitiro({ data: pickupDateStr });
+        setRiconsegna({ data: dropoffDateStr });
 
         const params = new URLSearchParams(payloadUrl);
         const url = `/ricerca-risultati?${params.toString()}`;
@@ -206,23 +207,29 @@ export default function SearchCard() {
                 </div>
 
                 {/* AUTO / FURGONI */}
-                <div className="flex flex-col gap-1.5 md:gap-2">
-                    <span className="text-xs md:text-sm font-semibold">Scegli il tipo di veicolo</span>
+                <div className="flex flex-col gap-2">
+                    <span className="text-sm font-semibold">Scegli il tipo di veicolo</span>
+
                     <RadioGroup
-                        className="flex flex-row gap-0 border w-full md:min-w-60 rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="grid grid-cols-2 gap-0 border w-[280px] rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={tipoVeicolo}
                         onValueChange={(val) => setTipoVeicolo(val as "auto" | "furgone")}
                     >
-                        <div className={`flex-1 transition-colors border-r ${tipoVeicolo === "auto" ? "bg-[#0700DE]" : "bg-white"}`}>
-                            <RadioGroupItem className="sr-only" value="auto" id="r-auto"/>
-                            <Label htmlFor="r-auto" className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium w-full h-full ${tipoVeicolo === "auto" ? "text-white" : "text-gray-700"}`}>
-                                <Car className="w-4 h-4"/> Auto
+                        <div
+                            className={`transition-colors border-r flex justify-center ${tipoVeicolo === "auto" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="auto" id="r-auto" />
+                            <Label htmlFor="r-auto"
+                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoVeicolo === "auto" ? "text-white" : "text-gray-700"}`}>
+                                <Car className="w-4 h-4" /> Auto
                             </Label>
                         </div>
-                        <div className={`flex-1 transition-colors ${tipoVeicolo === "furgone" ? "bg-[#0700DE]" : "bg-white"}`}>
-                            <RadioGroupItem className="sr-only" value="furgone" id="r-furgone"/>
-                            <Label htmlFor="r-furgone" className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium w-full h-full ${tipoVeicolo === "furgone" ? "text-white" : "text-gray-700"}`}>
-                                <Truck className="w-4 h-4"/> Furgoni
+
+                        <div
+                            className={`transition-colors flex justify-center ${tipoVeicolo === "furgone" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
+                            <RadioGroupItem className="sr-only" value="furgone" id="r-furgone" />
+                            <Label htmlFor="r-furgone"
+                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoVeicolo === "furgone" ? "text-white" : "text-gray-700"}`}>
+                                <Truck className="w-4 h-4" /> Furgoni
                             </Label>
                         </div>
                     </RadioGroup>
@@ -247,7 +254,9 @@ export default function SearchCard() {
                                     setRiconsegna({
                                         stessoUfficio: checked,
                                         luogo: checked ? (ritiro.luogo || "") : riconsegna.luogo,
+                                        luogoLabel: checked ? (ritiro.luogoLabel || "") : riconsegna.luogoLabel,
                                     });
+
                                 }}
                             />
                             <Label className="text-[12px] md:text-s cursor-pointer" htmlFor="same-office">
@@ -258,16 +267,29 @@ export default function SearchCard() {
 
                     <div className="relative">
                         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE] z-10">
-                            <MapPin className="w-4 h-4"/>
+                            <MapPin className="w-4 h-4" />
                         </div>
 
                         <Select
                             value={pickupOfficeId}
                             onValueChange={(v) => {
-                                setRitiro({luogo: v});
-                                if (riconsegna.stessoUfficio) setRiconsegna({luogo: v});
-                                setErrors((e) => ({...e, pickupOffice: false}));
+                                const agenzia = (agenzie ?? []).find((a: any) => a.codiceAgenzia === v);
+
+                                setRitiro({
+                                    luogo: v,
+                                    luogoLabel: agenzia?.descrizioneAgenzia ?? v,
+                                });
+
+                                if (riconsegna.stessoUfficio) {
+                                    setRiconsegna({
+                                        luogo: v,
+                                        luogoLabel: agenzia?.descrizioneAgenzia ?? v,
+                                    });
+                                }
+
+                                setErrors((e) => ({ ...e, pickupOffice: false }));
                             }}
+
                             disabled={isLoadingAgenzie}
                         >
                             <SelectTrigger
@@ -289,8 +311,8 @@ export default function SearchCard() {
                                         <div className="flex flex-col">
                                             <span className="font-medium">{a.descrizioneAgenzia}</span>
                                             <span className="text-xs text-gray-500">
-                            {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
-                          </span>
+                                                {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
+                                            </span>
                                         </div>
                                     </SelectItem>
                                 ))}
@@ -321,10 +343,10 @@ export default function SearchCard() {
                                         variant="ghost"
                                         className="h-full w-full rounded-none px-3 flex items-center justify-start hover:bg-gray-50 shadow-none border-none m-0"
                                     >
-                                        <CalendarArrowUp className="w-4 h-4 text-[#0700DE] mr-2 shrink-0"/>
+                                        <CalendarArrowUp className="w-4 h-4 text-[#0700DE] mr-2 shrink-0" />
                                         <span className="truncate text-sm">
-                          {pickupDate ? pickupDate.toLocaleDateString() : ""}
-                        </span>
+                                            {pickupDate ? pickupDate.toLocaleDateString() : ""}
+                                        </span>
                                     </Button>
                                 </PopoverTrigger>
 
@@ -350,21 +372,22 @@ export default function SearchCard() {
                             <Select
                                 value={pickupTime}
                                 onValueChange={(v) => {
-                                    setRitiro({ora: v});
-                                    setErrors((e) => ({...e, pickupTime: false}));
+                                    setRitiro({ ora: v });
+                                    setErrors((e) => ({ ...e, pickupTime: false }));
                                 }}
+
                             >
                                 <SelectTrigger
                                     className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 pr-2 rounded-none">
                                     <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
-                                        <ClockArrowUp className="w-4 h-4 text-[#0700DE] shrink-0"/>
-                                        <SelectValue placeholder="Ora"/>
+                                        <ClockArrowUp className="w-4 h-4 text-[#0700DE] shrink-0" />
+                                        <SelectValue placeholder="Ora" />
                                     </div>
                                 </SelectTrigger>
 
                                 <SelectContent
                                     position="popper"
-                                    className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
+                                    className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
                                 >
                                     <SelectItem value="09:00">09:00</SelectItem>
                                     <SelectItem value="10:00">10:00</SelectItem>
@@ -452,10 +475,10 @@ export default function SearchCard() {
                                         variant="ghost"
                                         className="h-full w-full rounded-none px-3 flex items-center justify-start hover:bg-gray-50 shadow-none border-none m-0"
                                     >
-                                        <CalendarArrowDown className="w-4 h-4 text-[#0700DE] mr-2 shrink-0"/>
+                                        <CalendarArrowDown className="w-4 h-4 text-[#0700DE] mr-2 shrink-0" />
                                         <span className="truncate text-sm">
-                          {dropoffDate ? dropoffDate.toLocaleDateString() : ""}
-                        </span>
+                                            {dropoffDate ? dropoffDate.toLocaleDateString() : ""}
+                                        </span>
                                     </Button>
                                 </PopoverTrigger>
 
@@ -480,15 +503,15 @@ export default function SearchCard() {
                             <Select
                                 value={dropoffTime}
                                 onValueChange={(v) => {
-                                    setRiconsegna({ora: v});
-                                    setErrors((e) => ({...e, dropoffTime: false}));
+                                    setRiconsegna({ ora: v });
+                                    setErrors((e) => ({ ...e, dropoffTime: false }));
                                 }}
                             >
                                 <SelectTrigger
                                     className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 pr-2 rounded-none">
                                     <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
-                                        <ClockArrowDown className="w-4 h-4 text-[#0700DE] shrink-0"/>
-                                        <SelectValue placeholder="Ora"/>
+                                        <ClockArrowDown className="w-4 h-4 text-[#0700DE] shrink-0" />
+                                        <SelectValue placeholder="Ora" />
                                     </div>
                                 </SelectTrigger>
 
@@ -509,6 +532,67 @@ export default function SearchCard() {
                         <p className="text-xs text-red-600">Seleziona l’ora di consegna.</p>
                     )}
                 </div>
+
+                {/* SE dropoff diverso ufficio: mostra selettore sede riconsegna */}
+                {!stessoUfficio && (
+                    <div className="col-span-1 space-y-2 animate-in slide-in-from-top-2 duration-300">
+                        <Label htmlFor="dropoff-city" className="font-semibold">
+                            Città riconsegna
+                        </Label>
+
+                        <div className="relative">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE]">
+                                <MapPin className="w-4 h-4" />
+                            </div>
+
+                            <Select
+                                value={dropoffOfficeId}
+                                onValueChange={(v) => {
+                                    const agenzia = (agenzie ?? []).find((a: any) => a.codiceAgenzia === v);
+
+                                    setRiconsegna({
+                                        luogo: v,
+                                        luogoLabel: agenzia?.descrizioneAgenzia ?? v,
+                                    });
+
+                                    setErrors((e) => ({ ...e, dropoffOffice: false }));
+                                }}
+
+                                disabled={isLoadingAgenzie}
+                            >
+                                <SelectTrigger
+                                    className={[
+                                        "w-full h-14 rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none",
+                                        errors.dropoffOffice ? "border-red-500" : "border-gray-300",
+                                    ].join(" ")}
+                                >
+                                    <SelectValue
+                                        placeholder={
+                                            isLoadingAgenzie ? "Caricamento agenzie..." : "Seleziona punto riconsegna"
+                                        }
+                                    />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                    {(agenzie ?? []).map((a: any) => (
+                                        <SelectItem key={a.codiceAgenzia} value={a.codiceAgenzia}>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{a.descrizioneAgenzia}</span>
+                                                <span className="text-xs text-gray-500">
+                                                    {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
+                                                </span>
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {errors.dropoffOffice && (
+                            <p className="text-xs text-red-600">Seleziona una sede di riconsegna.</p>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* FILTRI BASSO & PROMO */}
@@ -520,7 +604,7 @@ export default function SearchCard() {
                         <Select value={String(eta)} onValueChange={(v) => setEta(Number(v))}>
                             <SelectTrigger
                                 className="h-10 w-[90px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
-                                <SelectValue placeholder="Età"/>
+                                <SelectValue placeholder="Età" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="18">18+</SelectItem>
@@ -533,10 +617,10 @@ export default function SearchCard() {
                     {/* VIVO IN */}
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-700">Vivo in</span>
-                        <Select value={country} onValueChange={setCountry}>
+                        <Select value={country} onValueChange={(v) => setCountry(v as "italia" | "estero")}>
                             <SelectTrigger
                                 className="h-10 w-[140px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
-                                <SelectValue placeholder="Paese"/>
+                                <SelectValue placeholder="Paese" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="italia">Italia</SelectItem>
@@ -553,13 +637,13 @@ export default function SearchCard() {
                                 checked={hasPromo}
                                 onCheckedChange={(val) => {
                                     const checked = val as boolean;
-                                    setPromoOpen(checked);
+                                    setHasPromo(checked);
                                     if (!checked) setCodicePromo(undefined);
                                 }}
                             />
                             <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-s md:text-sm">
                                 <span className="hidden xs:inline">Ho un </span><span
-                                className="font-semibold">Codice sconto</span>
+                                    className="font-semibold">Codice sconto</span>
                             </label>
                         </div>
 

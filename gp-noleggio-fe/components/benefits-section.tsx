@@ -28,7 +28,7 @@ const benefits = [
 export default function BenefitsSection() {
     return (
         <section className="w-full bg-white py-10">
-            <div className="container mx-auto px-4 py-16">
+            <div className="container mx-auto px-4 py-16 max-w-[1240px]">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                     {benefits.map((b) => (
                         <div key={b.title} className="flex flex-col items-center text-center">
