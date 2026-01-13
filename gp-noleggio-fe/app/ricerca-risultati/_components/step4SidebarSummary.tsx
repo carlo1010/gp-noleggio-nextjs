@@ -68,11 +68,11 @@ function SummaryCard() {
     const nome = veicolo?.descrizioneClasse ?? "—";
     const img = veicolo?.urlImmagine ?? "/fiat-500.png";
 
-    const cambio = "Manuale";
-    const posti = 4;
-    const porte = 3;
-    const aria = true;
-    const etaMin = 18;
+    const cambio = veicolo?.cambio ?? "—";
+    const posti = veicolo?.posti;
+    const porte = veicolo?.porte;
+    const aria = veicolo?.ariaCondizionata;
+    const etaMin = veicolo?.etaMin;
 
     const prezzoVeicolo = Number(tariffa?.prezzoTotale ?? 0);
 
@@ -116,10 +116,10 @@ function SummaryCard() {
             {/* ICONE SPECIFICHE */}
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[11px] text-gray-700">
                 <SpecItem icon={<CambioIcon />} text={cambio} />
-                <SpecItem icon={<PostiIcon />} text={String(posti)} />
-                <SpecItem icon={<PorteIcon />} text={String(porte)} />
-                <SpecItem icon={<AriaIcon />} text={aria ? "A/C" : "No A/C"} />
-                <SpecItem icon={<PatenteIcon />} text={String(etaMin)} />
+                <SpecItem icon={<PostiIcon />} text={posti ? String(posti) : "—"} />
+                <SpecItem icon={<PorteIcon />} text={porte ? String(porte) : "—"} />
+                <SpecItem icon={<AriaIcon />} text={aria === undefined ? "—" : aria ? "A/C" : "No A/C"} />
+                <SpecItem icon={<PatenteIcon />} text={etaMin ? String(etaMin) : "—"} />
             </div>
 
             {/* Tariffa base */}
