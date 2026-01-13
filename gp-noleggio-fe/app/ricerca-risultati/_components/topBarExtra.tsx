@@ -40,7 +40,7 @@ export default function CheckoutTopBar({ totale }: CheckoutTopBarProps) {
                         <Button
                             type="button"
                             onClick={goToStep4}
-                            className="h-12 px-10 rounded-br-sm rounded-tl-sm bg-blue-700 hover:bg-blue-800 text-white"
+                            className="h-12 px-10 rounded-br-sm rounded-tl-sm text-white"
                         >
                             Verifica e paga
                         </Button>

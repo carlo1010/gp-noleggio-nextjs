@@ -8,12 +8,9 @@ import CardNoleggio from "@/components/card-noleggio";
 import FiltroAuto from "@/components/filtro-auto";
 import { SceltaTariffa } from "@/components/scelta-tariffa";
 import { listaVeicoli } from "@/hook/useVeicoli";
-import { useRouter } from "next/navigation";
-import { findIndex } from "eslint-config-next";
 
 export default function SceltaVeicolo() {
     const [open, setOpen] = useState(false);
-    const router = useRouter();
     const [selectedVeicolo, setSelectedVeicolo] = useState<any>(null);
 
     const sp = useSearchParams();
@@ -48,6 +45,7 @@ export default function SceltaVeicolo() {
 
                 return (
                     <SceltaTariffa
+                        veicolo={veicolo}
                         imageUrl={veicolo.urlImmagine}
                         nome={veicolo.descrizioneClasse}
                         cambio={"automatico"}

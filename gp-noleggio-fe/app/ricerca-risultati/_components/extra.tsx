@@ -1,6 +1,7 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {formatPrice} from "@/lib/formatPrice";
 import {useCheckoutStore} from "@/store/checkout.store";
+import {calcDays} from "@/lib/date";
 
 
 import {
@@ -10,18 +11,23 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
 
-type ProtectionKey = "basic" | "medium" | "premium";
+export type ProtectionKey = string;
 
-type Price = {
-    day: number;
-    total: number;
+export type ProtectionOption = {
+    key: ProtectionKey;
+    nome: string;
+    descrizione?: string;
+    note?: string;
+    importo: number;
+    franchigiaFurto?: string;
+    franchigiaDanno?: string;
 };
 
 type PacchettiProtectionProps = {
-    medium: Price;
-    premium: Price;
-    onChange?: (key: ProtectionKey) => void;
+    options: ProtectionOption[];
+    onChange?: (option: ProtectionOption) => void;
 };
 
 function Card({
@@ -47,7 +53,7 @@ function Card({
             ].join(" ")}
         >
             {/* Header */}
-            <div className="bg-gray-50 px-6 py-5">
+            <div className="bg-[#F6F6FF] px-6 py-5">
                 <div className="text-lg font-semibold">{title}</div>
                 {header}
             </div>
@@ -57,7 +63,7 @@ function Card({
                 <ul className="space-y-3 flex-1">
                     {features.map((f, i) => (
                         <li key={i} className="flex gap-3 text-sm text-gray-800">
-              <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-700 text-white">
+              <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white">
                 ✓
               </span>
                             {f}
@@ -67,28 +73,29 @@ function Card({
 
                 {/* CTA */}
                 <div className="mt-8 flex items-center justify-between">
-                    <button
-                        type="button"
-                        className="text-sm font-semibold text-blue-700 hover:underline"
+                    <Button
+                        variant="link"
+                        className="text-sm font-semibold  hover:underline"
                         onClick={onMoreDetails}
                     >
                         Maggiori Dettagli
-                    </button>
+                    </Button>
 
                     {isSelected ? (
-                        <button
+                        <Button
                             disabled
-                            className="rounded-br-sm rounded-tl-sm bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 cursor-not-allowed"
+                            variant={"secondary"}
                         >
                             Selezionato
-                        </button>
+                        </Button>
                     ) : (
-                        <button
+                        <Button
                             onClick={onSelect}
-                            className=" rounded-br-sm rounded-tl-sm bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
+                            variant={"default"}
+                            className=""
                         >
                             Seleziona
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>
@@ -97,33 +104,33 @@ function Card({
 }
 
 export default function PacchettiProtection({
-                                                medium,
-                                                premium,
+                                                options,
                                                 onChange,
                                             }: PacchettiProtectionProps) {
     // ✅ Basic selezionato di default
     const selected = useCheckoutStore(s => s.protezioni.pacchetto);
     const setPacchettoConPrezzo = useCheckoutStore(s => s.setPacchettoConPrezzo);
+    const ritiro = useCheckoutStore((s) => s.search.ritiro);
+    const riconsegna = useCheckoutStore((s) => s.search.riconsegna);
+
+    const giorni = useMemo(
+        () => calcDays(ritiro?.data, riconsegna?.data),
+        [ritiro?.data, riconsegna?.data]
+    );
 
 
     // ✅ Dialog state
     const [open, setOpen] = useState(false);
-    const [detailsKey, setDetailsKey] = useState<ProtectionKey>("basic");
+    const [detailsKey, setDetailsKey] = useState<ProtectionKey>("");
 
     const select = (key: ProtectionKey) => {
-        if (key === "basic") {
-            setPacchettoConPrezzo("basic", 0, 0);
-        }
+        const option = options.find((o) => o.key === key);
+        const prezzoGiorno = option?.importo ?? 0;
 
-        if (key === "medium") {
-            setPacchettoConPrezzo("medium", medium.day, medium.total);
-        }
+        const selezionata = option ? toSelezionata(option) : undefined;
 
-        if (key === "premium") {
-            setPacchettoConPrezzo("premium", premium.day, premium.total);
-        }
-
-        onChange?.(key);
+        setPacchettoConPrezzo(key, prezzoGiorno, selezionata);
+        if (option) onChange?.(option);
 
         console.log("[PacchettiProtection] selected:", key);
         console.log("[PacchettiProtection] store:", useCheckoutStore.getState().protezioni);
@@ -137,43 +144,38 @@ export default function PacchettiProtection({
 
     // contenuti fissi del dialog (puoi riscriverli come vuoi)
     const details = useMemo(() => {
-        const base = {
-            basic: {
-                title: "Dettagli Basic",
-                desc: "Copertura essenziale inclusa nel noleggio.",
-                items: [
-                    "Danni al veicolo",
-                    "Furto e incendio",
-                    "Massimale addebitabile: 1.800,00 €",
-                ],
-            },
-            medium: {
-                title: "Dettagli Medium",
-                desc: "Copertura intermedia con più protezioni.",
-                items: [
-                    "Danni al veicolo",
-                    "Furto e incendio",
-                    "Parabrezza, fari e pneumatici",
-                    "Infortuni conducente e trasportati",
-                    "Massimale addebitabile: 600,00 €",
-                ],
-            },
-            premium: {
-                title: "Dettagli Premium",
-                desc: "Copertura completa con bagaglio ed effetti personali.",
-                items: [
-                    "Danni al veicolo",
-                    "Furto e incendio",
-                    "Parabrezza, fari e pneumatici",
-                    "Infortuni conducente e trasportati",
-                    "Bagaglio ed effetti personali",
-                    "Massimale addebitabile: 600,00 €",
-                ],
-            },
-        } as const;
+        const option = options.find((o) => o.key === detailsKey);
+        const items = parseItems(option?.note);
 
-        return base[detailsKey];
-    }, [detailsKey]);
+        if (option) {
+            return {
+                title: option.nome,
+                desc: option.descrizione ?? "Dettagli pacchetto disponibili.",
+                items,
+                price: option.importo,
+            };
+        }
+
+        return {
+            title: "Dettagli pacchetto",
+            desc: "Dettagli pacchetto disponibili.",
+            items: [],
+            price: 0,
+        };
+    }, [detailsKey, options]);
+
+    useEffect(() => {
+        if (options.length === 0) return;
+        if (detailsKey && options.some((o) => o.key === detailsKey)) return;
+        setDetailsKey(options[0].key);
+    }, [options, detailsKey]);
+
+    useEffect(() => {
+        if (!options.length) return;
+        if (selected) return;
+        const first = options[0];
+        setPacchettoConPrezzo(first.key, first.importo ?? 0, toSelezionata(first));
+    }, [options, selected, setPacchettoConPrezzo]);
 
     return (
         <>
@@ -183,83 +185,45 @@ export default function PacchettiProtection({
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 items-stretch">
-                    {/* BASIC */}
-                    <Card
-                        title="Basic"
-                        isSelected={selected === "basic"}
-                        onSelect={() => select("basic")}
-                        onMoreDetails={() => openDetails("basic")}
-                        header={
+                    {options.map((option) => {
+                        const features = parseItems(option.note);
+                        const prezzoTotale = option.importo * giorni;
+                        const header = (
                             <>
                                 <div className="mt-2 text-sm text-gray-600">
-                                    Importo massimo addebitabile per danni o furto: 1.800,00 €
-                                </div>
-                                <div className="mt-4 text-sm font-semibold">Incluso</div>
-                            </>
-                        }
-                        features={["Protezione danni al veicolo", "Protezione furto e incendio"]}
-                    />
-
-                    {/* MEDIUM */}
-                    <Card
-                        title="Medium"
-                        isSelected={selected === "medium"}
-                        onSelect={() => select("medium")}
-                        onMoreDetails={() => openDetails("medium")}
-                        header={
-                            <>
-                                <div className="mt-2 text-sm text-gray-600">
-                                    Importo massimo addebitabile per danni o furto: 600,00 €
+                                    Importo massimo addebitabile per danni o furto:{" "}
+                                    {option.franchigiaDanno || option.franchigiaFurto || "—"}
                                 </div>
                                 <div className="mt-4">
-                                    <div className="text-sm">
-                                        <span className="font-semibold">{formatPrice(medium.day)}</span>{" "}
-                                        / giorno
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                        TOTALI {formatPrice(medium.total)}
-                                    </div>
+                                    {option.importo === 0 ? (
+                                        <div className="text-sm font-semibold">Incluso</div>
+                                    ) : (
+                                        <>
+                                            <div className="text-sm">
+                                                <span className="font-semibold">{formatPrice(option.importo)}</span>{" "}
+                                                / giorno
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                                TOTALI {formatPrice(prezzoTotale)}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </>
-                        }
-                        features={[
-                            "Protezione danni al veicolo",
-                            "Protezione furto e incendio",
-                            "Protezione parabrezza, fari e pneumatici",
-                            "Assicurazione infortuni conducente e trasportati",
-                        ]}
-                    />
+                        );
 
-                    {/* PREMIUM */}
-                    <Card
-                        title="Premium"
-                        isSelected={selected === "premium"}
-                        onSelect={() => select("premium")}
-                        onMoreDetails={() => openDetails("premium")}
-                        header={
-                            <>
-                                <div className="mt-2 text-sm text-gray-600">
-                                    Importo massimo addebitabile per danni o furto: 600,00 €
-                                </div>
-                                <div className="mt-4">
-                                    <div className="text-sm">
-                                        <span className="font-semibold">{formatPrice(premium.day)}</span>{" "}
-                                        / giorno
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                        TOTALI {formatPrice(premium.total)}
-                                    </div>
-                                </div>
-                            </>
-                        }
-                        features={[
-                            "Protezione danni al veicolo",
-                            "Protezione furto e incendio",
-                            "Protezione parabrezza, fari e pneumatici",
-                            "Assicurazione infortuni conducente e trasportati",
-                            "Assicurazione bagaglio ed effetti personali",
-                        ]}
-                    />
+                        return (
+                            <Card
+                                key={option.key}
+                                title={option.nome}
+                                isSelected={selected === option.key}
+                                onSelect={() => select(option.key)}
+                                onMoreDetails={() => openDetails(option.key)}
+                                header={header}
+                                features={features.length > 0 ? features : fallbackFeatures()}
+                            />
+                        );
+                    })}
                 </div>
             </section>
 
@@ -272,16 +236,10 @@ export default function PacchettiProtection({
                     </DialogHeader>
 
                     <div className="mt-3 space-y-2">
-                        {detailsKey === "medium" && (
+                        {details.price > 0 && (
                             <div className="text-sm text-gray-700">
-                                Prezzo: <b>{formatPrice(medium.day)}</b> / giorno — Totale:{" "}
-                                <b>{formatPrice(medium.total)}</b>
-                            </div>
-                        )}
-                        {detailsKey === "premium" && (
-                            <div className="text-sm text-gray-700">
-                                Prezzo: <b>{formatPrice(premium.day)}</b> / giorno — Totale:{" "}
-                                <b>{formatPrice(premium.total)}</b>
+                                Prezzo: <b>{formatPrice(details.price)}</b> / giorno — Totale:{" "}
+                                <b>{formatPrice(details.price * giorni)}</b>
                             </div>
                         )}
 
@@ -298,4 +256,27 @@ export default function PacchettiProtection({
             </Dialog>
         </>
     );
+}
+
+function parseItems(note?: string) {
+    if (!note) return [];
+    return note
+        .split(/[;\n]/)
+        .map((x) => x.trim())
+        .filter(Boolean);
+}
+
+function fallbackFeatures() {
+    return ["Protezione danni al veicolo", "Protezione furto e incendio"];
+}
+
+function toSelezionata(option: ProtectionOption) {
+    return {
+        nome: option.nome,
+        descrizione: option.descrizione ?? "",
+        importo: option.importo,
+        franchigiaFurto: option.franchigiaFurto ?? "",
+        franchigiaDanno: option.franchigiaDanno ?? "",
+        note: option.note ?? "",
+    };
 }

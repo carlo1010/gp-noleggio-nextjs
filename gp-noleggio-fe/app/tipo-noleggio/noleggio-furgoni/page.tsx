@@ -4,7 +4,6 @@ import ComeFunziona from "@/components/come-funziona";
 import IntroFurgoni from "@/components/intro-furgoni";
 import PromoSplit from "@/components/PromoSplit";
 import WideImageBanner from "@/components/wide-image-banner";
-import Extra from "@/app/ricerca-risultati/_components/extra";
 
 
 export default function noleggioFurgoni() {

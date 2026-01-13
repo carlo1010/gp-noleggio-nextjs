@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { useCheckoutStore } from "@/store/checkout.store";
 import { formatPrice } from "@/lib/formatPrice";
+import { calcDays } from "@/lib/date";
 
 import CambioIcon from "@/components/svg/cambioIcon";
 import PostiIcon from "@/components/svg/postiIcon";
@@ -20,6 +21,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 //Wrapper principale che include la card bianca + gli accordion sotto
 export default function Step4SidebarSummary() {
@@ -49,33 +51,32 @@ function SummaryCard() {
     const tariffa = useCheckoutStore((s) => s.tariffa);
 
     const protezioni = useCheckoutStore((s) => s.protezioni);
-    const extra = useCheckoutStore((s) => s.extra);
+    const servizi = useCheckoutStore((s) => s.servizi);
 
     const ritiro = useCheckoutStore((s) => s.search.ritiro);
     const riconsegna = useCheckoutStore((s) => s.search.riconsegna);
 
-    const extraTotale = Object.values(extra ?? {}).reduce((acc, item) => {
+    const giorni = calcDays(ritiro?.data, riconsegna?.data);
+    const extraTotale = Object.values(servizi ?? {}).reduce((acc, item) => {
         const prezzo = Number(item.prezzo) || 0;
         const qta = Number(item.quantita) || 0;
-        return acc + prezzo * qta;
+        return acc + prezzo * qta * giorni;
     }, 0);
 
     // ===== FALLBACK SAFE (poi li mappiamo 1:1 quando mi dici com'è fatto veicolo)
-    const brand = veicolo?.marca ?? veicolo?.brand ?? "—";
-    const nome = veicolo?.nome ?? "—";
-    const img = veicolo?.imageUrl ?? veicolo?.img ?? "/fiat-500.png";
+    const brand = veicolo?.descrizioneAgenzia ?? "—";
+    const nome = veicolo?.descrizioneClasse ?? "—";
+    const img = veicolo?.urlImmagine ?? "/fiat-500.png";
 
-    const cambio = veicolo?.cambio ?? "Manuale";
-    const posti = veicolo?.posti ?? 4;
-    const porte = veicolo?.porte ?? 3;
-    const aria = veicolo?.ariaCondizionata ?? true;
-    const etaMin = veicolo?.etaMin ?? 18;
-
-    const giorni = calcGiorni(ritiro?.data, riconsegna?.data);
+    const cambio = "Manuale";
+    const posti = 4;
+    const porte = 3;
+    const aria = true;
+    const etaMin = 18;
 
     const prezzoVeicolo = Number(tariffa?.prezzoTotale ?? 0);
 
-    const pacchettoLabel = protezioni?.pacchetto ?? "basic";
+    const pacchettoLabel = protezioni?.selezionata?.nome ?? protezioni?.pacchetto ?? "—";
     const pacchettoPrezzo = protezioni?.prezzoTotale
         ? formatPrice(protezioni.prezzoTotale)
         : "Incluso";
@@ -178,16 +179,41 @@ function SummaryCard() {
 
             {/* EXTRA */}
             <div className="flex items-center justify-between">
-                <p className="font-semibold text-sm">Extra</p>
+                <p className="font-semibold text-sm">Servizi Aggiunti</p>
                 <p className="font-semibold text-sm">{formatPrice(extraTotale)}</p>
             </div>
 
-            <div className="mt-3 flex items-center justify-between text-[11px] text-gray-700">
-                <div className="flex items-center gap-2">
-                    <p className="font-semibold capitalize">{pacchettoLabel}</p>
-                    <Info className="w-4 h-4 text-gray-400" />
+            <div className="mt-3 space-y-2 text-[11px] text-gray-700">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <p className="font-semibold capitalize">{pacchettoLabel}</p>
+                        <Info className="w-4 h-4 text-gray-400" />
+                    </div>
+                    <p className="text-gray-600">{pacchettoPrezzo}</p>
                 </div>
-                <p className="text-gray-600">{pacchettoPrezzo}</p>
+
+                {Object.values(servizi ?? {})
+                    .filter((item) => (item?.quantita ?? 0) > 0)
+                    .map((item) => (
+                        <div key={item.codice} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <p className="font-semibold truncate">{item.titolo}</p>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className="inline-flex">
+                                            <Info className="w-4 h-4 text-gray-400" />
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>{item.descrizione || "Dettaglio servizio non disponibile."}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </div>
+                            <p className="text-gray-600">
+                                {formatPrice(item.prezzo * item.quantita * giorni)}
+                            </p>
+                        </div>
+                    ))}
             </div>
 
             <p className="mt-2 text-[10px] text-gray-500">Per {giorni} giorni</p>
@@ -241,30 +267,3 @@ function SpecItem({ icon, text }: { icon: React.ReactNode; text: string }) {
 }
 
 /** calcolo giorni (robusto per YYYY-MM-DD e DD/MM/YYYY) */
-function calcGiorni(dataInizio?: string, dataFine?: string) {
-    if (!dataInizio || !dataFine) return 1;
-
-    const start = parseDate(dataInizio);
-    const end = parseDate(dataFine);
-    if (!start || !end) return 1;
-
-    const ms = end.getTime() - start.getTime();
-    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-    return Math.max(1, days);
-}
-
-function parseDate(s: string) {
-    // YYYY-MM-DD
-    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-        const [y, m, d] = s.split("-").map(Number);
-        return new Date(y, m - 1, d);
-    }
-
-    // DD/MM/YYYY o DD-MM-YYYY
-    if (/^\d{2}[\/-]\d{2}[\/-]\d{4}$/.test(s)) {
-        const [d, m, y] = s.split(/[\/-]/).map(Number);
-        return new Date(y, m - 1, d);
-    }
-
-    return null;
-}

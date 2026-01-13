@@ -12,8 +12,8 @@
     --popover-foreground: oklch(0.14 0 0);
     --primary: oklch(0.41 0.28 264.68);
     --primary-foreground: oklch(0.99 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.20 0 0);
+    --secondary: oklch(0.885 0 89.876);
+    --secondary-foreground: oklch(0.517 0 89.876);
     --muted: oklch(0.97 0 0);
     --muted-foreground: oklch(0.56 0 0);
     --accent: oklch(0.97 0 0);
@@ -167,35 +167,11 @@
 }
 
 
-.noleggioCard {
+.noleggioCard-active {
     transition: box-shadow 0.3s ease;
 }
 
-.noleggioCard .hide-on-hover {
-    display: flex;
-}
-
-.noleggioCard .hide-on-hover-product {
-    display: grid;
-}
-
-.noleggioCard .show-on-hover {
-    display: none;
-}
-
-.noleggioCard:hover .hide-on-hover {
-    display: none;
-}
-
-.noleggioCard:hover .hide-on-hover-product {
-    display: none;
-}
-
-.noleggioCard:hover .show-on-hover {
-    display: flex;
-}
-
-.noleggioCard:hover {
+.noleggioCard-active {
     -webkit-box-shadow: 0px 0px 27.1px 0px rgba(0, 26, 255, 0.55);
     -moz-box-shadow: 0px 0px 27.1px 0px rgba(0, 26, 255, 0.55);
     box-shadow: 0px 0px 27.1px 0px rgba(0, 26, 255, 0.55);

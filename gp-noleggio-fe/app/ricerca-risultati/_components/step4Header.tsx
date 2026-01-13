@@ -8,7 +8,7 @@ export default function Step4Header() {
 
     return (
         <div className="w-full bg-white border-b">
-            <div className="container mx-auto py-6">
+            <div className="container mx-auto py-10">
                 <div className="flex items-start justify-between">
                     <h1 className="text-2xl font-bold">Conferma la tua prenotazione</h1>
 

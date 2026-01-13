@@ -38,7 +38,7 @@ export default function Header({ dark = false }: HeaderProps) {
                         : "bg-transparent py-4"
                     }`}
             >
-                <div className={`container mx-auto px-4 md:px-6 max-w-[1240px] flex items-center justify-between transition-all duration-300 ${isScrolled ? "h-16 md:h-14" : "h-20"
+                <div className={`mx-auto px-4 md:px-6 max-w-7xl flex items-center justify-between transition-all duration-300 ${isScrolled ? "h-16 md:h-14" : "h-20"
                     }`}>
                     {/* LOGO */}
                     <div className={`flex flex-col relative z-50 transition-all duration-300 ${isScrolled ? "mt-[5px] md:mt-0" : "mt-0"

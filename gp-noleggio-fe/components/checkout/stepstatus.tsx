@@ -6,6 +6,7 @@ import { useMemo } from "react";
 
 import { useCheckoutStore } from "@/store/checkout.store";
 import { formatPrice } from "@/lib/formatPrice";
+import { calcDays } from "@/lib/date";
 
 export default function StepStatus() {
     const router = useRouter();
@@ -25,26 +26,27 @@ export default function StepStatus() {
     const tariffa = useCheckoutStore((s) => s.tariffa);
 
     const protezioni = useCheckoutStore((s) => s.protezioni);
-    const extra = useCheckoutStore((s) => s.extra);
+    const servizi = useCheckoutStore((s) => s.servizi);
 
     const totale = useCheckoutStore((s) => s.getTotale());
 
     // ---- Calcoli UI
     const extraTotale = useMemo(() => {
-        return Object.values(extra ?? {}).reduce((acc, item) => {
+        const giorni = calcDays(ritiro?.data, riconsegna?.data);
+        return Object.values(servizi ?? {}).reduce((acc, item) => {
             const prezzo = Number(item.prezzo) || 0;
             const qta = Number(item.quantita) || 0;
-            return acc + prezzo * qta;
+            return acc + prezzo * qta * giorni;
         }, 0);
-    }, [extra]);
+    }, [servizi, ritiro?.data, riconsegna?.data]);
 
     const extraCount = useMemo(() => {
-        return Object.values(extra ?? {}).filter((x) => (x?.quantita ?? 0) > 0).length;
-    }, [extra]);
+        return Object.values(servizi ?? {}).filter((x) => (x?.quantita ?? 0) > 0).length;
+    }, [servizi]);
 
     const pacchettoLabel = useMemo(() => {
-        return protezioni?.pacchetto ? protezioni.pacchetto : "—";
-    }, [protezioni?.pacchetto]);
+        return protezioni?.selezionata?.nome ?? protezioni?.pacchetto ?? "—";
+    }, [protezioni?.pacchetto, protezioni?.selezionata?.nome]);
 
     // ---- Navigazione matite
     const goToStep = (step: 1 | 2 | 3 | 4) => {
@@ -53,6 +55,8 @@ export default function StepStatus() {
         // ✅ se torno allo STEP 2, resetto SEMPRE pacchetti + tutele + extra
         if (step === 2) {
             clearStep3();
+            params.delete("classe");
+            params.delete("pay");
         }
 
         if (step === 1) {
@@ -77,7 +81,7 @@ export default function StepStatus() {
     const dataRitiro = ritiro?.data || "—";
     const dataRiconsegna = riconsegna?.data || "—";
 
-    const nomeVeicolo = veicolo?.nome || "—";
+    const nomeVeicolo = veicolo?.descrizioneClasse || "—";
     const prezzoVeicolo = tariffa?.prezzoTotale ? formatPrice(tariffa.prezzoTotale) : "—";
 
     const protezioniPrezzo = protezioni?.prezzoTotale ? formatPrice(protezioni.prezzoTotale) : "Incluso";

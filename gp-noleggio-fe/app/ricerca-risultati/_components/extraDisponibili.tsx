@@ -5,6 +5,7 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {Info} from "lucide-react";
 import {formatPrice} from "@/lib/formatPrice";
 import {useCheckoutStore} from "@/store/checkout.store";
+import {parsePrice} from "@/lib/price";
 
 interface ExtraDisponibiliProps {
     codice: string;
@@ -19,14 +20,14 @@ interface ExtraDisponibiliProps {
 
 export default function ExtraDisponibili(props: ExtraDisponibiliProps) {
     // ✅ qty nello store (per toggle sarà 0 o 1)
-    const qty = useCheckoutStore((s) => s.extra[props.codice]?.quantita ?? 0);
-
+    const qty = useCheckoutStore((s) => s.servizi[props.codice]?.quantita ?? 0);
 
     // ✅ azioni Zustand
-    const inc = useCheckoutStore((s) => s.incExtra);
-    const dec = useCheckoutStore((s) => s.decExtra);
-    const toggle = useCheckoutStore((s) => s.toggleExtra);
-    const prezzoNumber = Number(props.prezzo);
+    const inc = useCheckoutStore((s) => s.incServizio);
+    const dec = useCheckoutStore((s) => s.decServizio);
+    const toggle = useCheckoutStore((s) => s.toggleServizio);
+    const prezzoNumber = parsePrice(props.prezzo);
+    const flagQtaServizio = props.isquantity ? 1 : 0;
 
     // toggle = "aggiunto" se qty > 0
     const isAdded = qty > 0;
@@ -38,41 +39,38 @@ export default function ExtraDisponibili(props: ExtraDisponibiliProps) {
     };
 
     const increment = () => {
-        inc(props.codice, props.titolo, prezzoNumber);
+        inc(props.codice, props.titolo, prezzoNumber, flagQtaServizio, props.descrizione);
         props.onchange?.(qty + 1);
         console.log("[EXTRA][INC]", props.codice, "->", qty + 1);
     };
 
     const toggleAdd = () => {
-        toggle(props.codice, props.titolo, prezzoNumber); // 0 <-> 1
+        toggle(props.codice, props.titolo, prezzoNumber, flagQtaServizio, props.descrizione); // 0 <-> 1
         const next = !isAdded;
         props.onchange?.(next);
         console.log("[EXTRA][TOGGLE]", props.codice, "->", next ? 1 : 0);
     };
 
     return (
-        <div className="flex items-center bg-[#F7F7F7] p-4 rounded-br-lg rounded-tl-lg gap-x-4 justify-between">
-            {/* Titolo */}
-            <div className="font-bold">{props.titolo}</div>
+        <div className="flex items-center bg-[#F7F7F7] p-4 rounded-br-lg rounded-tl-lg justify-between">
+            {/* Left: Titolo + tooltip */}
+            <div className="flex items-center gap-x-3">
+                <div className="font-bold">{props.titolo}</div>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <Info/>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>{props.descrizione}</p>
+                    </TooltipContent>
+                </Tooltip>
+            </div>
 
-            {/* Tooltip */}
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <Info/>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>{props.descrizione}</p>
-                </TooltipContent>
-            </Tooltip>
-
-            {/* Prezzo */}
-            <div className="font-bold">{formatPrice(prezzoNumber)}</div>
-
-
-            {/* CTA */}
-            <div>
+            {/* Right: Prezzo + CTA */}
+            <div className="flex items-center gap-x-4">
+                <div className="font-bold">{formatPrice(prezzoNumber)}</div>
                 {props.isquantity ? (
                     <div className="flex items-center gap-x-3">
                         <Button variant="outline" onClick={decrement} disabled={qty === 0}>
