@@ -85,6 +85,7 @@ export default function SearchCard() {
     const dropoffDateStr = format(dropoffDate, "yyyy-MM-dd");
 
 
+
     // errori UI (solo per mostrare bordo rosso / messaggio)
     const [errors, setErrors] = useState<{
         pickupOffice?: boolean;
@@ -179,37 +180,30 @@ export default function SearchCard() {
     };
 
     return (
-        <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full p-8 space-y-6">
-            {/* RIGA 1: SELETTORI - DESIGN FOGLIA (LEAF) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full p-4 md:p-8 space-y-4 md:space-y-6">
+            {/* RIGA 1: SELETTORI */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {/* PRIVATO / AZIENDA */}
-                <div className="flex flex-col gap-2">
-                    <span className="text-sm font-semibold">Scegli un’opzione</span>
-
+                <div className="flex flex-col gap-1.5 md:gap-2">
+                    <span className="text-xs md:text-sm font-semibold">Scegli un’opzione</span>
                     <RadioGroup
-                        className="grid grid-cols-2 gap-0 border w-[280px] rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="flex flex-row gap-0 border w-full md:min-w-60 rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={tipoCliente}
                         onValueChange={(val) => setTipoCliente(val as "privato" | "azienda")}
                     >
-                        <div
-                            className={`transition-colors border-r flex justify-center ${tipoCliente === "privato" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="privato" id="r-privato" />
-                            <Label htmlFor="r-privato"
-                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoCliente === "privato" ? "text-white" : "text-gray-700"}`}>
-                                <User className="w-4 h-4" /> Privato
+                        <div className={`flex-1 transition-colors border-r ${tipoCliente === "privato" ? "bg-[#0700DE]" : "bg-white"}`}>
+                            <RadioGroupItem className="sr-only" value="privato" id="r-privato"/>
+                            <Label htmlFor="r-privato" className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium w-full h-full ${tipoCliente === "privato" ? "text-white" : "text-gray-700"}`}>
+                                <User className="w-4 h-4"/> Privato
                             </Label>
                         </div>
-
-                        <div
-                            className={`transition-colors flex justify-center ${tipoCliente === "azienda" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
-                            <RadioGroupItem className="sr-only" value="azienda" id="r-azienda" />
-                            <Label htmlFor="r-azienda"
-                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
-                                <Building className="w-4 h-4" /> Azienda
+                        <div className={`flex-1 transition-colors ${tipoCliente === "azienda" ? "bg-[#0700DE]" : "bg-white"}`}>
+                            <RadioGroupItem className="sr-only" value="azienda" id="r-azienda"/>
+                            <Label htmlFor="r-azienda" className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium w-full h-full ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
+                                <Building className="w-4 h-4"/> Azienda
                             </Label>
                         </div>
                     </RadioGroup>
-
                 </div>
 
                 {/* AUTO / FURGONI */}
@@ -243,15 +237,15 @@ export default function SearchCard() {
             </div>
 
             {/* MAIN SEARCH GRID */}
-            <div className="grid grid-cols-3 gap-x-3 gap-y-6 items-end">
+            <div className={`flex flex-col md:grid ${stessoUfficio ? 'md:grid-cols-3' : 'md:grid-cols-4'} gap-4 md:gap-6 items-end`}>
                 {/* CITTÀ RITIRO */}
-                <div className="col-span-1 space-y-2">
-                    <div className="flex items-center justify-between">
-                        <Label htmlFor="pickup-city" className="font-semibold">
-                            {stessoUfficio ? "Città ritiro e riconsegna" : "Città ritiro"}
+                <div className="w-full space-y-2 order-1">
+                    <div className="flex flex-row items-center justify-between gap-2 h-5">
+                        <Label htmlFor="pickup-city" className="font-semibold text-xs md:text-sm">
+                            {stessoUfficio ? "Ritiro e riconsegna" : "Città ritiro"}
                         </Label>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                             <Checkbox
                                 id="same-office"
                                 checked={stessoUfficio}
@@ -265,8 +259,8 @@ export default function SearchCard() {
 
                                 }}
                             />
-                            <Label className="text-xs cursor-pointer" htmlFor="same-office">
-                                Riconsegna nello stesso ufficio
+                            <Label className="text-[12px] md:text-s cursor-pointer" htmlFor="same-office">
+                                Riconsegna stesso ufficio
                             </Label>
                         </div>
                     </div>
@@ -300,7 +294,7 @@ export default function SearchCard() {
                         >
                             <SelectTrigger
                                 className={[
-                                    "w-full h-14 rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none",
+                                    "w-full h-11! rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none",
                                     errors.pickupOffice ? "border-red-500" : "border-gray-300",
                                 ].join(" ")}
                             >
@@ -332,8 +326,8 @@ export default function SearchCard() {
                 </div>
 
                 {/* DATA/ORA RITIRO */}
-                <div className="space-y-2">
-                    <Label className="font-semibold text-sm">Data e ora del ritiro</Label>
+                <div className="w-full space-y-2 order-2">
+                    <Label className="font-semibold text-xs md:text-sm block h-5">Data e ora del ritiro</Label>
 
                     <div
                         className={[
@@ -384,7 +378,7 @@ export default function SearchCard() {
 
                             >
                                 <SelectTrigger
-                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none">
+                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 pr-2 rounded-none">
                                     <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
                                         <ClockArrowUp className="w-4 h-4 text-[#0700DE] shrink-0" />
                                         <SelectValue placeholder="Ora" />
@@ -409,10 +403,64 @@ export default function SearchCard() {
                     )}
                 </div>
 
-                {/* DATA/ORA CONSEGNA: SEMPRE (sia stesso ufficio che non) */}
-                <div className="col-span-1 space-y-2 animate-in fade-in duration-300">
-                    <Label className="font-semibold text-sm">Data e ora della consegna</Label>
+                {/* SE riconsegna diverso ufficio: mostra selettore sede riconsegna */}
+                {!stessoUfficio && (
+                    <div className="w-full space-y-2 animate-in slide-in-from-top-2 duration-300 order-3">
+                        <Label htmlFor="dropoff-city" className="font-semibold text-xs md:text-sm block h-5">
+                            Città riconsegna
+                        </Label>
 
+                        <div className="relative">
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE]">
+                                <MapPin className="w-4 h-4"/>
+                            </div>
+
+                            <Select
+                                value={dropoffOfficeId}
+                                onValueChange={(v) => {
+                                    setRiconsegna({luogo: v});
+                                    setErrors((e) => ({...e, dropoffOffice: false}));
+                                }}
+
+                                disabled={isLoadingAgenzie}
+                            >
+                                <SelectTrigger
+                                    className={[
+                                        "w-full h-11! rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none",
+                                        errors.dropoffOffice ? "border-red-500" : "border-gray-300",
+                                    ].join(" ")}
+                                >
+                                    <SelectValue
+                                        placeholder={
+                                            isLoadingAgenzie ? "Caricamento agenzie..." : "Seleziona punto riconsegna"
+                                        }
+                                    />
+                                </SelectTrigger>
+
+                                <SelectContent>
+                                    {(agenzie ?? []).map((a: any) => (
+                                        <SelectItem key={a.codiceAgenzia} value={a.codiceAgenzia}>
+                                            <div className="flex flex-col">
+                                                <span className="font-medium">{a.descrizioneAgenzia}</span>
+                                                <span className="text-xs text-gray-500">
+                              {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
+                            </span>
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {errors.dropoffOffice && (
+                            <p className="text-xs text-red-600">Seleziona una sede di riconsegna.</p>
+                        )}
+                    </div>
+                )}
+
+                {/* DATA/ORA CONSEGNA */}
+                <div className="w-full space-y-2 order-4">
+                    <Label className="font-semibold text-xs md:text-sm block h-5">Data e ora della consegna</Label>
                     <div
                         className={[
                             "flex h-11 rounded-tl-sm rounded-br-sm border overflow-hidden",
@@ -421,7 +469,7 @@ export default function SearchCard() {
                     >
                         {/* DATE */}
                         <div className="w-1/2 border-r border-gray-300">
-                            <Popover open={dropoffOpen} onOpenChange={setDropoffOpen}>
+                            <Popover open={dropoffOpen} onOpenChange={setDropoffOpen} >
                                 <PopoverTrigger asChild>
                                     <Button
                                         variant="ghost"
@@ -460,7 +508,7 @@ export default function SearchCard() {
                                 }}
                             >
                                 <SelectTrigger
-                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none">
+                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 pr-2 rounded-none">
                                     <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
                                         <ClockArrowDown className="w-4 h-4 text-[#0700DE] shrink-0" />
                                         <SelectValue placeholder="Ora" />
@@ -469,7 +517,7 @@ export default function SearchCard() {
 
                                 <SelectContent
                                     position="popper"
-                                    className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
+                                    className="w-(--radix-select-trigger-width) min-w-(--radix-select-trigger-width)"
                                 >
                                     <SelectItem value="09:00">09:00</SelectItem>
                                     <SelectItem value="10:00">10:00</SelectItem>
@@ -548,11 +596,11 @@ export default function SearchCard() {
             </div>
 
             {/* FILTRI BASSO & PROMO */}
-            <div className="grid grid-cols-4 pt-4 items-center gap-y-4">
-                <div className="flex justify-start gap-x-12 flex-row col-span-3">
+            <div className="flex flex-col md:grid md:grid-cols-4 pt-2 md:pt-4 items-center gap-4">
+                <div className="flex flex-wrap md:flex-row justify-between md:justify-start items-center gap-3 md:gap-x-12 md:col-span-3 w-full">
                     {/* ETA */}
-                    <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-700">Età</span>
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs md:text-sm text-gray-700">Età</span>
                         <Select value={String(eta)} onValueChange={(v) => setEta(Number(v))}>
                             <SelectTrigger
                                 className="h-10 w-[90px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
@@ -566,8 +614,8 @@ export default function SearchCard() {
                         </Select>
                     </div>
 
-                    {/* VIVO IN (resta locale) */}
-                    <div className="flex items-center gap-3">
+                    {/* VIVO IN */}
+                    <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-700">Vivo in</span>
                         <Select value={country} onValueChange={(v) => setCountry(v as "italia" | "estero")}>
                             <SelectTrigger
@@ -582,8 +630,8 @@ export default function SearchCard() {
                     </div>
 
                     {/* CODICE PROMO */}
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2 text-sm text-gray-800">
+                    <div className="flex items-center gap-2 w-full md:w-auto mt-2 md:mt-0">
+                        <div className="flex items-center gap-2 text-sm text-gray-800 shrink-0">
                             <Checkbox
                                 id="hasPromo"
                                 checked={hasPromo}
@@ -599,25 +647,27 @@ export default function SearchCard() {
                             </label>
                         </div>
 
-                        {hasPromo && (
-                            <div className="animate-in fade-in zoom-in-95 duration-200">
-                                <input
-                                    type="text"
-                                    placeholder="Inserisci codice"
-                                    className="h-9 w-32 rounded-br-sm rounded-tl-sm border border-gray-300 px-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none"
-                                    value={codicePromo ?? ""}
-                                    onChange={(e) => setCodicePromo(e.target.value || undefined)}
-                                />
-                            </div>
-                        )}
+                        <div className="min-w-[100px] md:min-w-[130px]">
+                            {hasPromo && (
+                                <div className="animate-in fade-in zoom-in-95 duration-200">
+                                    <input
+                                        type="text"
+                                        placeholder="Codice"
+                                        className="h-9 w-full rounded-br-sm rounded-tl-sm border border-gray-300 px-3 text-xs md:text-sm focus:ring-1 focus:ring-[#0700DE] outline-none bg-white relative z-50"
+                                        value={codicePromo ?? ""}
+                                        onChange={(e) => setCodicePromo(e.target.value || undefined)}
+                                        autoFocus
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-
-                <div className="col-span-1">
+                <div className="w-full md:col-span-1">
                     <Button
                         onClick={handleSearch}
                         type="button"
-                        className="w-full h-12 bg-[#0700DE] hover:bg-[#0500b0] rounded-tl-sm rounded-br-sm text-lg font-bold transition-all"
+                        className="w-full h-12 bg-[#0700DE] hover:bg-[#0500b0] rounded-tl-sm rounded-br-sm text-lg font-bold transition-all shadow-lg"
                     >
                         Cerca
                     </Button>
