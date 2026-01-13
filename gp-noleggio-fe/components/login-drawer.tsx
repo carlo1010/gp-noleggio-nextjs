@@ -21,12 +21,32 @@ export default function LoginDrawer({ open, onClose }: LoginDrawerProps) {
     }, [open, onClose]);
 
     // lock body scroll
+    // useEffect(() => {
+    //     if (!open) return;
+    //     const prev = document.body.style.overflow;
+    //     document.body.style.overflow = "hidden";
+    //     return () => {
+    //         document.body.style.overflow = prev;
+    //     };
+    // }, [open]);
+
+    // rimuovere scroll verticale causa spostamento del layout, per questo commentato. La soluzione sottostante impedisce l'uso dello scroll ma previene lo spostamento
     useEffect(() => {
         if (!open) return;
-        const prev = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
+
+        const preventScroll = (e: Event) => {
+            e.preventDefault();
+        };
+
+        // Wheel & trackpad
+        window.addEventListener("wheel", preventScroll, { passive: false });
+
+        // Touch (mobile)
+        window.addEventListener("touchmove", preventScroll, { passive: false });
+
         return () => {
-            document.body.style.overflow = prev;
+            window.removeEventListener("wheel", preventScroll);
+            window.removeEventListener("touchmove", preventScroll);
         };
     }, [open]);
 

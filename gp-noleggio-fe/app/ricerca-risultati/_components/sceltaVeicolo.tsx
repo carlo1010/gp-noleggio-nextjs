@@ -58,6 +58,7 @@ export default function SceltaVeicolo() {
                         prezzoGiornalieroOnline={veicolo.tariffaWeb}
                         prezzoTotaleRitiro={veicolo.totalTariffaBanco}
                         prezzoTotaleOnline={veicolo.totalTariffaWeb}
+                        codiceTariffa={veicolo.codiceTariffa}
                         open={open}
                         onOpenChange={() => setOpen(false)}
                     />
@@ -65,7 +66,7 @@ export default function SceltaVeicolo() {
             })()}
 
 
-            <div className="container mx-auto py-4 space-y-10">
+            <div className="container mx-auto px-4 py-4 space-y-10 max-w-[1240px]">
                 <FiltroAuto />
 
                 {isLoadingVeicoli && (

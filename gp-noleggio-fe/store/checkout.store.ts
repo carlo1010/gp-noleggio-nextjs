@@ -1,4 +1,5 @@
-import {create} from "zustand";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 import type {ListaVeicolo} from "@/types/veicolo";
 import {calcDays} from "@/lib/date";
@@ -44,6 +45,8 @@ export type CheckoutState = {
         tipo?: MetodoPagamento;
         prezzoGiorno: number;
         prezzoTotale: number;
+        codiceTariffa: string;
+
     };
 
 
@@ -98,6 +101,7 @@ type CheckoutActions = {
         tipo: MetodoPagamento;
         prezzoGiorno: number;
         prezzoTotale: number;
+        codiceTariffa: string;
     }) => void;
 
     // protezioni
@@ -151,8 +155,8 @@ const initialCheckoutState: CheckoutState = {
     search: {
         tipoCliente: "privato",
         tipoVeicolo: "auto",
-        ritiro: {luogo: "", luogoLabel: "", data: "", ora: ""},
-        riconsegna: {luogo: "", luogoLabel: "", data: "", ora: "", stessoUfficio: true},
+        ritiro: { luogo: "", luogoLabel: "", data: "", ora: "" },
+        riconsegna: { luogo: "", luogoLabel: "", data: "", ora: "", stessoUfficio: true },
         eta: 18,
         codicePromo: undefined,
     },
@@ -162,6 +166,7 @@ const initialCheckoutState: CheckoutState = {
         tipo: undefined,
         prezzoGiorno: 0,
         prezzoTotale: 0,
+        codiceTariffa: "",
     },
 
 
@@ -250,19 +255,18 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
         })),
 
 
-    // protezioni
-    setPacchetto: (pacchetto) =>
-        set((s) => ({protezioni: {...s.protezioni, pacchetto}})),
 
-    toggleProtezioneOpzione: (codice) =>
-        set((s) => {
-            const exists = s.protezioni.opzioni.includes(codice);
-            const opzioni = exists
-                ? s.protezioni.opzioni.filter((x) => x !== codice)
-                : [...s.protezioni.opzioni, codice];
-
-            return {protezioni: {...s.protezioni, opzioni}};
-        }),
+            // reset
+            resetCheckout: () => set({ ...initialCheckoutState }),
+            setPacchettoConPrezzo: (pacchetto, prezzoGiorno, prezzoTotale) =>
+                set((s) => ({
+                    protezioni: {
+                        ...s.protezioni,
+                        pacchetto,
+                        prezzoGiorno,
+                        prezzoTotale,
+                    },
+                })),
 
     clearProtezioniOpzioni: () =>
         set((s) => ({protezioni: {...s.protezioni, opzioni: []}})),

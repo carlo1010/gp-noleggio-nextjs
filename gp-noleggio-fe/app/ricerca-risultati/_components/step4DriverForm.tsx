@@ -351,9 +351,19 @@ export default function Step4DriverForm() {
                             </FormItem>
                         )}
                     />
-                    <Button type="button" className="h-9 w-full">
-                        Applica coupon
-                    </Button>
+                    {openCoupon && (
+                        <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm mt-2 flex gap-3 animate-in fade-in slide-in-from-top-2">
+                            <Input
+                                className="h-12 flex-1"
+                                placeholder="Inserisci coupon"
+                                value={codicePromo ?? ""}
+                                onChange={(e) => setCodicePromo(e.target.value || undefined)}
+                            />
+                            <Button className="h-12 px-6 font-bold bg-primary text-white rounded-tl-xl rounded-br-xl hover:bg-blue-800 transition-colors">
+                                APPLICA
+                            </Button>
+                        </div>
+                    )}
                 </div>
             )}
 

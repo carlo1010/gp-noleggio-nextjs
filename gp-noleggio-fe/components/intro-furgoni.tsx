@@ -8,26 +8,26 @@ type IntroFurgoniProps = {
 };
 
 export default function IntroFurgoni({
-                                         breadcrumb = [
-                                             { label: "Home", href: "/" },
-                                             { label: "Noleggio Furgoni", href: "/noleggio-furgoni" },
-                                         ],
-                                         title,
-                                         subtitle,
-                                         body,
-                                     }: IntroFurgoniProps) {
+    breadcrumb = [
+        { label: "Home", href: "/" },
+        { label: "Noleggio Furgoni", href: "/noleggio-furgoni" },
+    ],
+    title,
+    subtitle,
+    body,
+}: IntroFurgoniProps) {
     return (
         <section className="w-full bg-white py-16">
-            <div className="mx-auto w-full max-w-[1124px] px-4">
+            <div className="container mx-auto max-w-[1240px] px-4">
                 {/* Breadcrumb */}
                 <nav className="text-[11px] text-gray-500">
                     {breadcrumb.map((item, idx) => (
                         <span key={item.href}>
-              <Link href={item.href} className="hover:underline">
-                {item.label}
-              </Link>
+                            <Link href={item.href} className="hover:underline">
+                                {item.label}
+                            </Link>
                             {idx < breadcrumb.length - 1 && <span> &gt; </span>}
-            </span>
+                        </span>
                     ))}
                 </nav>
 

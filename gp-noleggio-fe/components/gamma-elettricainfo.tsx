@@ -1,10 +1,10 @@
 import Link from "next/link";
-import {ChevronRight} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 export default function GammaElettricaInfo() {
     return (
         <section className="w-full bg-white">
-            <div className="mx-auto max-w-6xl px-4 py-12">
+            <div className="container mx-auto max-w-[1240px] px-4 py-12">
                 <h2 className="text-3xl font-bold text-black">
                     La nostra esclusiva gamma di auto elettriche
                 </h2>
@@ -38,7 +38,7 @@ export default function GammaElettricaInfo() {
                     className="mt-10 inline-flex items-center gap-2 text-[#0700DE] font-semibold"
                 >
                     Vai ai punti di ricarica
-                    <ChevronRight className="h-5 w-5"/>
+                    <ChevronRight className="h-5 w-5" />
                 </Link>
             </div>
         </section>

@@ -7,7 +7,7 @@ import MartelloIcon from "@/components/svg/martello";
 import FuocoIcon from "@/components/svg/fuoco";
 import CamioncinoRifiuti from "@/components/svg/camioncinoRifiuti";
 
-import {formatPrice} from "@/lib/formatPrice";
+import { formatPrice } from "@/lib/formatPrice";
 import {
     Dialog,
     DialogContent,
@@ -41,8 +41,10 @@ export function TuteleDisponibili({
     const icons = [<MartelloIcon/>, <FuocoIcon/>, <CamioncinoRifiuti/>];
 
     return (
-        <div className="w-full">
-            <div className="text-lg font-semibold mb-6 text-left">{title}</div>
+        <div className="w-full space-y-8">
+            <h2 className="text-xl md:text-2xl font-bold text-black border-b border-gray-100 pb-4">
+                {title}
+            </h2>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 {servizi.map((servizio, index) => {
@@ -119,7 +121,7 @@ export function TuteleDisponibili({
                                         });
                                     }}
                                 >
-                                    {isSelected ? "Rimuovi" : "Aggiungi"}
+                                    {isSelected ? "Aggiunto" : "Aggiungi"}
                                 </Button>
                             </div>
                         </div>

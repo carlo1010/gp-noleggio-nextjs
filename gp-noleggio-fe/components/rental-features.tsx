@@ -21,7 +21,7 @@ const features = [
 export default function RentalFeatures() {
     return (
         <section className="w-full bg-white py-20">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 max-w-[1240px]">
 
                 {/* TITOLO + TESTO */}
                 <div className="max-w-4xl mb-16">

@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function ModelChoice() {
     return (
         <section className="w-full bg-white">
-            <div className="mx-auto max-w-6xl px-6 py-16">
+            <div className="container mx-auto max-w-[1240px] px-4 py-16">
                 <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
                     {/* Testo (sx) */}
                     <div className="max-w-md">

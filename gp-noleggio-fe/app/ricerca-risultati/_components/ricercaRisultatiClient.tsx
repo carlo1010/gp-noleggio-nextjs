@@ -16,6 +16,7 @@ import { listaVeicoli } from "@/hook/useVeicoli";
 import { parsePrice } from "@/lib/price";
 
 export default function RicercaRisultatiClient() {
+    const hasHydrated = useHasHydrated();
     const sp = useSearchParams();
     const step = sp.get("step") ?? "2";
     const classe = sp.get("classe");
@@ -110,6 +111,8 @@ export default function RicercaRisultatiClient() {
                 franchigiaDanno: p.franchigiaDanno,
             }));
     }, [protezioni]);
+
+    if (!hasHydrated) return null;
 
     // 🔁 RENDER IN BASE ALLO STEP
     if (step === "2") {

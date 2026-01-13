@@ -23,13 +23,32 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
         return () => window.removeEventListener("keydown", onKeyDown);
     }, [open, onClose]);
 
-    // Blocca scroll body quando aperto
+    // // Blocca scroll body quando aperto
+    // useEffect(() => {
+    //     if (!open) return;
+    //     const prev = document.body.style.overflow;
+    //     document.body.style.overflow = "hidden";
+    //     return () => {
+    //         document.body.style.overflow = prev;
+    //     };
+    // }, [open]);
+// rimuovere scroll verticale causa spostamento del layout, per questo commentato. La soluzione sottostante impedisce l'uso dello scroll ma previene lo spostamento
     useEffect(() => {
         if (!open) return;
-        const prev = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
+
+        const preventScroll = (e: Event) => {
+            e.preventDefault();
+        };
+
+        // Wheel & trackpad
+        window.addEventListener("wheel", preventScroll, {passive: false});
+
+        // Touch (mobile)
+        window.addEventListener("touchmove", preventScroll, {passive: false});
+
         return () => {
-            document.body.style.overflow = prev;
+            window.removeEventListener("wheel", preventScroll);
+            window.removeEventListener("touchmove", preventScroll);
         };
     }, [open]);
 
@@ -58,6 +77,7 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
                         <Image
                             src="/logo-rent-nero.png"
                             alt="Piccirillo Rent"
+                            sizes={266}
                             fill
                             className="object-contain"
                             priority
@@ -84,10 +104,14 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
                         <li>
                             <div className="font-semibold">La nostra flotta</div>
                             <ul className="mt-3 space-y-2 pl-4 text-gray-700">
-                                <li><Link href="/tipo-noleggio/noleggio-auto" onClick={onClose} className="hover:underline">Auto</Link></li>
-                                <li><Link href="/tipo-noleggio/noleggio-premium" onClick={onClose} className="hover:underline">Premium</Link></li>
-                                <li><Link href="/tipo-noleggio/noleggio-elettriche" onClick={onClose} className="hover:underline">Elettriche</Link></li>
-                                <li><Link href="/tipo-noleggio/noleggio-furgoni" onClick={onClose} className="hover:underline">Furgoni</Link></li>
+                                <li><Link href="/tipo-noleggio/noleggio-auto" onClick={onClose}
+                                          className="hover:underline">Auto</Link></li>
+                                <li><Link href="/tipo-noleggio/noleggio-premium" onClick={onClose}
+                                          className="hover:underline">Premium</Link></li>
+                                <li><Link href="/tipo-noleggio/noleggio-elettriche" onClick={onClose}
+                                          className="hover:underline">Elettriche</Link></li>
+                                <li><Link href="/tipo-noleggio/noleggio-furgoni" onClick={onClose}
+                                          className="hover:underline">Furgoni</Link></li>
                             </ul>
                         </li>
 

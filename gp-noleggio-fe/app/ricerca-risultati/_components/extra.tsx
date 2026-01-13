@@ -31,26 +31,28 @@ type PacchettiProtectionProps = {
 };
 
 function Card({
-                  title,
-                  isSelected,
-                  onSelect,
-                  header,
-                  features,
-                  onMoreDetails,
-              }: {
+    title,
+    isSelected,
+    onSelect,
+    subtitle,
+    pricing,
+    features,
+    onMoreDetails,
+}: {
     title: string;
     isSelected: boolean;
     onSelect: () => void;
-    header: React.ReactNode;
+    subtitle: string;
+    pricing: React.ReactNode;
     features: string[];
     onMoreDetails: () => void;
 }) {
     return (
         <div
-            className={[
-                "rounded-br-xl rounded-tl-xl border bg-white shadow-sm overflow-hidden flex flex-col h-full",
-                isSelected ? "border-blue-600 ring-1 ring-blue-600" : "border-gray-200",
-            ].join(" ")}
+            className={`rounded-2xl border-2 transition-all duration-300 flex flex-col h-full bg-white overflow-hidden ${isSelected
+                ? "border-primary shadow-xl scale-[1.02] z-10"
+                : "border-gray-100 hover:border-gray-200 shadow-sm"
+                }`}
         >
             {/* Header */}
             <div className="bg-[#F6F6FF] px-6 py-5">
@@ -59,8 +61,8 @@ function Card({
             </div>
 
             {/* Body */}
-            <div className="px-6 py-5 flex flex-col flex-1">
-                <ul className="space-y-3 flex-1">
+            <div className="px-6 py-6 flex flex-col flex-1 space-y-6">
+                <ul className="space-y-4 flex-1">
                     {features.map((f, i) => (
                         <li key={i} className="flex gap-3 text-sm text-gray-800">
               <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white">
@@ -179,10 +181,10 @@ export default function PacchettiProtection({
 
     return (
         <>
-            <section className={"py-10"}>
-                <div className="mb-10  text-xl font-semibold ">
+            <section className={"py-6 md:py-10"}>
+                <h2 className="mb-8 text-xl md:text-2xl font-bold text-black border-b border-gray-100 pb-4">
                     Pacchetti Protection
-                </div>
+                </h2>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 items-stretch">
                     {options.map((option) => {

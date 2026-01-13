@@ -79,13 +79,37 @@ export default function ExtraDisponibili(props: ExtraDisponibiliProps) {
 
                         <div className="min-w-[20px] text-center font-semibold">{qty}</div>
 
-                        <Button onClick={increment}>+</Button>
+                    <div className="flex items-center">
+                        {props.isquantity ? (
+                            <div className="flex items-center bg-white rounded-lg border border-gray-100 shadow-sm p-1">
+                                <button
+                                    onClick={decrement}
+                                    disabled={qty === 0}
+                                    className="w-8 h-8 flex items-center justify-center text-primary disabled:text-gray-300 font-bold transition-colors hover:bg-gray-50 rounded-md"
+                                >
+                                    -
+                                </button>
+                                <div className="min-w-[32px] text-center font-extrabold text-sm text-black">{qty}</div>
+                                <button
+                                    onClick={increment}
+                                    className="w-8 h-8 flex items-center justify-center text-primary font-bold transition-colors hover:bg-gray-50 rounded-md"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        ) : (
+                            <Button
+                                onClick={toggleAdd}
+                                className={`h-10 px-6 font-bold text-sm transition-all ${isAdded
+                                        ? "bg-gray-200 text-gray-500 hover:bg-gray-200"
+                                        : "bg-primary text-white shadow-md hover:shadow-lg"
+                                    }`}
+                            >
+                                {isAdded ? "Aggiunto" : "Aggiungi"}
+                            </Button>
+                        )}
                     </div>
-                ) : (
-                    <Button variant={isAdded ? "secondary" : "default"} onClick={toggleAdd}>
-                        {isAdded ? "Rimuovi" : "Aggiungi"}
-                    </Button>
-                )}
+                </div>
             </div>
         </div>
     );

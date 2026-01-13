@@ -13,11 +13,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
-            <html lang="en">
+            <html lang="it">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <div className="relative min-h-dvh overflow-x-hidden">
                 <QueryProvider>
                     {children}
                 </QueryProvider>
+            </div>
             </body>
             </html>
     );

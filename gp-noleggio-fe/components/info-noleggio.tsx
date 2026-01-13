@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function InfoNoleggio() {
     return (
         <section className="w-full bg-white">
-            <div className="mx-auto max-w-6xl px-6 py-14">
+            <div className="container mx-auto max-w-[1240px] px-4 py-14">
                 <div className=" bg-white  p-6 md:p-10">
                     <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:items-start">
                         {/* Immagine */}

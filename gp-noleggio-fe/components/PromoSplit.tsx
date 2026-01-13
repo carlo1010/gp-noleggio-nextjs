@@ -20,22 +20,22 @@ type PromoSplitProps = {
 };
 
 export default function PromoSplit({
-                                       title,
-                                       body,
-                                       ctaLabel,
-                                       ctaHref,
-                                       imageSrc,
-                                       imageAlt,
-                                       imageSide = "right",
-                                       contentMaxWClassName = "max-w-[520px]",
-                                       imageRoundedClassName = "rounded-md",
-                                       imageAspectClassName = "aspect-[4/3]",
-                                   }: PromoSplitProps) {
+    title,
+    body,
+    ctaLabel,
+    ctaHref,
+    imageSrc,
+    imageAlt,
+    imageSide = "right",
+    contentMaxWClassName = "max-w-[520px]",
+    imageRoundedClassName = "rounded-md",
+    imageAspectClassName = "aspect-[4/3]",
+}: PromoSplitProps) {
     const isImageRight = imageSide === "right";
 
     return (
         <section className="w-full bg-white py-16">
-            <div className="mx-auto w-full max-w-[1124px] px-4">
+            <div className="container mx-auto max-w-[1240px] px-4">
                 <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
                     {/* TESTO */}
                     <div className={`${contentMaxWClassName} ${isImageRight ? "" : "md:order-2"}`}>

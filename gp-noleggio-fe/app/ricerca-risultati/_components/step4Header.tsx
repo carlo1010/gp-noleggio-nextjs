@@ -12,11 +12,13 @@ export default function Step4Header() {
                 <div className="flex items-start justify-between">
                     <h1 className="text-2xl font-bold">Conferma la tua prenotazione</h1>
 
-                    <div className="text-right leading-tight">
-                        <p className="text-[10px] uppercase text-gray-500 tracking-wide">
-                            Totale
-                        </p>
-                        <p className="text-lg font-bold">{formatPrice(totale)}</p>
+                    <div className="flex flex-col md:items-end">
+                        <span className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">
+                            TOTALE
+                        </span>
+                        <span className="text-xl md:text-2xl font-black text-black">
+                            {formatPrice(totale)}
+                        </span>
                     </div>
                 </div>
             </div>

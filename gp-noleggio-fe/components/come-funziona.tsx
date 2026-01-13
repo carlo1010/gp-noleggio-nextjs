@@ -1,7 +1,7 @@
 export default function ComeFunziona() {
     return (
         <section className="w-full bg-[#F7F7F7]">
-            <div className="mx-auto max-w-6xl px-6 py-12">
+            <div className="container mx-auto max-w-[1240px] px-4 py-12">
                 <h2 className="text-2xl font-bold text-gray-900">
                     Come noleggiare un&apos;auto con Piccirillo Rent
                 </h2>

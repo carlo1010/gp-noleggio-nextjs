@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function BannerElettriche() {
     return (
         <section className="w-full py-16">
-            <div className="mx-auto w-full max-w-[1124px] px-4">
+            <div className="container mx-auto max-w-[1240px] px-4">
                 <div className="flex flex-col gap-16">
 
                     {/* BLOCCO 1 */}

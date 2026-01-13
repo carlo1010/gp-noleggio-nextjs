@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function InfoElettrico() {
     return (
         <section className="w-full bg-white py-16">
-            <div className="mx-auto w-full max-w-[1124px] px-4">
+            <div className="container mx-auto max-w-[1240px] px-4">
                 {/* Divider top */}
                 <div className="border-t border-gray-200 pt-10">
                     <div className="max-w-[900px] text-sm leading-6 text-gray-700">
@@ -13,9 +13,9 @@ export default function InfoElettrico() {
                             Non perdere questa occasione, prenota ora su uno degli uffici
                             abilitati o{" "}
                             <span className="font-semibold text-gray-900">
-                richiedi subito un contatto per scoprire le nostre Long-Term
-                Solutions.
-              </span>
+                                richiedi subito un contatto per scoprire le nostre Long-Term
+                                Solutions.
+                            </span>
                         </p>
 
                         <p className="mt-4">

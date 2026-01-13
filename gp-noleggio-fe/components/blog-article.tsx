@@ -33,7 +33,7 @@ export default async function BlogArticle({ id }: BlogArticleProps) {
     }
 
     return (
-        <article className="container mx-auto px-4 py-20 max-w-6xl">
+        <article className="container mx-auto px-4 py-20 max-w-[1240px]">
             <NextBreadcrumb
                 homeElement={'Home'}
                 separator={<span> | </span>}
