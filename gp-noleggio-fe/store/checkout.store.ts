@@ -1,8 +1,30 @@
 import {create} from "zustand";
 
+import type {ListaVeicolo} from "@/types/veicolo";
+import {calcDays} from "@/lib/date";
+
 export type ClienteTipo = "privato" | "azienda";
 export type VeicoloTipo = "auto" | "furgone";
-export type PacchettoTipo = "basic" | "medium" | "premium";
+export type PacchettoTipo = string;
+export type MetodoPagamento = "web" | "ritiro";
+
+export type ServizioSelezionato = {
+    codice: string;
+    titolo: string;
+    descrizione?: string;
+    prezzo: number;
+    quantita: number;
+    flagQtaServizio: 0 | 1;
+};
+
+export type ProtezioneSelezionata = {
+    nome: string;
+    descrizione: string;
+    importo: number;
+    franchigiaFurto: string;
+    franchigiaDanno: string;
+    note: string;
+};
 
 export type CheckoutState = {
     step: number;
@@ -16,10 +38,10 @@ export type CheckoutState = {
         codicePromo?: string;
     };
 
-    veicolo?: any;
+    veicolo?: ListaVeicolo;
 
     tariffa: {
-        tipo?: "web" | "ritiro";
+        tipo?: MetodoPagamento;
         prezzoGiorno: number;
         prezzoTotale: number;
     };
@@ -30,9 +52,10 @@ export type CheckoutState = {
         prezzoGiorno: number;
         prezzoTotale: number;
         opzioni: string[]; // es: ["danni","furto"] o codici
+        selezionata?: ProtezioneSelezionata;
     };
 
-    extra: Record<string, { titolo: string; prezzo: number; quantita: number }>;
+    servizi: Record<string, ServizioSelezionato>;
 
 
     conducente: {
@@ -68,11 +91,11 @@ type CheckoutActions = {
     setCodicePromo: (codicePromo?: string) => void;
 
     // veicolo
-    setVeicolo: (veicolo: any) => void;
+    setVeicolo: (veicolo: ListaVeicolo) => void;
 
     // tariffa
     setTariffa: (payload: {
-        tipo: "web" | "ritiro";
+        tipo: MetodoPagamento;
         prezzoGiorno: number;
         prezzoTotale: number;
     }) => void;
@@ -83,10 +106,22 @@ type CheckoutActions = {
     clearProtezioniOpzioni: () => void;
 
     // extra
-    setExtra: (codice: string, titolo: string, prezzo: number, quantita: number) => void;
-    incExtra: (codice: string, titolo: string, prezzo: number) => void;
-    decExtra: (codice: string) => void;
-    toggleExtra: (codice: string, titolo: string, prezzo: number) => void;
+    setServizio: (payload: ServizioSelezionato) => void;
+    incServizio: (
+        codice: string,
+        titolo: string,
+        prezzo: number,
+        flagQtaServizio: 0 | 1,
+        descrizione?: string
+    ) => void;
+    decServizio: (codice: string) => void;
+    toggleServizio: (
+        codice: string,
+        titolo: string,
+        prezzo: number,
+        flagQtaServizio: 0 | 1,
+        descrizione?: string
+    ) => void;
 
     // totale
     getTotale: () => number;
@@ -100,7 +135,11 @@ type CheckoutActions = {
 
     // reset
     resetCheckout: () => void;
-    setPacchettoConPrezzo: (pacchetto: PacchettoTipo, prezzoGiorno: number, prezzoTotale: number) => void;
+    setPacchettoConPrezzo: (
+        pacchetto: PacchettoTipo,
+        prezzoGiorno: number,
+        selezionata?: ProtezioneSelezionata
+    ) => void;
     clearStep3: () => void;
 
 
@@ -127,13 +166,13 @@ const initialCheckoutState: CheckoutState = {
 
 
     protezioni: {
-        pacchetto: "basic",
+        pacchetto: "",
         prezzoGiorno: 0,
         prezzoTotale: 0,
         opzioni: [],
     },
 
-    extra: {},
+    servizi: {},
 
     conducente: {
         nome: "",
@@ -157,21 +196,8 @@ const initialCheckoutState: CheckoutState = {
 };
 
 
-const parseYMDToLocalDate = (yMD: string) => {
-    const [y, m, d] = yMD.split('-');
-    return new Date(Number(y), Number(m) - 1, Number(d));
-};
-const calcGiorniNoleggio = (dataInizio?: string, dataFine?: string) => {
-    if (!dataInizio || !dataFine) return 1;
-    const start = parseYMDToLocalDate(dataInizio);
-    const end = parseYMDToLocalDate(dataFine);
-
-    const ms = end.getTime() - start.getTime();
-    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-
-    // se stesso giorno => 1
-    return Math.max(1, days);
-};
+const calcGiorniNoleggio = (dataInizio?: string, dataFine?: string) =>
+    calcDays(dataInizio, dataFine);
 
 export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, get) => ({
     ...initialCheckoutState,
@@ -214,12 +240,13 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
         set((s) => ({
             protezioni: {
                 ...s.protezioni,
-                pacchetto: "basic",
+                pacchetto: "",
                 prezzoGiorno: 0,
                 prezzoTotale: 0,
                 opzioni: [],
+                selezionata: undefined,
             },
-            extra: {},
+            servizi: {},
         })),
 
 
@@ -243,28 +270,42 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
     // extra
 
 
-    setExtra: (codice, titolo, prezzo, quantita) =>
+    setServizio: ({codice, titolo, descrizione, prezzo, quantita, flagQtaServizio}) =>
         set((s) => ({
-            extra: {
-                ...s.extra,
-                [codice]: {titolo, prezzo, quantita: Math.max(0, quantita)},
+            servizi: {
+                ...s.servizi,
+                [codice]: {
+                    codice,
+                    titolo,
+                    descrizione,
+                    prezzo,
+                    quantita: Math.max(0, quantita),
+                    flagQtaServizio,
+                },
             },
         })),
 
-    incExtra: (codice, titolo, prezzo) =>
+    incServizio: (codice, titolo, prezzo, flagQtaServizio, descrizione) =>
         set((s) => {
-            const current = s.extra[codice]?.quantita ?? 0;
+            const current = s.servizi[codice]?.quantita ?? 0;
             return {
-                extra: {
-                    ...s.extra,
-                    [codice]: {titolo, prezzo, quantita: current + 1},
+                servizi: {
+                    ...s.servizi,
+                    [codice]: {
+                        codice,
+                        titolo,
+                        descrizione,
+                        prezzo,
+                        quantita: current + 1,
+                        flagQtaServizio,
+                    },
                 },
             };
         }),
 
-    decExtra: (codice) =>
+    decServizio: (codice) =>
         set((s) => {
-            const item = s.extra[codice];
+            const item = s.servizi[codice];
             const current = item?.quantita ?? 0;
             const next = Math.max(0, current - 1);
 
@@ -272,33 +313,33 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
 
             // se arrivi a 0, lo rimuovo dal record (così non resta “sporco”)
             if (next === 0) {
-                const {[codice]: _removed, ...rest} = s.extra;
-                return {extra: rest};
+                const {[codice]: _removed, ...rest} = s.servizi;
+                return {servizi: rest};
             }
 
             return {
-                extra: {
-                    ...s.extra,
+                servizi: {
+                    ...s.servizi,
                     [codice]: {...item, quantita: next},
                 },
             };
         }),
 
-    toggleExtra: (codice, titolo, prezzo) =>
+    toggleServizio: (codice, titolo, prezzo, flagQtaServizio, descrizione) =>
         set((s) => {
-            const current = s.extra[codice]?.quantita ?? 0;
+            const current = s.servizi[codice]?.quantita ?? 0;
 
             // se esiste (quantita > 0) => rimuovi
             if (current > 0) {
-                const {[codice]: _removed, ...rest} = s.extra;
-                return {extra: rest};
+                const {[codice]: _removed, ...rest} = s.servizi;
+                return {servizi: rest};
             }
 
             // altrimenti aggiungi con quantita 1
             return {
-                extra: {
-                    ...s.extra,
-                    [codice]: {titolo, prezzo, quantita: 1},
+                servizi: {
+                    ...s.servizi,
+                    [codice]: {codice, titolo, descrizione, prezzo, quantita: 1, flagQtaServizio},
                 },
             };
         }),
@@ -322,25 +363,28 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
         const base = s.tariffa?.prezzoTotale ?? 0;
         const protezioniTot = s.protezioni?.prezzoTotale ?? 0;
 
-        const extraTot = Object.values(s.extra ?? {}).reduce((acc, item) => {
+        const giorni = calcGiorniNoleggio(s.search.ritiro?.data, s.search.riconsegna?.data);
+
+        const serviziTot = Object.values(s.servizi ?? {}).reduce((acc, item) => {
             const prezzo = Number(item.prezzo) || 0;
             const qta = Number(item.quantita) || 0;
-            return acc + prezzo * qta;
+            return acc + prezzo * qta * giorni;
         }, 0);
 
-        return base + protezioniTot + extraTot;
+        return base + protezioniTot + serviziTot;
     },
 
 
     // reset
     resetCheckout: () => set({...initialCheckoutState}),
-    setPacchettoConPrezzo: (pacchetto, prezzoGiorno, prezzoTotale) =>
+    setPacchettoConPrezzo: (pacchetto, prezzoGiorno, selezionata) =>
         set((s) => ({
             protezioni: {
                 ...s.protezioni,
                 pacchetto,
                 prezzoGiorno,
-                prezzoTotale,
+                prezzoTotale: prezzoGiorno * calcGiorniNoleggio(s.search.ritiro?.data, s.search.riconsegna?.data),
+                selezionata,
             },
         })),
 

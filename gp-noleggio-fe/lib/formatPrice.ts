@@ -1,9 +1,11 @@
+import {parsePrice} from "@/lib/price";
+
 export function formatPrice(
     price: number | string,
     showCurrency: boolean = true,
     rounded: boolean = false
 ): string {
-    let numericPrice = typeof price === 'string' ? parseFloat(price) : price;
+    let numericPrice = parsePrice(price);
 
     if (isNaN(numericPrice)) {
         numericPrice = 0;

@@ -17,8 +17,11 @@ import {Check, X} from "lucide-react";
 import {formatPrice} from "@/lib/formatPrice";
 import {useRouter, useSearchParams} from "next/navigation";
 import {useCheckoutStore} from "@/store/checkout.store";
+import type {ListaVeicolo} from "@/types/veicolo";
+import {parsePrice} from "@/lib/price";
 
 interface SceltaTariffaProps {
+    veicolo: ListaVeicolo;
     imageUrl: string;
     nome: string;
     cambio: string;
@@ -44,40 +47,33 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
     // ✅ azioni Zustand: DEVONO stare qui, fuori dalla funzione
     const setVeicolo = useCheckoutStore((s) => s.setVeicolo);
     const setTariffa = useCheckoutStore((s) => s.setTariffa);
+    const setStep = useCheckoutStore((s) => s.setStep);
 
     // Se i prezzi arrivano con virgola, questo evita NaN
-    const toNumber = (v: string) => Number(String(v).replace(",", "."));
-
     function NextStep(
         tipopagamento: "web" | "ritiro",
         prezzogiornaliero: string,
         prezzototale: string
     ) {
         // 1) salvo veicolo nello store
-        setVeicolo({
-            nome: props.nome,
-            imageUrl: props.imageUrl,
-            cambio: props.cambio,
-            posti: props.posti,
-            ariaCondizionata: props.ariaCondizionata,
-            eta: props.eta,
-            porte: props.porte,
-            alimentazione: props.alimentazione,
-        });
+        setVeicolo(props.veicolo);
 
         // 2) salvo tariffa nello store
         setTariffa({
             tipo: tipopagamento,
-            prezzoGiorno: toNumber(prezzogiornaliero),
-            prezzoTotale: toNumber(prezzototale),
+            prezzoGiorno: parsePrice(prezzogiornaliero),
+            prezzoTotale: parsePrice(prezzototale),
         });
 
         // ✅ debug
         console.log("CHECKOUT STATE (after tariffa):", useCheckoutStore.getState());
 
-        // 3) passo allo step 3 (tengo solo step nei params)
+        // 3) passo allo step 3 (step + info minime per ripristino)
         const params = new URLSearchParams(sp.toString());
         params.set("step", "3");
+        params.set("classe", props.veicolo.codiceClasse);
+        params.set("pay", tipopagamento);
+        setStep(3);
         router.push(`/ricerca-risultati?${params.toString()}`);
     }
 
@@ -99,7 +95,13 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
                                 O MINI SIMILARE
                             </div>
 
-                            <Image className="" src={props.imageUrl} alt={""} width={335} height={272}/>
+                            <Image
+                                className=""
+                                src={props.imageUrl || "/fiat-500.png"}
+                                alt={props.nome || "Veicolo"}
+                                width={335}
+                                height={272}
+                            />
 
                             <div className={"flex flex-row flex-wrap gap-x-4 font-bold"}>
                                 <div className={"flex flew-row gap-x-2 items-center"}>
@@ -128,7 +130,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
 
                     {/* Pagamento al ritiro */}
                     <div
-                        className="flex flex-col w-1/4 gap-x-2 gap-y-4 noleggioCard border border-gray rounded-br-2xl rounded-tl-2xl justify-between">
+                        className="flex flex-col w-1/3 gap-x-2 gap-y-4 border border-gray rounded-br-2xl rounded-tl-2xl justify-between">
                         <div className={"bg-[#F6F6FF] items-center rounded-tl-2xl p-4"}>
                             <p className={"text-black font-bold "}>Pagamento al ritiro</p>
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
@@ -172,7 +174,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
 
                     {/* Pagamento online */}
                     <div
-                        className="flex flex-col w-1/4 gap-x-2 gap-y-4 noleggioCard border border-gray rounded-br-2xl rounded-tl-2xl justify-between">
+                        className="flex flex-col w-1/3 gap-x-2 gap-y-4 noleggioCard-active border border-gray rounded-br-2xl rounded-tl-2xl justify-between">
                         <div className={"bg-[#F6F6FF] items-center rounded-tl-2xl p-4"}>
                             <p className={"text-black font-bold "}>Pagamento Online</p>
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>

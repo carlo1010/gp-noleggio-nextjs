@@ -9,7 +9,7 @@ export default function SiteLayout({children}: { children: React.ReactNode }) {
         <>
             <Header dark={true}/>
             <section className="bg-[#f7f7f7] pt-[80px]">
-                <div className="container mx-auto py-4">
+                <div className="max-w-7xl mx-auto py-4">
                     <Suspense fallback={null}>
                         <StepStatus/>
                     </Suspense>

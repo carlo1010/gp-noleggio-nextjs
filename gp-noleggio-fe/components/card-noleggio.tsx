@@ -32,8 +32,13 @@ export default function CardNoleggio(props: CardNoleggioProps,) {
 
 
             <div className='col-span-2 flex items-center justify-center'>
-                <Image className="" src={props.imageUrl} alt={''} width={300} height={219}/>
-
+                <Image
+                    className=""
+                    src={props.imageUrl || "/fiat-500.png"}
+                    alt={props.nome || "Veicolo"}
+                    width={300}
+                    height={219}
+                />
             </div>
 
             <div className={"flex flex-col gap-y-2 col-span-3"}>
