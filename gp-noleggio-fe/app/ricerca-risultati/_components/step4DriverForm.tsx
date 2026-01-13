@@ -16,60 +16,55 @@ export default function Step4DriverForm() {
     const codicePromo = useCheckoutStore((s) => s.search.codicePromo);
     const setCodicePromo = useCheckoutStore((s) => s.setCodicePromo);
 
-    const terminiAccettati = useCheckoutStore((s) => s.pagamento.terminiAccettati);
-    const setTermini = useCheckoutStore((s) => s.setTermini);
-
-    // ⬇️ stati per i “dropdown”
     const [openFedelta, setOpenFedelta] = useState(false);
     const [openCoupon, setOpenCoupon] = useState(false);
 
     return (
-        <div className="bg-[#F7F7F7] p-6 w-full rounded-tl-3xl rounded-br-3xl shadow-sm">
-            {/* Titolo */}
-            <h2 className="font-bold text-xl text-gray-900 mb-6">
-                Dettagli del conducente
-            </h2>
+        <div className="space-y-8">
+            <section className="bg-gray-50/50 p-6 md:p-8 rounded-3xl border border-gray-100/50 shadow-sm">
+                <h2 className="font-extrabold text-xl text-black mb-6">
+                    Dettagli del conducente
+                </h2>
 
-            {/* Campi */}
-            <div className="space-y-3">
-                <Field label="Nome*">
-                    <Input
-                        className="h-9 bg-white"
-                        placeholder="Es. Luigi"
-                        value={conducente.nome}
-                        onChange={(e) => setConducente({ nome: e.target.value })}
-                    />
-                </Field>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <Field label="Nome*">
+                        <Input
+                            className="h-12 bg-white rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                            placeholder="Es. Luigi"
+                            value={conducente.nome}
+                            onChange={(e) => setConducente({ nome: e.target.value })}
+                        />
+                    </Field>
 
-                <Field label="Cognome*">
-                    <Input
-                        className="h-9 bg-white"
-                        placeholder="Es. Rossi"
-                        value={conducente.cognome}
-                        onChange={(e) => setConducente({ cognome: e.target.value })}
-                    />
-                </Field>
+                    <Field label="Cognome*">
+                        <Input
+                            className="h-12 bg-white rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                            placeholder="Es. Rossi"
+                            value={conducente.cognome}
+                            onChange={(e) => setConducente({ cognome: e.target.value })}
+                        />
+                    </Field>
 
-                <Field label="Data di nascita*">
-                    <Input
-                        className="h-9 bg-white"
-                        placeholder="GG/MM/AA"
-                        value={conducente.dataNascita}
-                        onChange={(e) => setConducente({ dataNascita: e.target.value })}
-                    />
-                </Field>
+                    <Field label="Data di nascita*">
+                        <Input
+                            className="h-12 bg-white rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                            placeholder="GG/MM/AA"
+                            value={conducente.dataNascita}
+                            onChange={(e) => setConducente({ dataNascita: e.target.value })}
+                        />
+                    </Field>
 
-                <Field label="E-mail*">
-                    <Input
-                        className="h-9 bg-white"
-                        placeholder="nome@email.com"
-                        value={conducente.email}
-                        onChange={(e) => setConducente({ email: e.target.value })}
-                    />
-                </Field>
+                    <Field label="E-mail*">
+                        <Input
+                            className="h-12 bg-white rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                            placeholder="nome@email.com"
+                            value={conducente.email}
+                            onChange={(e) => setConducente({ email: e.target.value })}
+                        />
+                    </Field>
+                </div>
 
-                {/* Checkbox */}
-                <div className="pt-1 space-y-3">
+                <div className="mt-6 space-y-4">
                     <CheckboxRow
                         id="privacyInfo"
                         checked={conducente.privacyInfo}
@@ -81,107 +76,90 @@ export default function Step4DriverForm() {
                         id="marketing"
                         checked={conducente.marketing}
                         onChange={(v) => setConducente({ marketing: v })}
-                        text="Presto il mio consenso per ricevere comunicazioni marketing."
+                        text="Presto il mio consenso per ricevere comunicazioni marketing tramite email e telefono."
                     />
                 </div>
 
-                {/* Telefono */}
-                <Field label="Numero di telefono*">
-                    <div className="flex gap-2">
-                        <div className="h-9 px-2 bg-white border rounded-md flex items-center gap-2 text-xs">
-                            <span>🇮🇹</span>
-                            <span>+39</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                    <Field label="Numero di telefono*">
+                        <div className="flex gap-2">
+                            <div className="h-12 px-4 bg-white border border-gray-200 rounded-xl flex items-center gap-2 text-sm font-bold shadow-sm">
+                                <span>🇮🇹</span>
+                                <span>+39</span>
+                                <ChevronDown className="w-4 h-4 text-gray-400" />
+                            </div>
+                            <Input
+                                className="h-12 flex-1 bg-white rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                                placeholder="Numero di telefono"
+                                value={conducente.telefono}
+                                onChange={(e) => setConducente({ telefono: e.target.value })}
+                            />
                         </div>
+                    </Field>
+
+                    <Field label="Codice fiscale*">
                         <Input
-                            className="h-9 bg-white"
-                            placeholder="Numero di telefono"
-                            value={conducente.telefono}
-                            onChange={(e) => setConducente({ telefono: e.target.value })}
+                            className="h-12 bg-white rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20 uppercase"
+                            placeholder="ES. RSS LGU..."
+                            value={conducente.codiceFiscale}
+                            onChange={(e) => setConducente({ codiceFiscale: e.target.value })}
                         />
-                    </div>
-                </Field>
-
-                <Field label="Codice fiscale*">
-                    <Input
-                        className="h-9 bg-white"
-                        placeholder="Es. RSSL..."
-                        value={conducente.codiceFiscale}
-                        onChange={(e) => setConducente({ codiceFiscale: e.target.value })}
-                    />
-                </Field>
-            </div>
-
-            {/* Divider */}
-            <div className="my-6 h-px bg-gray-200" />
-
-            {/* Info volo */}
-            <div className="flex items-center gap-2 mb-3 mt-8">
-                <p className="font-bold text-base text-gray-900">Informazioni sul volo</p>
-                <Info className="w-4 h-4 text-[#0700DE]" />
-            </div>
-
-            <Field label="Numero di volo">
-                <Input
-                    className="h-9 bg-white"
-                    placeholder="Es. AZ 1230"
-                    value={conducente.numeroVolo ?? ""}
-                    onChange={(e) => setConducente({ numeroVolo: e.target.value })}
-                />
-            </Field>
-
-            {/* Programma fedeltà */}
-            <DropdownRow
-                label="Fai parte di un programma fedeltà?"
-                open={openFedelta}
-                onToggle={() => setOpenFedelta(!openFedelta)}
-            />
-
-            {openFedelta && (
-                <Input
-                    className="h-9 bg-white mt-2"
-                    placeholder="Es. Miles&More"
-                    value={conducente.programmaFedelta ?? ""}
-                    onChange={(e) => setConducente({ programmaFedelta: e.target.value })}
-                />
-            )}
-
-            {/* Coupon */}
-            <DropdownRow
-                label="Aggiungi un Codice Coupon"
-                open={openCoupon}
-                onToggle={() => setOpenCoupon(!openCoupon)}
-            />
-
-            {openCoupon && (
-                <div className="mt-2 space-y-2">
-                    <Input
-                        className="h-9 bg-white"
-                        placeholder="Inserisci coupon"
-                        value={codicePromo ?? ""}
-                        onChange={(e) => setCodicePromo(e.target.value || undefined)}
-                    />
-                    <Button type="button" className="h-9 w-full">
-                        Applica coupon
-                    </Button>
+                    </Field>
                 </div>
-            )}
+            </section>
 
-            {/* Termini */}
-            <div className="mt-5 space-y-3">
-                <CheckboxRow
-                    id="termini"
-                    checked={terminiAccettati}
-                    onChange={setTermini}
-                    text="Accetto termini e condizioni."
-                />
+            <section className="bg-gray-50/50 p-6 md:p-8 rounded-3xl border border-gray-100/50 shadow-sm">
+                <div className="flex items-center gap-2 mb-6">
+                    <h2 className="font-extrabold text-xl text-black">Informazioni sul volo</h2>
+                    <Info className="w-4 h-4 text-primary" />
+                </div>
 
-                <Button
-                    className="h-10 w-full"
-                    disabled={!terminiAccettati}
-                >
-                    Conferma e continua
-                </Button>
-            </div>
+                <Field label="Numero di volo">
+                    <Input
+                        className="h-12 bg-white rounded-xl border-gray-200 focus:border-primary focus:ring-primary/20"
+                        placeholder="Es. AZ 1230"
+                        value={conducente.numeroVolo ?? ""}
+                        onChange={(e) => setConducente({ numeroVolo: e.target.value })}
+                    />
+                </Field>
+
+                <div className="mt-8 space-y-2">
+                    <DropdownRow
+                        label="Fai parte di un programma fedeltà?"
+                        open={openFedelta}
+                        onToggle={() => setOpenFedelta(!openFedelta)}
+                    />
+                    {openFedelta && (
+                        <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm mt-2 animate-in fade-in slide-in-from-top-2">
+                            <Input
+                                className="h-12"
+                                placeholder="Inserisci il tuo codice fedeltà"
+                                value={conducente.programmaFedelta ?? ""}
+                                onChange={(e) => setConducente({ programmaFedelta: e.target.value })}
+                            />
+                        </div>
+                    )}
+
+                    <DropdownRow
+                        label="Aggiungi un Codice Coupon"
+                        open={openCoupon}
+                        onToggle={() => setOpenCoupon(!openCoupon)}
+                    />
+                    {openCoupon && (
+                        <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm mt-2 flex gap-3 animate-in fade-in slide-in-from-top-2">
+                            <Input
+                                className="h-12 flex-1"
+                                placeholder="Inserisci coupon"
+                                value={codicePromo ?? ""}
+                                onChange={(e) => setCodicePromo(e.target.value || undefined)}
+                            />
+                            <Button className="h-12 px-6 font-bold bg-primary text-white rounded-tl-sm rounded-br-sm hover:bg-blue-800 transition-colors">
+                                APPLICA
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            </section>
         </div>
     );
 }

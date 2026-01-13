@@ -1,6 +1,7 @@
-import React, {useMemo, useState} from "react";
-import {formatPrice} from "@/lib/formatPrice";
-import {useCheckoutStore} from "@/store/checkout.store";
+import React, { useMemo, useState } from "react";
+import { formatPrice } from "@/lib/formatPrice";
+import { useCheckoutStore } from "@/store/checkout.store";
+import { Button } from "@/components/ui/button";
 
 
 import {
@@ -25,71 +26,75 @@ type PacchettiProtectionProps = {
 };
 
 function Card({
-                  title,
-                  isSelected,
-                  onSelect,
-                  header,
-                  features,
-                  onMoreDetails,
-              }: {
+    title,
+    isSelected,
+    onSelect,
+    subtitle,
+    pricing,
+    features,
+    onMoreDetails,
+}: {
     title: string;
     isSelected: boolean;
     onSelect: () => void;
-    header: React.ReactNode;
+    subtitle: string;
+    pricing: React.ReactNode;
     features: string[];
     onMoreDetails: () => void;
 }) {
     return (
         <div
-            className={[
-                "rounded-br-xl rounded-tl-xl border bg-white shadow-sm overflow-hidden flex flex-col h-full",
-                isSelected ? "border-blue-600 ring-1 ring-blue-600" : "border-gray-200",
-            ].join(" ")}
+            className={`rounded-2xl border-2 transition-all duration-300 flex flex-col h-full bg-white overflow-hidden ${isSelected
+                ? "border-primary shadow-xl scale-[1.02] z-10"
+                : "border-gray-100 hover:border-gray-200 shadow-sm"
+                }`}
         >
             {/* Header */}
-            <div className="bg-gray-50 px-6 py-5">
-                <div className="text-lg font-semibold">{title}</div>
-                {header}
+            <div className={`px-6 py-6 space-y-3 ${isSelected ? 'bg-primary/5' : ''}`}>
+                <h3 className="text-2xl font-bold text-black">{title}</h3>
+                <p className="text-sm text-gray-500 font-medium leading-tight">
+                    {subtitle}
+                </p>
+                <div className="pt-2">
+                    {pricing}
+                </div>
             </div>
 
             {/* Body */}
-            <div className="px-6 py-5 flex flex-col flex-1">
-                <ul className="space-y-3 flex-1">
+            <div className="px-6 py-6 flex flex-col flex-1 space-y-6">
+                <ul className="space-y-4 flex-1">
                     {features.map((f, i) => (
-                        <li key={i} className="flex gap-3 text-sm text-gray-800">
-              <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-700 text-white">
-                ✓
-              </span>
-                            {f}
+                        <li key={i} className="flex items-start gap-3">
+                            <span className="flex-shrink-0 mt-0.5">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-primary" />
+                                </svg>
+                            </span>
+                            <span className="text-sm font-semibold text-gray-700 leading-snug">{f}</span>
                         </li>
                     ))}
                 </ul>
 
-                {/* CTA */}
-                <div className="mt-8 flex items-center justify-between">
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-6 border-t border-gray-100">
                     <button
                         type="button"
-                        className="text-sm font-semibold text-blue-700 hover:underline"
+                        className="text-sm font-bold text-primary hover:underline"
                         onClick={onMoreDetails}
                     >
                         Maggiori Dettagli
                     </button>
 
-                    {isSelected ? (
-                        <button
-                            disabled
-                            className="rounded-br-sm rounded-tl-sm bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 cursor-not-allowed"
-                        >
-                            Selezionato
-                        </button>
-                    ) : (
-                        <button
-                            onClick={onSelect}
-                            className=" rounded-br-sm rounded-tl-sm bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800"
-                        >
-                            Seleziona
-                        </button>
-                    )}
+                    <Button
+                        onClick={onSelect}
+                        disabled={isSelected}
+                        className={`h-10 px-6 font-bold text-sm transition-all ${isSelected
+                            ? "bg-gray-200 text-gray-500 cursor-default hover:bg-gray-200"
+                            : "bg-primary text-white shadow-md hover:shadow-lg"
+                            }`}
+                    >
+                        {isSelected ? "Selezionato" : "Seleziona"}
+                    </Button>
                 </div>
             </div>
         </div>
@@ -97,10 +102,10 @@ function Card({
 }
 
 export default function PacchettiProtection({
-                                                medium,
-                                                premium,
-                                                onChange,
-                                            }: PacchettiProtectionProps) {
+    medium,
+    premium,
+    onChange,
+}: PacchettiProtectionProps) {
     // ✅ Basic selezionato di default
     const selected = useCheckoutStore(s => s.protezioni.pacchetto);
     const setPacchettoConPrezzo = useCheckoutStore(s => s.setPacchettoConPrezzo);
@@ -177,25 +182,23 @@ export default function PacchettiProtection({
 
     return (
         <>
-            <section className={"py-10"}>
-                <div className="mb-10  text-xl font-semibold ">
+            <section className={"py-6 md:py-10"}>
+                <h2 className="mb-8 text-xl md:text-2xl font-bold text-black border-b border-gray-100 pb-4">
                     Pacchetti Protection
-                </div>
+                </h2>
 
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 items-stretch">
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 items-stretch">
                     {/* BASIC */}
                     <Card
                         title="Basic"
                         isSelected={selected === "basic"}
                         onSelect={() => select("basic")}
                         onMoreDetails={() => openDetails("basic")}
-                        header={
-                            <>
-                                <div className="mt-2 text-sm text-gray-600">
-                                    Importo massimo addebitabile per danni o furto: 1.800,00 €
-                                </div>
-                                <div className="mt-4 text-sm font-semibold">Incluso</div>
-                            </>
+                        subtitle="Importo massimo addebitabile per danni o furto: 1.800,00 €"
+                        pricing={
+                            <div className="text-sm font-bold text-gray-900 bg-gray-100 w-max px-3 py-1 rounded-full">
+                                Incluso
+                            </div>
                         }
                         features={["Protezione danni al veicolo", "Protezione furto e incendio"]}
                     />
@@ -206,21 +209,17 @@ export default function PacchettiProtection({
                         isSelected={selected === "medium"}
                         onSelect={() => select("medium")}
                         onMoreDetails={() => openDetails("medium")}
-                        header={
-                            <>
-                                <div className="mt-2 text-sm text-gray-600">
-                                    Importo massimo addebitabile per danni o furto: 600,00 €
+                        subtitle="Importo massimo addebitabile per danni o furto: 600,00 €"
+                        pricing={
+                            <div className="space-y-0.5">
+                                <div className="text-sm text-black">
+                                    <span className="font-extrabold text-lg">{formatPrice(medium.day)}</span>{" "}
+                                    / giorno
                                 </div>
-                                <div className="mt-4">
-                                    <div className="text-sm">
-                                        <span className="font-semibold">{formatPrice(medium.day)}</span>{" "}
-                                        / giorno
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                        TOTALI {formatPrice(medium.total)}
-                                    </div>
+                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                    TOTALI {formatPrice(medium.total)}
                                 </div>
-                            </>
+                            </div>
                         }
                         features={[
                             "Protezione danni al veicolo",
@@ -236,21 +235,17 @@ export default function PacchettiProtection({
                         isSelected={selected === "premium"}
                         onSelect={() => select("premium")}
                         onMoreDetails={() => openDetails("premium")}
-                        header={
-                            <>
-                                <div className="mt-2 text-sm text-gray-600">
-                                    Importo massimo addebitabile per danni o furto: 600,00 €
+                        subtitle="Importo massimo addebitabile per danni o furto: 600,00 €"
+                        pricing={
+                            <div className="space-y-0.5">
+                                <div className="text-sm text-black">
+                                    <span className="font-extrabold text-lg">{formatPrice(premium.day)}</span>{" "}
+                                    / giorno
                                 </div>
-                                <div className="mt-4">
-                                    <div className="text-sm">
-                                        <span className="font-semibold">{formatPrice(premium.day)}</span>{" "}
-                                        / giorno
-                                    </div>
-                                    <div className="text-xs text-gray-500">
-                                        TOTALI {formatPrice(premium.total)}
-                                    </div>
+                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                    TOTALI {formatPrice(premium.total)}
                                 </div>
-                            </>
+                            </div>
                         }
                         features={[
                             "Protezione danni al veicolo",

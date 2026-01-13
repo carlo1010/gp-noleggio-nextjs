@@ -90,17 +90,16 @@ export default function StepStatus() {
         `${boxBase} ${activeStep === n ? "border-primary" : "border-transparent"}`;
 
     const badgeClass = (n: number) =>
-        `flex items-center justify-center rounded-full text-white w-6 h-6 ${
-            activeStep === n ? "bg-primary" : "bg-[#D9D9D9]"
+        `flex items-center justify-center rounded-full text-white w-6 h-6 ${activeStep === n ? "bg-primary" : "bg-[#D9D9D9]"
         }`;
 
     const titleClass = (n: number) =>
         `font-bold uppercase text-sm ${activeStep === n ? "text-primary" : "text-[#686868]"}`;
 
     return (
-        <div className="grid grid-cols-6 gap-x-4">
+        <div className="flex justify-center xl:grid xl:grid-cols-6 gap-3 overflow-x-auto pb-2 xl:pb-0 no-scrollbar">
             {/* STEP 1 */}
-            <div className={`col-span-2 ${boxClass(1)}`}>
+            <div className={`min-w-[180px] xl:min-w-0 xl:col-span-2 ${boxClass(1)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
                         <div className={badgeClass(1)}>1</div>
@@ -117,26 +116,26 @@ export default function StepStatus() {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-2">
+                <div className="hidden md:grid grid-cols-2 gap-x-2">
                     <div className="flex flex-col items-start justify-start w-full">
-                        <p className="font-bold">Ritiro</p>
-                        <p className="font-bold">{luogoRitiro}</p>
-                        <p className="text-[#696969] mt-2">{dataRitiro}</p>
+                        <p className="text-[10px] xl:text-xs">Ritiro</p>
+                        <p className="font-bold text-[10px] xl:text-xs truncate w-full">{luogoRitiro}</p>
+                        <p className="text-[#696969] text-[10px] xl:text-xs">{dataRitiro}</p>
                     </div>
                     <div className="flex flex-col items-start justify-start w-full">
-                        <p className="font-bold">Riconsegna</p>
-                        <p className="font-bold">{luogoRiconsegna}</p>
-                        <p className="text-[#696969] mt-2">{dataRiconsegna}</p>
+                        <p className="text-[10px] xl:text-xs">Riconsegna</p>
+                        <p className="font-bold text-[10px] xl:text-xs truncate w-full">{luogoRiconsegna}</p>
+                        <p className="text-[#696969] text-[10px] xl:text-xs">{dataRiconsegna}</p>
                     </div>
                 </div>
             </div>
 
             {/* STEP 2 */}
-            <div className={`col-span-1 ${boxClass(2)}`}>
+            <div className={`min-w-[140px] xl:min-w-0 xl:col-span-1 ${boxClass(2)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
                         <div className={badgeClass(2)}>2</div>
-                        <p className={titleClass(2)}>SCELTA VEICOLO</p>
+                        <p className={titleClass(2)}>VEICOLO</p>
                     </div>
 
                     <button
@@ -149,14 +148,14 @@ export default function StepStatus() {
                     </button>
                 </div>
 
-                <div className="flex flex-col items-start justify-end w-full">
-                    <p className="font-bold">{nomeVeicolo}</p>
-                    <p className="text-[#696969] mt-2">{prezzoVeicolo}</p>
+                <div className="hidden md:flex flex-col items-start justify-end w-full">
+                    <p className="font-bold text-[10px] xl:text-xs truncate w-full">{nomeVeicolo}</p>
+                    <p className="text-[#696969] text-[10px] xl:text-xs">{prezzoVeicolo}</p>
                 </div>
             </div>
 
             {/* STEP 3 */}
-            <div className={`col-span-2 ${boxClass(3)}`}>
+            <div className={`min-w-[140px] xl:min-w-0 xl:col-span-2 ${boxClass(3)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
                         <div className={badgeClass(3)}>3</div>
@@ -173,21 +172,21 @@ export default function StepStatus() {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-2">
+                <div className="hidden md:grid grid-cols-2 gap-x-2">
                     <div className="flex flex-col items-start justify-start w-full">
-                        <p className="font-bold">{pacchettoLabel}</p>
-                        <p className="text-[#696969] mt-2">{protezioniPrezzo}</p>
+                        <p className="font-bold text-[10px] xl:text-xs">{pacchettoLabel}</p>
+                        <p className="text-[#696969] text-[10px] xl:text-xs">{protezioniPrezzo}</p>
                     </div>
 
                     <div className="flex flex-col items-start justify-start w-full">
-                        <p className="font-bold">{extraCount} Extra</p>
-                        <p className="text-[#696969] mt-2">{formatPrice(extraTotale)}</p>
+                        <p className="font-bold text-[10px] xl:text-xs">{extraCount} Extra</p>
+                        <p className="text-[#696969] text-[10px] xl:text-xs">{formatPrice(extraTotale)}</p>
                     </div>
                 </div>
             </div>
 
             {/* STEP 4 (riepilogo) */}
-            <div className={`col-span-1 ${boxClass(4)}`}>
+            <div className={`min-w-[140px] xl:min-w-0 xl:col-span-1 ${boxClass(4)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
                         <div className={badgeClass(4)}>4</div>
@@ -204,9 +203,9 @@ export default function StepStatus() {
                     </button>
                 </div>
 
-                <div className="flex flex-col items-start justify-start w-full">
-                    <p className="font-bold">Prezzo Totale</p>
-                    <p className="text-[#696969] mt-2">{formatPrice(totale)}</p>
+                <div className="hidden md:flex flex-col items-start justify-start w-full">
+                    <p className="font-bold text-[10px] xl:text-xs">Totale</p>
+                    <p className="text-[#696969] text-[10px] xl:text-xs">{formatPrice(totale)}</p>
                 </div>
             </div>
         </div>

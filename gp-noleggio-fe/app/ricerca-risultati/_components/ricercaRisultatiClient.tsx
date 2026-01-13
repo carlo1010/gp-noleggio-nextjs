@@ -64,52 +64,99 @@ export default function RicercaRisultatiClient() {
 
     if (step === "3") {
         return (
-            <div className="container mx-auto">
+            <div className="w-full">
                 {/* Top bar con totale calcolato da Zustand */}
                 <CheckoutTopBar totale={totale} />
 
-                {/* Pacchetti protezione */}
-                <PacchettiProtection
-                    medium={{ day: 23.85, total: 47.7 }}
-                    premium={{ day: 27.62, total: 75.25 }}
-                    onChange={(key) => {
-                        console.log("Selezionato:", key);
+                <div className="container mx-auto px-4 py-8 space-y-12 max-w-[1240px]">
+                    {/* Pacchetti protezione */}
+                    <PacchettiProtection
+                        medium={{ day: 23.85, total: 47.7 }}
+                        premium={{ day: 27.62, total: 75.25 }}
+                        onChange={(key) => {
+                            console.log("Selezionato:", key);
+                            if (key === "basic") setPacchettoConPrezzo("basic", 0, 0);
+                            if (key === "medium") setPacchettoConPrezzo("medium", 23.85, 47.7);
+                            if (key === "premium") setPacchettoConPrezzo("premium", 27.62, 75.25);
+                        }}
+                    />
 
-                        if (key === "basic") setPacchettoConPrezzo("basic", 0, 0);
-                        if (key === "medium") setPacchettoConPrezzo("medium", 23.85, 47.7);
-                        if (key === "premium") setPacchettoConPrezzo("premium", 27.62, 75.25);
+                    {/* Tutele singole */}
+                    <TuteleDisponibili
+                        prezzi={prezzi}
+                        title="Formule di Tutela disponibili"
+                    />
 
-                        console.log("DOPO", useCheckoutStore.getState().protezioni);
-                    }}
-                />
+                    {/* Extra */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl md:text-2xl font-bold text-black border-b border-gray-100 pb-4">
+                            Extra Disponibili
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <ExtraDisponibili
+                                codice="driver_add"
+                                titolo="Guidatore Addizionale"
+                                prezzo="95.20"
+                                descrizione="Permette a un'altra persona di guidare il veicolo."
+                                isquantity={true}
+                            />
 
-                {/* Tutele singole */}
-                <TuteleDisponibili
-                    prezzi={prezzi}
-                    title="Formule di Tutela disponibili"
-                />
+                            <ExtraDisponibili
+                                codice="child_seat_0_13"
+                                titolo="Seggiolino per bambini 0-13kg con dispositivo antiabbandono"
+                                prezzo="32.20"
+                                descrizione="Seggiolino di sicurezza per neonati."
+                                isquantity={true}
+                            />
 
-                {/* Extra */}
-                <div className="font-semibold text-xl text-black py-4">
-                    Extra Disponibili
-                    <div className="grid grid-cols-2 gap-x-4 py-6">
-                        <ExtraDisponibili
-                            codice="driver_add"
-                            titolo="Guidatore Addizionale"
-                            prezzo="200"
-                            descrizione="adsdsdsadsda"
-                            isquantity={true}
-                            onchange={(value) => console.log("quantity changed:", value)}
-                        />
+                            <ExtraDisponibili
+                                codice="child_seat_9_18"
+                                titolo="Seggiolino per bambini 9-18kg"
+                                prezzo="18.20"
+                                descrizione="Seggiolino di sicurezza per bambini."
+                                isquantity={true}
+                            />
 
-                        <ExtraDisponibili
-                            codice="gps"
-                            titolo="GPS"
-                            prezzo="20"
-                            descrizione="adsdsdsadsda"
-                            isquantity={false}
-                            onchange={(value) => console.log("toggle changed:", value)}
-                        />
+                            <ExtraDisponibili
+                                codice="anti_abandon"
+                                titolo="Dispositivo antiabbandono (obbligatorio sotto i 4 anni)"
+                                prezzo="312.20"
+                                descrizione="Dispositivo di sicurezza obbligatorio per legge."
+                                isquantity={true}
+                            />
+
+                            <ExtraDisponibili
+                                codice="gps"
+                                titolo="Navigatore satellitare"
+                                prezzo="132.20"
+                                descrizione="Navigatore GPS per non perdere mai la strada."
+                                isquantity={false}
+                            />
+
+                            <ExtraDisponibili
+                                codice="young_driver"
+                                titolo="Supplemento Young Driver"
+                                prezzo="232.20"
+                                descrizione="Supplemento per guidatori sotto i 25 anni."
+                                isquantity={true}
+                            />
+
+                            <ExtraDisponibili
+                                codice="booster"
+                                titolo="Rialzo per bambini con schienale (obbligatorio sotto i 150 cm di altezza)"
+                                prezzo="22.90"
+                                descrizione="Rialzo di sicurezza per bambini più grandi."
+                                isquantity={true}
+                            />
+
+                            <ExtraDisponibili
+                                codice="chains"
+                                titolo="Catene da neve"
+                                prezzo="32.20"
+                                descrizione="Catene da neve omologate."
+                                isquantity={true}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

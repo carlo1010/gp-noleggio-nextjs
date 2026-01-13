@@ -1,10 +1,10 @@
 "use client";
 
-import {Button} from "@/components/ui/button";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import {Info} from "lucide-react";
-import {formatPrice} from "@/lib/formatPrice";
-import {useCheckoutStore} from "@/store/checkout.store";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
+import { formatPrice } from "@/lib/formatPrice";
+import { useCheckoutStore } from "@/store/checkout.store";
 
 interface ExtraDisponibiliProps {
     codice: string;
@@ -51,43 +51,66 @@ export default function ExtraDisponibili(props: ExtraDisponibiliProps) {
     };
 
     return (
-        <div className="flex items-center bg-[#F7F7F7] p-4 rounded-br-lg rounded-tl-lg gap-x-4 justify-between">
-            {/* Titolo */}
-            <div className="font-bold">{props.titolo}</div>
-
-            {/* Tooltip */}
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                        <Info/>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>{props.descrizione}</p>
-                </TooltipContent>
-            </Tooltip>
-
-            {/* Prezzo */}
-            <div className="font-bold">{formatPrice(prezzoNumber)}</div>
-
-
-            {/* CTA */}
-            <div>
-                {props.isquantity ? (
-                    <div className="flex items-center gap-x-3">
-                        <Button variant="outline" onClick={decrement} disabled={qty === 0}>
-                            -
-                        </Button>
-
-                        <div className="min-w-[20px] text-center font-semibold">{qty}</div>
-
-                        <Button onClick={increment}>+</Button>
+        <div className={`p-5 rounded-2xl transition-all duration-300 border-2 ${isAdded ? "border-primary bg-white shadow-md" : "border-transparent bg-gray-50/50"
+            }`}>
+            <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <span className="font-bold text-black text-sm md:text-base">{props.titolo}</span>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button className="text-gray-400 hover:text-primary transition-colors">
+                                    <Info className="w-4 h-4" />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="text-xs">{props.descrizione}</p>
+                            </TooltipContent>
+                        </Tooltip>
                     </div>
-                ) : (
-                    <Button variant={isAdded ? "secondary" : "default"} onClick={toggleAdd}>
-                        {isAdded ? "Rimuovi" : "Aggiungi"}
-                    </Button>
-                )}
+                </div>
+
+                <div className="flex items-center justify-between mt-2">
+                    <div className="flex flex-col">
+                        <span className="text-lg font-extrabold text-black">
+                            {formatPrice(prezzoNumber)}
+                        </span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                            / totale
+                        </span>
+                    </div>
+
+                    <div className="flex items-center">
+                        {props.isquantity ? (
+                            <div className="flex items-center bg-white rounded-lg border border-gray-100 shadow-sm p-1">
+                                <button
+                                    onClick={decrement}
+                                    disabled={qty === 0}
+                                    className="w-8 h-8 flex items-center justify-center text-primary disabled:text-gray-300 font-bold transition-colors hover:bg-gray-50 rounded-md"
+                                >
+                                    -
+                                </button>
+                                <div className="min-w-[32px] text-center font-extrabold text-sm text-black">{qty}</div>
+                                <button
+                                    onClick={increment}
+                                    className="w-8 h-8 flex items-center justify-center text-primary font-bold transition-colors hover:bg-gray-50 rounded-md"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        ) : (
+                            <Button
+                                onClick={toggleAdd}
+                                className={`h-10 px-6 font-bold text-sm transition-all ${isAdded
+                                        ? "bg-gray-200 text-gray-500 hover:bg-gray-200"
+                                        : "bg-primary text-white shadow-md hover:shadow-lg"
+                                    }`}
+                            >
+                                {isAdded ? "Aggiunto" : "Aggiungi"}
+                            </Button>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

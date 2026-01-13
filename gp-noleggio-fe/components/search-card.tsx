@@ -188,12 +188,12 @@ export default function SearchCard() {
     return (
         <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full p-4 md:p-8 space-y-4 md:space-y-6">
             {/* RIGA 1: SELETTORI */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* PRIVATO / AZIENDA */}
                 <div className="flex flex-col gap-1.5 md:gap-2">
                     <span className="text-xs md:text-sm font-semibold">Scegli un’opzione</span>
                     <RadioGroup
-                        className="flex flex-row gap-0 border w-full md:min-w-60 rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="flex flex-row gap-0 border w-full lg:w-auto lg:min-w-64 rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={tipoCliente}
                         onValueChange={(val) => setTipoCliente(val as "privato" | "azienda")}
                     >
@@ -205,7 +205,7 @@ export default function SearchCard() {
                         </div>
                         <div className={`flex-1 transition-colors ${tipoCliente === "azienda" ? "bg-[#0700DE]" : "bg-white"}`}>
                             <RadioGroupItem className="sr-only" value="azienda" id="r-azienda" />
-                            <Label htmlFor="r-azienda" className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium w-full h-full ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
+                            <Label htmlFor="r-azienda" className={`flex items-center justify-center gap-2 px-4 py-2.5 cursor-pointer text-sm font-medium w-full h-full ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
                                 <Building className="w-4 h-4" /> Azienda
                             </Label>
                         </div>
@@ -217,7 +217,7 @@ export default function SearchCard() {
                     <span className="text-sm font-semibold">Scegli il tipo di veicolo</span>
 
                     <RadioGroup
-                        className="grid grid-cols-2 gap-0 border w-[280px] rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="grid grid-cols-2 gap-0 border w-full lg:w-auto lg:min-w-64 rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={tipoVeicolo}
                         onValueChange={(val) => setTipoVeicolo(val as "auto" | "furgone")}
                     >
@@ -243,7 +243,7 @@ export default function SearchCard() {
             </div>
 
             {/* MAIN SEARCH GRID */}
-            <div className={`flex flex-col md:grid ${stessoUfficio ? 'md:grid-cols-3' : 'md:grid-cols-4'} gap-4 md:gap-6 items-end`}>
+            <div className={`flex flex-col sm:grid ${stessoUfficio ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} sm:grid-cols-2 gap-4 md:gap-6 items-end`}>
                 {/* CITTÀ RITIRO */}
                 <div className="w-full space-y-2 order-1">
                     <div className="flex flex-row items-center justify-between gap-2 h-5">
@@ -539,66 +539,6 @@ export default function SearchCard() {
                     )}
                 </div>
 
-                {/* SE dropoff diverso ufficio: mostra selettore sede riconsegna */}
-                {!stessoUfficio && (
-                    <div className="col-span-1 space-y-2 animate-in slide-in-from-top-2 duration-300">
-                        <Label htmlFor="dropoff-city" className="font-semibold">
-                            Città riconsegna
-                        </Label>
-
-                        <div className="relative">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE]">
-                                <MapPin className="w-4 h-4" />
-                            </div>
-
-                            <Select
-                                value={dropoffOfficeId}
-                                onValueChange={(v) => {
-                                    const agenzia = (agenzie ?? []).find((a: any) => a.codiceAgenzia === v);
-
-                                    setRiconsegna({
-                                        luogo: v,
-                                        luogoLabel: agenzia?.descrizioneAgenzia ?? v,
-                                    });
-
-                                    setErrors((e) => ({ ...e, dropoffOffice: false }));
-                                }}
-
-                                disabled={isLoadingAgenzie}
-                            >
-                                <SelectTrigger
-                                    className={[
-                                        "w-full h-14 rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none",
-                                        errors.dropoffOffice ? "border-red-500" : "border-gray-300",
-                                    ].join(" ")}
-                                >
-                                    <SelectValue
-                                        placeholder={
-                                            isLoadingAgenzie ? "Caricamento agenzie..." : "Seleziona punto riconsegna"
-                                        }
-                                    />
-                                </SelectTrigger>
-
-                                <SelectContent>
-                                    {(agenzie ?? []).map((a: any) => (
-                                        <SelectItem key={a.codiceAgenzia} value={a.codiceAgenzia}>
-                                            <div className="flex flex-col">
-                                                <span className="font-medium">{a.descrizioneAgenzia}</span>
-                                                <span className="text-xs text-gray-500">
-                                                    {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
-                                                </span>
-                                            </div>
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {errors.dropoffOffice && (
-                            <p className="text-xs text-red-600">Seleziona una sede di riconsegna.</p>
-                        )}
-                    </div>
-                )}
             </div>
 
             {/* FILTRI BASSO & PROMO */}

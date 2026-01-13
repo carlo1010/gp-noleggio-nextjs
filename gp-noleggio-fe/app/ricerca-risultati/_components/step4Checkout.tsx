@@ -7,22 +7,25 @@ import Step4SidebarSummary from "@/app/ricerca-risultati/_components/step4Sideba
 
 export default function Step4Checkout() {
     return (
-        <div className="w-full">
-            {/* ✅ HEADER fuori dal layout */}
+        <div className="w-full bg-white">
+            {/* ✅ HEADER */}
             <Step4Header />
 
             {/* ✅ CONTENUTO */}
-            <div className="container mx-auto">
-                <div className="grid grid-cols-12 gap-6 py-6">
-                    <div className="col-span-12 lg:col-span-8">
-                        <Step4DriverForm />
-                        <Step4Payment />
-                    </div>
+            <div className="container mx-auto px-4 py-8 max-w-[1240px]">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 transition-all duration-300">
 
-                    <div className="col-span-12 lg:col-span-4">
-                        <div className="lg:sticky lg:top-24 flex justify-end">
+                    {/* RIASSUNTO (Sopra su mobile, a lato su tablet/desktop) */}
+                    <div className="md:col-span-4 md:order-2">
+                        <div className="md:sticky md:top-24">
                             <Step4SidebarSummary />
                         </div>
+                    </div>
+
+                    {/* FORM + PAGAMENTO */}
+                    <div className="md:col-span-8 md:order-1 space-y-12">
+                        <Step4DriverForm />
+                        <Step4Payment />
                     </div>
                 </div>
             </div>

@@ -36,7 +36,7 @@ const fleetItems = [
     {
         title: "Furgoni",
         desc: "Scopri la nostra ampia selezione di veicoli commerciali, dai più compatti agli “extra carico”",
-        href: "/flotta/furgoni",
+        href: "/tipo-noleggio/noleggio-furgoni",
         img: "/furgoni2.png",
         imgAlt: "Furgoni",
         width: 237,
