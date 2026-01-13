@@ -159,7 +159,7 @@ const initialCheckoutState: CheckoutState = {
 
 const parseYMDToLocalDate = (yMD: string) => {
     const [y, m, d] = yMD.split('-');
-    return new Date(y, m - 1, d)
+    return new Date(Number(y), Number(m) - 1, Number(d));
 };
 const calcGiorniNoleggio = (dataInizio?: string, dataFine?: string) => {
     if (!dataInizio || !dataFine) return 1;
