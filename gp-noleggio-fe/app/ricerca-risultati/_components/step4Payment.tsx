@@ -111,7 +111,7 @@ export default function Step4Payment() {
                     </div>
 
                     <Button
-                        className="bg-primary hover:bg-blue-800 text-white font-black h-16 px-12 rounded-tl-sm rounded-br-sm text-lg shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+                        className="bg-primary hover:bg-blue-800 text-white font-black h-16 px-12 rounded-tl-2xl rounded-br-2xl text-lg shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
                         onClick={handlePayment}
                     >
                         Paga al ritiro

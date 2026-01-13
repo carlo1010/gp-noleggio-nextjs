@@ -153,7 +153,7 @@ export default function Step4DriverForm() {
                                 value={codicePromo ?? ""}
                                 onChange={(e) => setCodicePromo(e.target.value || undefined)}
                             />
-                            <Button className="h-12 px-6 font-bold bg-primary text-white rounded-tl-sm rounded-br-sm hover:bg-blue-800 transition-colors">
+                            <Button className="h-12 px-6 font-bold bg-primary text-white rounded-tl-xl rounded-br-xl hover:bg-blue-800 transition-colors">
                                 APPLICA
                             </Button>
                         </div>
