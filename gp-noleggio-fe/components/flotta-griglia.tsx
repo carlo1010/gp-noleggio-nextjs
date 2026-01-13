@@ -1,4 +1,4 @@
-import {useIntersection} from "next/dist/client/use-intersection";
+import { useIntersection } from "next/dist/client/use-intersection";
 import Image from "next/image";
 
 interface FlottaGrigliaProps {
@@ -14,12 +14,12 @@ export default function FlottaGriglia(props: FlottaGrigliaProps) {
     return (
         <section className="w-full bg-white">
 
-            <div className="mx-auto max-w-6xl px-4 py-5">
+            <div className="container mx-auto max-w-[1240px] px-4 py-5">
                 <h2 className=" text-2xl font-bold text-black justify-start">
                     {props.title}
                 </h2>
 
-                <div className="mt-10 grid grid-cols-2 gap-x-10 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 py-40">
+                <div className="mt-10 grid grid-cols-2 gap-x-10 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 py-10">
                     {props.cars.map((car, index) => (
                         <div key={index} className="flex flex-col items-center text-center">
                             {/* contenitore immagine */}

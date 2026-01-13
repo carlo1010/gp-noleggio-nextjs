@@ -11,8 +11,10 @@ import ExtraDisponibili from "@/app/ricerca-risultati/_components/extraDisponibi
 import CheckoutTopBar from "@/app/ricerca-risultati/_components/topBarExtra";
 import { useCheckoutStore } from "@/store/checkout.store";
 import Step4Checkout from "@/app/ricerca-risultati/_components/step4Checkout";
+import { useHasHydrated } from "@/hook/useHasHydrated";
 
 export default function RicercaRisultatiClient() {
+    const hasHydrated = useHasHydrated();
     const sp = useSearchParams();
     const step = sp.get("step");
 
@@ -52,6 +54,8 @@ export default function RicercaRisultatiClient() {
     function handleInfo(key: TutelaKey) {
         console.log("Scopri di più:", key);
     }
+
+    if (!hasHydrated) return null;
 
     // 🔁 RENDER IN BASE ALLO STEP
     if (step === "2") {

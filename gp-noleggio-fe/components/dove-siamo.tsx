@@ -3,7 +3,7 @@ import MapClient from "@/components/mappa-cliente";
 export default function DoveSiamo() {
     return (
         <section className="w-full bg-white">
-            <div className="container mx-auto px-4 py-14">
+            <div className="container mx-auto px-4 py-14 max-w-[1240px]">
                 <h2 className="text-3xl md:text-4xl font-bold mb-10">
                     Piccirillo Rent In Italia
                 </h2>

@@ -24,7 +24,7 @@ export default function WhyRent() {
     return (
         <section className="w-full bg-white py-10">
 
-            <div className="container mx-auto px-4 py-16">
+            <div className="container mx-auto px-4 py-16 max-w-[1240px]">
                 <h2 className="text-3xl md:text-4xl font-bold mb-10">
                     Perché noleggiare un’auto con Piccirillo Rent?
                 </h2>

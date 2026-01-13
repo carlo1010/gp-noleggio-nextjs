@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function VantaggiVacanza() {
     return (
         <section className="bg-gray-50 py-35">
-            <div className="mx-auto max-w-[1200px] px-4 grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+            <div className="container mx-auto max-w-[1240px] px-4 grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
 
                 <div>
                     <Image

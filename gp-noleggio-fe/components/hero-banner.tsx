@@ -20,20 +20,19 @@ export default function HeroBanner({ imageUrl, title, description, promo }: Hero
     const hasContent = title || promo;
 
     return (
-        <section className={`relative flex flex-col justify-end pt-38 md:pt-0 ${
-            hasContent
+        <section className={`relative flex flex-col justify-end pt-32 md:pt-0 ${hasContent
                 ? "min-h-dvh md:min-h-[600px] lg:min-h-[750px]"
                 : "min-h-[700px] md:min-h-[600px] lg:min-h-[750px]"
-        }`}>
+            }`}>
             <div className="absolute top-0 left-0 w-full z-40">
-                <OfferBanner/>
+                <OfferBanner />
             </div>
-            <Image src={imageUrl} alt={"logo hero banner"} fill className="object-cover" priority/>
+            <Image src={imageUrl} alt={"logo hero banner"} fill className="object-cover" priority />
 
             {/* OVERLAY CONTENT */}
             {hasContent && (
                 <div className="absolute top-24 md:top-44 left-0 w-full z-10 pointer-events-none">
-                    <div className="container mx-auto px-4">
+                    <div className="container mx-auto px-4 max-w-[1240px]">
                         <div className="flex flex-row md:flex-col justify-between md:justify-start items-start gap-2 md:gap-4">
 
                             {/* LEFT (MOBILE) / BOTTOM (DESKTOP): TITLE & DESCRIPTION */}
@@ -70,11 +69,10 @@ export default function HeroBanner({ imageUrl, title, description, promo }: Hero
             )}
 
             {/* SEARCH CARD CONTAINER */}
-            <div className={`relative w-full z-30 pb-8 md:pb-16 px-2 md:px-4 ${
-                hasContent ? "mt-auto" : ""
-            }`}>
-                <div className="container mx-auto px-4">
-                    <SearchCard/>
+            <div className={`relative w-full z-30 pb-8 md:pb-16 ${hasContent ? "mt-auto" : ""
+                }`}>
+                <div className="container mx-auto px-4 max-w-[1240px]">
+                    <SearchCard />
                 </div>
             </div>
         </section>

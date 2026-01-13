@@ -32,6 +32,8 @@ interface SceltaTariffaProps {
     prezzoGiornalieroOnline: string;
     prezzoTotaleOnline: string;
     prezzoTotaleRitiro: string;
+    codiceTariffa: string;
+
 
     open: boolean;
     onOpenChange: (event: boolean) => void;
@@ -51,7 +53,8 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
     function NextStep(
         tipopagamento: "web" | "ritiro",
         prezzogiornaliero: string,
-        prezzototale: string
+        prezzototale: string,
+        codiceTariffa: string
     ) {
         // 1) salvo veicolo nello store
         setVeicolo({
@@ -70,6 +73,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
             tipo: tipopagamento,
             prezzoGiorno: toNumber(prezzogiornaliero),
             prezzoTotale: toNumber(prezzototale),
+            codiceTariffa: codiceTariffa,
         });
 
         // ✅ debug
@@ -161,7 +165,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
 
                             <Button
                                 onClick={() =>
-                                    NextStep("ritiro", props.prezzoGiornalieroRitiro, props.prezzoTotaleRitiro)
+                                    NextStep("ritiro", props.prezzoGiornalieroRitiro, props.prezzoTotaleRitiro, props.codiceTariffa)
                                 }
                                 className="text-sm"
                             >
@@ -205,7 +209,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
 
                             <Button
                                 onClick={() =>
-                                    NextStep("web", props.prezzoGiornalieroOnline, props.prezzoTotaleOnline)
+                                    NextStep("web", props.prezzoGiornalieroOnline, props.prezzoTotaleOnline, props.codiceTariffa)
                                 }
                                 className="text-sm"
                             >

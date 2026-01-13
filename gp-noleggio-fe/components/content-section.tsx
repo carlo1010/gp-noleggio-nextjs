@@ -1,7 +1,7 @@
 export default function ContenutoVacanza() {
     return (
         <section className="bg-white">
-            <div className="container mx-auto px-4 py-20">
+            <div className="container mx-auto px-4 py-20 max-w-[1240px]">
                 <h2 className="text-2xl font-bold text-gray-900">
                     Lorem ipsum
                 </h2>
@@ -18,27 +18,27 @@ export default function ContenutoVacanza() {
 
                 <ul className="mt-4 list-disc space-y-3 pl-5 text-sm leading-6 text-gray-600">
                     <li>
-            <span className="font-semibold text-gray-700">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            </span>{" "}
+                        <span className="font-semibold text-gray-700">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </span>{" "}
                         Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </li>
                     <li>
-            <span className="font-semibold text-gray-700">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            </span>{" "}
+                        <span className="font-semibold text-gray-700">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </span>{" "}
                         Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </li>
                     <li>
-            <span className="font-semibold text-gray-700">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            </span>{" "}
+                        <span className="font-semibold text-gray-700">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </span>{" "}
                         Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </li>
                     <li>
-            <span className="font-semibold text-gray-700">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            </span>{" "}
+                        <span className="font-semibold text-gray-700">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </span>{" "}
                         Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </li>
                 </ul>
@@ -51,11 +51,11 @@ export default function ContenutoVacanza() {
                 <p className="mt-4 text-sm leading-6 text-gray-600">
                     Lorem ipsum dolor sit amet,{" "}
                     <span className="font-semibold text-gray-700">
-            consectetur adipiscing elit
-          </span>. Sed do eiusmod tempor incididunt ut{" "}
+                        consectetur adipiscing elit
+                    </span>. Sed do eiusmod tempor incididunt ut{" "}
                     <span className="font-semibold text-gray-700">
-            labore et dolore magna aliqua
-          </span>.
+                        labore et dolore magna aliqua
+                    </span>.
                 </p>
 
                 <a

@@ -60,6 +60,7 @@ export default function SceltaVeicolo() {
                         prezzoGiornalieroOnline={veicolo.tariffaWeb}
                         prezzoTotaleRitiro={veicolo.totalTariffaBanco}
                         prezzoTotaleOnline={veicolo.totalTariffaWeb}
+                        codiceTariffa={veicolo.codiceTariffa}
                         open={open}
                         onOpenChange={() => setOpen(false)}
                     />

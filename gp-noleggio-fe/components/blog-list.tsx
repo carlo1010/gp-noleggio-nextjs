@@ -44,7 +44,7 @@ export default async function BlogSection() {
 
     return (
         <section className="w-full bg-white">
-            <div className="container mx-auto px-4 py-14">
+            <div className="container mx-auto px-4 py-14 max-w-[1240px]">
                 <NextBreadcrumb
                     homeElement={'Home'}
                     separator={<span> | </span>}
@@ -61,18 +61,18 @@ export default async function BlogSection() {
                     {items.map((item) => (
                         <article key={item.id} className="flex flex-col group">
 
-                                {/* --- CLICKABLE IMAGE --- */}
-                                <Link href={`/blog/${item.id}`} className="block overflow-hidden rounded-2xl">
-                                    <div className="relative w-full aspect-video">
-                                        <Image
-                                            src={item.img}
-                                            alt={item.imgAlt}
-                                            fill
-                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                            sizes="(max-width: 1024px) 100vw, 33vw"
-                                        />
-                                    </div>
-                                </Link>
+                            {/* --- CLICKABLE IMAGE --- */}
+                            <Link href={`/blog/${item.id}`} className="block overflow-hidden rounded-2xl">
+                                <div className="relative w-full aspect-video">
+                                    <Image
+                                        src={item.img}
+                                        alt={item.imgAlt}
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                        sizes="(max-width: 1024px) 100vw, 33vw"
+                                    />
+                                </div>
+                            </Link>
 
 
                             <div className="mt-6">

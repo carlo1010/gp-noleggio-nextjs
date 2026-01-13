@@ -31,9 +31,11 @@ import { useEffect, useMemo, useState } from "react";
 import { format, startOfDay, isBefore } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/store/checkout.store";
+import { useHasHydrated } from "@/hook/useHasHydrated";
 
 
 export default function SearchCard() {
+    const hasHydrated = useHasHydrated();
     const router = useRouter();
     const parseYMDToLocalDate = (ymd: string) => {
         const [y, m, d] = ymd.split("-").map(Number);
@@ -179,6 +181,10 @@ export default function SearchCard() {
         return false;
     };
 
+    // Se non abbiamo ancora idratato sul client, evitiamo di renderizzare valori
+    // che potrebbero differire dal server per via della persistenza.
+    if (!hasHydrated) return null;
+
     return (
         <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full p-4 md:p-8 space-y-4 md:space-y-6">
             {/* RIGA 1: SELETTORI */}
@@ -192,15 +198,15 @@ export default function SearchCard() {
                         onValueChange={(val) => setTipoCliente(val as "privato" | "azienda")}
                     >
                         <div className={`flex-1 transition-colors border-r ${tipoCliente === "privato" ? "bg-[#0700DE]" : "bg-white"}`}>
-                            <RadioGroupItem className="sr-only" value="privato" id="r-privato"/>
+                            <RadioGroupItem className="sr-only" value="privato" id="r-privato" />
                             <Label htmlFor="r-privato" className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium w-full h-full ${tipoCliente === "privato" ? "text-white" : "text-gray-700"}`}>
-                                <User className="w-4 h-4"/> Privato
+                                <User className="w-4 h-4" /> Privato
                             </Label>
                         </div>
                         <div className={`flex-1 transition-colors ${tipoCliente === "azienda" ? "bg-[#0700DE]" : "bg-white"}`}>
-                            <RadioGroupItem className="sr-only" value="azienda" id="r-azienda"/>
+                            <RadioGroupItem className="sr-only" value="azienda" id="r-azienda" />
                             <Label htmlFor="r-azienda" className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer text-sm font-medium w-full h-full ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
-                                <Building className="w-4 h-4"/> Azienda
+                                <Building className="w-4 h-4" /> Azienda
                             </Label>
                         </div>
                     </RadioGroup>
@@ -412,14 +418,14 @@ export default function SearchCard() {
 
                         <div className="relative">
                             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0700DE]">
-                                <MapPin className="w-4 h-4"/>
+                                <MapPin className="w-4 h-4" />
                             </div>
 
                             <Select
                                 value={dropoffOfficeId}
                                 onValueChange={(v) => {
-                                    setRiconsegna({luogo: v});
-                                    setErrors((e) => ({...e, dropoffOffice: false}));
+                                    setRiconsegna({ luogo: v });
+                                    setErrors((e) => ({ ...e, dropoffOffice: false }));
                                 }}
 
                                 disabled={isLoadingAgenzie}
@@ -443,8 +449,8 @@ export default function SearchCard() {
                                             <div className="flex flex-col">
                                                 <span className="font-medium">{a.descrizioneAgenzia}</span>
                                                 <span className="text-xs text-gray-500">
-                              {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
-                            </span>
+                                                    {a.localitaAgenzia} ({a.provinciaAgenzia}) – {a.indirizzoAgenzia}
+                                                </span>
                                             </div>
                                         </SelectItem>
                                     ))}

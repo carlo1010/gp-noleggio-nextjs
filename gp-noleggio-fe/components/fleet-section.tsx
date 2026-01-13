@@ -89,7 +89,7 @@ export default function FleetSection() {
     }, [isAutoPlaying]);
 
     return (
-        <section className="w-full relative bg-white px-3 pb-8 md:pb-0">
+        <section className="w-full relative bg-white pb-8 md:pb-0">
             {/* ===== FASCIA GRIGIA ===== */}
             <div className="bg-gray-50 h-auto md:h-[422px]">
                 <div className="container mx-auto px-4 pt-14 pb-10 md:pb-0 max-w-[1240px]">

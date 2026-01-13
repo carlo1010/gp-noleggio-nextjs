@@ -1,4 +1,5 @@
-import {create} from "zustand";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type ClienteTipo = "privato" | "azienda";
 export type VeicoloTipo = "auto" | "furgone";
@@ -22,6 +23,8 @@ export type CheckoutState = {
         tipo?: "web" | "ritiro";
         prezzoGiorno: number;
         prezzoTotale: number;
+        codiceTariffa: string;
+
     };
 
 
@@ -75,6 +78,7 @@ type CheckoutActions = {
         tipo: "web" | "ritiro";
         prezzoGiorno: number;
         prezzoTotale: number;
+        codiceTariffa: string;
     }) => void;
 
     // protezioni
@@ -112,8 +116,8 @@ const initialCheckoutState: CheckoutState = {
     search: {
         tipoCliente: "privato",
         tipoVeicolo: "auto",
-        ritiro: {luogo: "", luogoLabel: "", data: "", ora: ""},
-        riconsegna: {luogo: "", luogoLabel: "", data: "", ora: "", stessoUfficio: true},
+        ritiro: { luogo: "", luogoLabel: "", data: "", ora: "" },
+        riconsegna: { luogo: "", luogoLabel: "", data: "", ora: "", stessoUfficio: true },
         eta: 18,
         codicePromo: undefined,
     },
@@ -123,6 +127,7 @@ const initialCheckoutState: CheckoutState = {
         tipo: undefined,
         prezzoGiorno: 0,
         prezzoTotale: 0,
+        codiceTariffa: "",
     },
 
 
@@ -173,175 +178,183 @@ const calcGiorniNoleggio = (dataInizio?: string, dataFine?: string) => {
     return Math.max(1, days);
 };
 
-export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, get) => ({
-    ...initialCheckoutState,
+export const useCheckoutStore = create<CheckoutState & CheckoutActions>()(
+    persist(
+        (set, get) => ({
+            ...initialCheckoutState,
 
-    // step
-    setStep: (step) => set({step}),
+            // step
+            setStep: (step) => set({ step }),
 
-    // search
-    setTipoCliente: (tipoCliente) =>
-        set((s) => ({search: {...s.search, tipoCliente}})),
+            // search
+            setTipoCliente: (tipoCliente) =>
+                set((s) => ({ search: { ...s.search, tipoCliente } })),
 
-    setTipoVeicolo: (tipoVeicolo) =>
-        set((s) => ({search: {...s.search, tipoVeicolo}})),
+            setTipoVeicolo: (tipoVeicolo) =>
+                set((s) => ({ search: { ...s.search, tipoVeicolo } })),
 
-    setRitiro: (patch) =>
-        set((s) => ({search: {...s.search, ritiro: {...s.search.ritiro, ...patch}}})),
+            setRitiro: (patch) =>
+                set((s) => ({ search: { ...s.search, ritiro: { ...s.search.ritiro, ...patch } } })),
 
-    setRiconsegna: (patch) =>
-        set((s) => ({
-            search: {...s.search, riconsegna: {...s.search.riconsegna, ...patch}},
-        })),
+            setRiconsegna: (patch) =>
+                set((s) => ({
+                    search: { ...s.search, riconsegna: { ...s.search.riconsegna, ...patch } },
+                })),
 
-    setEta: (eta) => set((s) => ({search: {...s.search, eta}})),
+            setEta: (eta) => set((s) => ({ search: { ...s.search, eta } })),
 
-    setCodicePromo: (codicePromo) =>
-        set((s) => ({search: {...s.search, codicePromo}})),
+            setCodicePromo: (codicePromo) =>
+                set((s) => ({ search: { ...s.search, codicePromo } })),
 
-    // veicolo
-    setVeicolo: (veicolo) => set({veicolo}),
-    // tariffa
-    setTariffa: (payload) =>
-        set((s) => ({
-            tariffa: {
-                ...s.tariffa,
-                ...payload,
+            // veicolo
+            setVeicolo: (veicolo) => set({ veicolo }),
+            // tariffa
+            setTariffa: (payload) =>
+                set((s) => ({
+                    tariffa: {
+                        ...s.tariffa,
+                        ...payload,
+                    },
+                })),
+
+            clearStep3: () =>
+                set((s) => ({
+                    protezioni: {
+                        ...s.protezioni,
+                        pacchetto: "basic",
+                        prezzoGiorno: 0,
+                        prezzoTotale: 0,
+                        opzioni: [],
+                    },
+                    extra: {},
+                })),
+
+
+            // protezioni
+            setPacchetto: (pacchetto) =>
+                set((s) => ({ protezioni: { ...s.protezioni, pacchetto } })),
+
+            toggleProtezioneOpzione: (codice) =>
+                set((s) => {
+                    const exists = s.protezioni.opzioni.includes(codice);
+                    const opzioni = exists
+                        ? s.protezioni.opzioni.filter((x) => x !== codice)
+                        : [...s.protezioni.opzioni, codice];
+
+                    return { protezioni: { ...s.protezioni, opzioni } };
+                }),
+
+            clearProtezioniOpzioni: () =>
+                set((s) => ({ protezioni: { ...s.protezioni, opzioni: [] } })),
+
+            // extra
+
+
+            setExtra: (codice, titolo, prezzo, quantita) =>
+                set((s) => ({
+                    extra: {
+                        ...s.extra,
+                        [codice]: { titolo, prezzo, quantita: Math.max(0, quantita) },
+                    },
+                })),
+
+            incExtra: (codice, titolo, prezzo) =>
+                set((s) => {
+                    const current = s.extra[codice]?.quantita ?? 0;
+                    return {
+                        extra: {
+                            ...s.extra,
+                            [codice]: { titolo, prezzo, quantita: current + 1 },
+                        },
+                    };
+                }),
+
+            decExtra: (codice) =>
+                set((s) => {
+                    const item = s.extra[codice];
+                    const current = item?.quantita ?? 0;
+                    const next = Math.max(0, current - 1);
+
+                    if (!item) return s;
+
+                    // se arrivi a 0, lo rimuovo dal record (così non resta “sporco”)
+                    if (next === 0) {
+                        const { [codice]: _removed, ...rest } = s.extra;
+                        return { extra: rest };
+                    }
+
+                    return {
+                        extra: {
+                            ...s.extra,
+                            [codice]: { ...item, quantita: next },
+                        },
+                    };
+                }),
+
+            toggleExtra: (codice, titolo, prezzo) =>
+                set((s) => {
+                    const current = s.extra[codice]?.quantita ?? 0;
+
+                    // se esiste (quantita > 0) => rimuovi
+                    if (current > 0) {
+                        const { [codice]: _removed, ...rest } = s.extra;
+                        return { extra: rest };
+                    }
+
+                    // altrimenti aggiungi con quantita 1
+                    return {
+                        extra: {
+                            ...s.extra,
+                            [codice]: { titolo, prezzo, quantita: 1 },
+                        },
+                    };
+                }),
+
+
+            // conducente
+            setConducente: (patch) =>
+                set((s) => ({ conducente: { ...s.conducente, ...patch } })),
+
+            // pagamento
+            setTermini: (value) =>
+                set((s) => ({ pagamento: { ...s.pagamento, terminiAccettati: value } })),
+
+            setTokenCarta: (token) =>
+                set((s) => ({ pagamento: { ...s.pagamento, tokenCarta: token } })),
+
+
+            getTotale: () => {
+                const s = get();
+
+                const base = s.tariffa?.prezzoTotale ?? 0;
+                const protezioniTot = s.protezioni?.prezzoTotale ?? 0;
+
+                const extraTot = Object.values(s.extra ?? {}).reduce((acc, item) => {
+                    const prezzo = Number(item.prezzo) || 0;
+                    const qta = Number(item.quantita) || 0;
+                    return acc + prezzo * qta;
+                }, 0);
+
+                return base + protezioniTot + extraTot;
             },
-        })),
-
-    clearStep3: () =>
-        set((s) => ({
-            protezioni: {
-                ...s.protezioni,
-                pacchetto: "basic",
-                prezzoGiorno: 0,
-                prezzoTotale: 0,
-                opzioni: [],
-            },
-            extra: {},
-        })),
 
 
-    // protezioni
-    setPacchetto: (pacchetto) =>
-        set((s) => ({protezioni: {...s.protezioni, pacchetto}})),
+            // reset
+            resetCheckout: () => set({ ...initialCheckoutState }),
+            setPacchettoConPrezzo: (pacchetto, prezzoGiorno, prezzoTotale) =>
+                set((s) => ({
+                    protezioni: {
+                        ...s.protezioni,
+                        pacchetto,
+                        prezzoGiorno,
+                        prezzoTotale,
+                    },
+                })),
 
-    toggleProtezioneOpzione: (codice) =>
-        set((s) => {
-            const exists = s.protezioni.opzioni.includes(codice);
-            const opzioni = exists
-                ? s.protezioni.opzioni.filter((x) => x !== codice)
-                : [...s.protezioni.opzioni, codice];
-
-            return {protezioni: {...s.protezioni, opzioni}};
         }),
-
-    clearProtezioniOpzioni: () =>
-        set((s) => ({protezioni: {...s.protezioni, opzioni: []}})),
-
-    // extra
-
-
-    setExtra: (codice, titolo, prezzo, quantita) =>
-        set((s) => ({
-            extra: {
-                ...s.extra,
-                [codice]: {titolo, prezzo, quantita: Math.max(0, quantita)},
-            },
-        })),
-
-    incExtra: (codice, titolo, prezzo) =>
-        set((s) => {
-            const current = s.extra[codice]?.quantita ?? 0;
-            return {
-                extra: {
-                    ...s.extra,
-                    [codice]: {titolo, prezzo, quantita: current + 1},
-                },
-            };
-        }),
-
-    decExtra: (codice) =>
-        set((s) => {
-            const item = s.extra[codice];
-            const current = item?.quantita ?? 0;
-            const next = Math.max(0, current - 1);
-
-            if (!item) return s;
-
-            // se arrivi a 0, lo rimuovo dal record (così non resta “sporco”)
-            if (next === 0) {
-                const {[codice]: _removed, ...rest} = s.extra;
-                return {extra: rest};
-            }
-
-            return {
-                extra: {
-                    ...s.extra,
-                    [codice]: {...item, quantita: next},
-                },
-            };
-        }),
-
-    toggleExtra: (codice, titolo, prezzo) =>
-        set((s) => {
-            const current = s.extra[codice]?.quantita ?? 0;
-
-            // se esiste (quantita > 0) => rimuovi
-            if (current > 0) {
-                const {[codice]: _removed, ...rest} = s.extra;
-                return {extra: rest};
-            }
-
-            // altrimenti aggiungi con quantita 1
-            return {
-                extra: {
-                    ...s.extra,
-                    [codice]: {titolo, prezzo, quantita: 1},
-                },
-            };
-        }),
-
-
-    // conducente
-    setConducente: (patch) =>
-        set((s) => ({conducente: {...s.conducente, ...patch}})),
-
-    // pagamento
-    setTermini: (value) =>
-        set((s) => ({pagamento: {...s.pagamento, terminiAccettati: value}})),
-
-    setTokenCarta: (token) =>
-        set((s) => ({pagamento: {...s.pagamento, tokenCarta: token}})),
-
-
-    getTotale: () => {
-        const s = get();
-
-        const base = s.tariffa?.prezzoTotale ?? 0;
-        const protezioniTot = s.protezioni?.prezzoTotale ?? 0;
-
-        const extraTot = Object.values(s.extra ?? {}).reduce((acc, item) => {
-            const prezzo = Number(item.prezzo) || 0;
-            const qta = Number(item.quantita) || 0;
-            return acc + prezzo * qta;
-        }, 0);
-
-        return base + protezioniTot + extraTot;
-    },
-
-
-    // reset
-    resetCheckout: () => set({...initialCheckoutState}),
-    setPacchettoConPrezzo: (pacchetto, prezzoGiorno, prezzoTotale) =>
-        set((s) => ({
-            protezioni: {
-                ...s.protezioni,
-                pacchetto,
-                prezzoGiorno,
-                prezzoTotale,
-            },
-        })),
-
-}));
+        {
+            name: "checkout-storage",
+            storage: createJSONStorage(() => sessionStorage),
+        }
+    )
+);
