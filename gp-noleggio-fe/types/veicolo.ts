@@ -15,4 +15,9 @@ export interface ListaVeicolo {
     totalTariffaBanco: string
     tariffaFranchigiaFurto: string
     tariffaFranchigiaDanno: string
+    cambio?: string
+    posti?: number
+    porte?: number
+    ariaCondizionata?: boolean
+    etaMin?: number
 }

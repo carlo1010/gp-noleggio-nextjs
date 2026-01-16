@@ -188,11 +188,12 @@ export default function PacchettiProtection({
                     {options.map((option) => {
                         const features = parseItems(option.note);
                         const prezzoTotale = option.importo * giorni;
+                        const franchigia = option.franchigiaDanno || option.franchigiaFurto;
                         const header = (
                             <>
                                 <div className="mt-2 text-sm text-gray-600">
                                     Importo massimo addebitabile per danni o furto:{" "}
-                                    {option.franchigiaDanno || option.franchigiaFurto || "—"}
+                                    {franchigia ? formatPrice(franchigia) : "—"}
                                 </div>
                                 <div className="mt-4">
                                     {option.importo === 0 ? (

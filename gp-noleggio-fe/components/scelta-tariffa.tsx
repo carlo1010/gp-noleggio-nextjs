@@ -55,8 +55,16 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
         prezzogiornaliero: string,
         prezzototale: string
     ) {
+        const etaMin = Number.parseInt(props.eta, 10);
         // 1) salvo veicolo nello store
-        setVeicolo(props.veicolo);
+        setVeicolo({
+            ...props.veicolo,
+            cambio: props.cambio,
+            posti: props.posti,
+            porte: props.porte,
+            ariaCondizionata: props.ariaCondizionata,
+            etaMin: Number.isNaN(etaMin) ? undefined : etaMin,
+        });
 
         // 2) salvo tariffa nello store
         setTariffa({
