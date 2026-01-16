@@ -83,6 +83,12 @@ export default function StepStatus() {
 
     const nomeVeicolo = veicolo?.descrizioneClasse || "—";
     const prezzoVeicolo = tariffa?.prezzoTotale ? formatPrice(tariffa.prezzoTotale) : "—";
+    const tipoPagamentoLabel =
+        tariffa?.tipo === "web"
+            ? " (online)"
+            : tariffa?.tipo === "ritiro"
+                ? " (al ritiro)"
+                : "";
 
     const protezioniPrezzo = protezioni?.prezzoTotale ? formatPrice(protezioni.prezzoTotale) : "Incluso";
 
@@ -94,8 +100,7 @@ export default function StepStatus() {
         `${boxBase} ${activeStep === n ? "border-primary" : "border-transparent"}`;
 
     const badgeClass = (n: number) =>
-        `flex items-center justify-center rounded-full text-white w-6 h-6 ${
-            activeStep === n ? "bg-primary" : "bg-[#D9D9D9]"
+        `flex items-center justify-center rounded-full text-white w-6 h-6 ${activeStep === n ? "bg-primary" : "bg-[#D9D9D9]"
         }`;
 
     const titleClass = (n: number) =>
@@ -155,7 +160,7 @@ export default function StepStatus() {
 
                 <div className="flex flex-col items-start justify-end w-full">
                     <p className="font-bold">{nomeVeicolo}</p>
-                    <p className="text-[#696969] mt-2">{prezzoVeicolo}</p>
+                    <p className="text-[#696969] mt-2">{prezzoVeicolo}{tipoPagamentoLabel}</p>
                 </div>
             </div>
 

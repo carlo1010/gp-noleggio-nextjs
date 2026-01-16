@@ -1,7 +1,7 @@
-import {create} from "zustand";
+import { create } from "zustand";
 
-import type {ListaVeicolo} from "@/types/veicolo";
-import {calcDays} from "@/lib/date";
+import type { ListaVeicolo } from "@/types/veicolo";
+import { calcDays } from "@/lib/date";
 
 export type ClienteTipo = "privato" | "azienda";
 export type VeicoloTipo = "auto" | "furgone";
@@ -76,6 +76,8 @@ export type CheckoutState = {
         tokenCarta?: string;
         terminiAccettati: boolean;
     };
+
+    visitedSteps: number[];
 };
 
 type CheckoutActions = {
@@ -142,6 +144,8 @@ type CheckoutActions = {
     ) => void;
     clearStep3: () => void;
 
+    addVisitedStep: (step: number) => void;
+
 
 };
 
@@ -151,8 +155,8 @@ const initialCheckoutState: CheckoutState = {
     search: {
         tipoCliente: "privato",
         tipoVeicolo: "auto",
-        ritiro: {luogo: "", luogoLabel: "", data: "", ora: ""},
-        riconsegna: {luogo: "", luogoLabel: "", data: "", ora: "", stessoUfficio: true},
+        ritiro: { luogo: "", luogoLabel: "", data: "", ora: "" },
+        riconsegna: { luogo: "", luogoLabel: "", data: "", ora: "", stessoUfficio: true },
         eta: 18,
         codicePromo: undefined,
     },
@@ -193,6 +197,8 @@ const initialCheckoutState: CheckoutState = {
         tokenCarta: undefined,
         terminiAccettati: false,
     },
+
+    visitedSteps: [1],
 };
 
 
@@ -203,30 +209,30 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
     ...initialCheckoutState,
 
     // step
-    setStep: (step) => set({step}),
+    setStep: (step) => set({ step }),
 
     // search
     setTipoCliente: (tipoCliente) =>
-        set((s) => ({search: {...s.search, tipoCliente}})),
+        set((s) => ({ search: { ...s.search, tipoCliente } })),
 
     setTipoVeicolo: (tipoVeicolo) =>
-        set((s) => ({search: {...s.search, tipoVeicolo}})),
+        set((s) => ({ search: { ...s.search, tipoVeicolo } })),
 
     setRitiro: (patch) =>
-        set((s) => ({search: {...s.search, ritiro: {...s.search.ritiro, ...patch}}})),
+        set((s) => ({ search: { ...s.search, ritiro: { ...s.search.ritiro, ...patch } } })),
 
     setRiconsegna: (patch) =>
         set((s) => ({
-            search: {...s.search, riconsegna: {...s.search.riconsegna, ...patch}},
+            search: { ...s.search, riconsegna: { ...s.search.riconsegna, ...patch } },
         })),
 
-    setEta: (eta) => set((s) => ({search: {...s.search, eta}})),
+    setEta: (eta) => set((s) => ({ search: { ...s.search, eta } })),
 
     setCodicePromo: (codicePromo) =>
-        set((s) => ({search: {...s.search, codicePromo}})),
+        set((s) => ({ search: { ...s.search, codicePromo } })),
 
     // veicolo
-    setVeicolo: (veicolo) => set({veicolo}),
+    setVeicolo: (veicolo) => set({ veicolo }),
     // tariffa
     setTariffa: (payload) =>
         set((s) => ({
@@ -252,7 +258,7 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
 
     // protezioni
     setPacchetto: (pacchetto) =>
-        set((s) => ({protezioni: {...s.protezioni, pacchetto}})),
+        set((s) => ({ protezioni: { ...s.protezioni, pacchetto } })),
 
     toggleProtezioneOpzione: (codice) =>
         set((s) => {
@@ -261,16 +267,16 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
                 ? s.protezioni.opzioni.filter((x) => x !== codice)
                 : [...s.protezioni.opzioni, codice];
 
-            return {protezioni: {...s.protezioni, opzioni}};
+            return { protezioni: { ...s.protezioni, opzioni } };
         }),
 
     clearProtezioniOpzioni: () =>
-        set((s) => ({protezioni: {...s.protezioni, opzioni: []}})),
+        set((s) => ({ protezioni: { ...s.protezioni, opzioni: [] } })),
 
     // extra
 
 
-    setServizio: ({codice, titolo, descrizione, prezzo, quantita, flagQtaServizio}) =>
+    setServizio: ({ codice, titolo, descrizione, prezzo, quantita, flagQtaServizio }) =>
         set((s) => ({
             servizi: {
                 ...s.servizi,
@@ -313,14 +319,14 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
 
             // se arrivi a 0, lo rimuovo dal record (così non resta “sporco”)
             if (next === 0) {
-                const {[codice]: _removed, ...rest} = s.servizi;
-                return {servizi: rest};
+                const { [codice]: _removed, ...rest } = s.servizi;
+                return { servizi: rest };
             }
 
             return {
                 servizi: {
                     ...s.servizi,
-                    [codice]: {...item, quantita: next},
+                    [codice]: { ...item, quantita: next },
                 },
             };
         }),
@@ -331,15 +337,15 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
 
             // se esiste (quantita > 0) => rimuovi
             if (current > 0) {
-                const {[codice]: _removed, ...rest} = s.servizi;
-                return {servizi: rest};
+                const { [codice]: _removed, ...rest } = s.servizi;
+                return { servizi: rest };
             }
 
             // altrimenti aggiungi con quantita 1
             return {
                 servizi: {
                     ...s.servizi,
-                    [codice]: {codice, titolo, descrizione, prezzo, quantita: 1, flagQtaServizio},
+                    [codice]: { codice, titolo, descrizione, prezzo, quantita: 1, flagQtaServizio },
                 },
             };
         }),
@@ -347,14 +353,14 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
 
     // conducente
     setConducente: (patch) =>
-        set((s) => ({conducente: {...s.conducente, ...patch}})),
+        set((s) => ({ conducente: { ...s.conducente, ...patch } })),
 
     // pagamento
     setTermini: (value) =>
-        set((s) => ({pagamento: {...s.pagamento, terminiAccettati: value}})),
+        set((s) => ({ pagamento: { ...s.pagamento, terminiAccettati: value } })),
 
     setTokenCarta: (token) =>
-        set((s) => ({pagamento: {...s.pagamento, tokenCarta: token}})),
+        set((s) => ({ pagamento: { ...s.pagamento, tokenCarta: token } })),
 
 
     getTotale: () => {
@@ -376,7 +382,7 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
 
 
     // reset
-    resetCheckout: () => set({...initialCheckoutState}),
+    resetCheckout: () => set({ ...initialCheckoutState }),
     setPacchettoConPrezzo: (pacchetto, prezzoGiorno, selezionata) =>
         set((s) => ({
             protezioni: {
@@ -387,5 +393,13 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
                 selezionata,
             },
         })),
+
+    // navigation guards
+    visitedSteps: [1],
+    addVisitedStep: (step) =>
+        set((s) => {
+            if (s.visitedSteps.includes(step)) return s;
+            return { visitedSteps: [...s.visitedSteps, step] };
+        }),
 
 }));
