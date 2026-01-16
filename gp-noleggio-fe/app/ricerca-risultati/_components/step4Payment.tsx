@@ -107,7 +107,7 @@ export default function Step4Payment() {
             {/* Footer Action */}
             <div className="flex items-center gap-6">
                 <Button
-                    className="bg-[#0700DE] hover:bg-[#0600b3] text-white font-bold h-12 px-8 rounded-md text-base"
+                    className="bg-[#0700DE] hover:bg-[#0600b3] text-white font-bold h-12 px-8 rounded-none rounded-tl-sm rounded-br-sm text-base"
                     onClick={handlePayment}
                 >
                     Paga al ritiro

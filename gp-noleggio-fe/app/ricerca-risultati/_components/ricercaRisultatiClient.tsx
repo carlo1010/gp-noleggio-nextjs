@@ -219,7 +219,7 @@ export default function RicercaRisultatiClient() {
 
     if (step === "3") {
         return (
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-0">
                 {/* Top bar con totale calcolato da Zustand */}
                 <CheckoutTopBar totale={totale} />
 
@@ -235,7 +235,7 @@ export default function RicercaRisultatiClient() {
                 {/* Extra */}
                 <div className="font-semibold text-xl text-black py-4">
                     Extra Disponibili
-                    <div className="grid grid-cols-2 gap-4 py-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-6">
                         {extra.map((item) => (
                             <ExtraDisponibili
                                 key={item.codiceServizio}

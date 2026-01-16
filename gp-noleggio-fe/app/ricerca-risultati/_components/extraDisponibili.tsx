@@ -1,11 +1,11 @@
 "use client";
 
-import {Button} from "@/components/ui/button";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import {Info} from "lucide-react";
-import {formatPrice} from "@/lib/formatPrice";
-import {useCheckoutStore} from "@/store/checkout.store";
-import {parsePrice} from "@/lib/price";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
+import { formatPrice } from "@/lib/formatPrice";
+import { useCheckoutStore } from "@/store/checkout.store";
+import { parsePrice } from "@/lib/price";
 
 interface ExtraDisponibiliProps {
     codice: string;
@@ -52,14 +52,14 @@ export default function ExtraDisponibili(props: ExtraDisponibiliProps) {
     };
 
     return (
-        <div className="flex items-center bg-[#F7F7F7] p-4 rounded-br-lg rounded-tl-lg justify-between">
-            {/* Left: Titolo + tooltip */}
-            <div className="flex items-center gap-x-3">
-                <div className="font-bold">{props.titolo}</div>
+        <div className="flex flex-col bg-[#F7F7F7] p-4 rounded-br-lg rounded-tl-lg gap-4 h-full">
+            {/* Top: Titolo + tooltip */}
+            <div className="flex items-start justify-between gap-x-3 w-full">
+                <div className="font-bold leading-tight">{props.titolo}</div>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Info/>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 -mt-1 -mr-2 text-gray-400 hover:text-gray-600">
+                            <Info size={16} />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -68,24 +68,32 @@ export default function ExtraDisponibili(props: ExtraDisponibiliProps) {
                 </Tooltip>
             </div>
 
-            {/* Right: Prezzo + CTA */}
-            <div className="flex items-center gap-x-4">
-                <div className="font-bold">{formatPrice(prezzoNumber)}</div>
-                {props.isquantity ? (
-                    <div className="flex items-center gap-x-3">
-                        <Button variant="outline" onClick={decrement} disabled={qty === 0}>
-                            -
+            {/* Bottom: Prezzo + CTA - Spaced between */}
+            <div className="flex items-center justify-between mt-auto w-full pt-2">
+                <div className="font-bold whitespace-nowrap">{formatPrice(prezzoNumber)}</div>
+
+                <div className="flex-shrink-0">
+                    {props.isquantity ? (
+                        <div className="flex items-center gap-x-3 bg-white rounded-md border p-1 border-gray-200">
+                            <Button variant="ghost" className="h-8 w-8 p-0" onClick={decrement} disabled={qty === 0}>
+                                -
+                            </Button>
+
+                            <div className="min-w-[20px] text-center font-semibold text-sm">{qty}</div>
+
+                            <Button className="h-8 w-8 p-0" onClick={increment}>+</Button>
+                        </div>
+                    ) : (
+                        <Button
+                            variant={isAdded ? "secondary" : "default"}
+                            onClick={toggleAdd}
+                            size="sm"
+                            className="h-9 px-4"
+                        >
+                            {isAdded ? "Rimuovi" : "Aggiungi"}
                         </Button>
-
-                        <div className="min-w-[20px] text-center font-semibold">{qty}</div>
-
-                        <Button onClick={increment}>+</Button>
-                    </div>
-                ) : (
-                    <Button variant={isAdded ? "secondary" : "default"} onClick={toggleAdd}>
-                        {isAdded ? "Rimuovi" : "Aggiungi"}
-                    </Button>
-                )}
+                    )}
+                </div>
             </div>
         </div>
     );

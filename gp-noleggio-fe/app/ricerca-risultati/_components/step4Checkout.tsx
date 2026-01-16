@@ -12,8 +12,8 @@ export default function Step4Checkout() {
             <Step4Header />
 
             {/* ✅ CONTENUTO */}
-            <div className="container mx-auto">
-                <div className="grid grid-cols-12 gap-6 py-6">
+            <div className="container mx-auto px-4 md:px-8 lg:px-0">
+                <div className="flex flex-col-reverse lg:grid lg:grid-cols-12 gap-6 py-6">
                     <div className="col-span-12 lg:col-span-8">
                         <Step4DriverForm />
                         <Step4Payment />

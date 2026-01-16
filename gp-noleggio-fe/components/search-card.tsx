@@ -243,7 +243,7 @@ export default function SearchCard() {
             </div>
 
             {/* MAIN SEARCH GRID */}
-            <div className="grid grid-cols-3 gap-x-3 gap-y-6 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-6 items-end">
                 {/* CITTÀ RITIRO */}
                 <div className="col-span-1 space-y-2">
                     <div className="flex items-center justify-between">
@@ -548,14 +548,14 @@ export default function SearchCard() {
             </div>
 
             {/* FILTRI BASSO & PROMO */}
-            <div className="grid grid-cols-4 pt-4 items-center gap-y-4">
-                <div className="flex justify-start gap-x-12 flex-row col-span-3">
+            <div className="flex flex-col md:flex-row flex-wrap items-center justify-between pt-4 gap-4">
+                <div className="flex flex-col md:flex-row flex-wrap justify-start items-center gap-4 md:gap-x-12 w-full md:w-auto">
                     {/* ETA */}
-                    <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-700">Età</span>
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                        <span className="text-sm text-gray-700 whitespace-nowrap">Età</span>
                         <Select value={String(eta)} onValueChange={(v) => setEta(Number(v))}>
                             <SelectTrigger
-                                className="h-10 w-[90px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
+                                className="h-10 w-full md:w-[90px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
                                 <SelectValue placeholder="Età" />
                             </SelectTrigger>
                             <SelectContent>
@@ -567,11 +567,11 @@ export default function SearchCard() {
                     </div>
 
                     {/* VIVO IN (resta locale) */}
-                    <div className="flex items-center gap-3">
-                        <span className="text-sm text-gray-700">Vivo in</span>
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                        <span className="text-sm text-gray-700 whitespace-nowrap">Vivo in</span>
                         <Select value={country} onValueChange={(v) => setCountry(v as "italia" | "estero")}>
                             <SelectTrigger
-                                className="h-10 w-[140px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
+                                className="h-10 w-full md:w-[140px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
                                 <SelectValue placeholder="Paese" />
                             </SelectTrigger>
                             <SelectContent>
@@ -582,7 +582,7 @@ export default function SearchCard() {
                     </div>
 
                     {/* CODICE PROMO */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 w-full md:w-auto">
                         <div className="flex items-center gap-2 text-sm text-gray-800">
                             <Checkbox
                                 id="hasPromo"
@@ -593,10 +593,12 @@ export default function SearchCard() {
                                     if (!checked) setCodicePromo(undefined);
                                 }}
                             />
-                            <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-s md:text-sm">
-                                <span className="hidden xs:inline">Ho un </span><span
-                                    className="font-semibold">Codice sconto</span>
-                            </label>
+                            {!hasPromo && (
+                                <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-s md:text-sm">
+                                    <span className="hidden xs:inline">Ho un </span><span
+                                        className="font-semibold">Codice sconto</span>
+                                </label>
+                            )}
                         </div>
 
                         {hasPromo && (
@@ -613,7 +615,7 @@ export default function SearchCard() {
                     </div>
                 </div>
 
-                <div className="col-span-1">
+                <div className="w-full md:w-auto min-w-[150px]">
                     <Button
                         onClick={handleSearch}
                         type="button"
