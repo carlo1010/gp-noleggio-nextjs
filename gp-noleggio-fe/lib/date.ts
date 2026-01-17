@@ -33,5 +33,6 @@ export function calcDays(start?: string, end?: string) {
 
     const ms = endDate.getTime() - startDate.getTime();
     const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-    return Math.max(1, days);
+    // Aggiungo +1 per contare il giorno di ritiro come richiesto
+    return Math.max(1, days + 1);
 }
