@@ -83,6 +83,12 @@ export default function StepStatus() {
 
     const nomeVeicolo = veicolo?.descrizioneClasse || "—";
     const prezzoVeicolo = tariffa?.prezzoTotale ? formatPrice(tariffa.prezzoTotale) : "—";
+    const tipoPagamentoLabel =
+        tariffa?.tipo === "web"
+            ? " (online)"
+            : tariffa?.tipo === "ritiro"
+                ? " (al ritiro)"
+                : "";
 
     const protezioniPrezzo = protezioni?.prezzoTotale ? formatPrice(protezioni.prezzoTotale) : "Incluso";
 
@@ -94,17 +100,16 @@ export default function StepStatus() {
         `${boxBase} ${activeStep === n ? "border-primary" : "border-transparent"}`;
 
     const badgeClass = (n: number) =>
-        `flex items-center justify-center rounded-full text-white w-6 h-6 ${
-            activeStep === n ? "bg-primary" : "bg-[#D9D9D9]"
+        `flex items-center justify-center rounded-full text-white w-6 h-6 ${activeStep === n ? "bg-primary" : "bg-[#D9D9D9]"
         }`;
 
     const titleClass = (n: number) =>
         `font-bold uppercase text-sm ${activeStep === n ? "text-primary" : "text-[#686868]"}`;
 
     return (
-        <div className="grid grid-cols-6 gap-x-4">
+        <div className="flex lg:grid lg:grid-cols-6 gap-x-4 overflow-x-auto pb-2 lg:pb-0 scrollbar-hide">
             {/* STEP 1 */}
-            <div className={`col-span-2 ${boxClass(1)}`}>
+            <div className={`min-w-[85%] md:min-w-[40%] lg:min-w-0 lg:col-span-2 ${boxClass(1)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
                         <div className={badgeClass(1)}>1</div>
@@ -121,7 +126,9 @@ export default function StepStatus() {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-2">
+
+
+                <div className="hidden lg:grid grid-cols-2 gap-x-2">
                     <div className="flex flex-col items-start justify-start w-full">
                         <p className="font-bold">Ritiro</p>
                         <p className="font-bold">{luogoRitiro}</p>
@@ -136,7 +143,7 @@ export default function StepStatus() {
             </div>
 
             {/* STEP 2 */}
-            <div className={`col-span-1 ${boxClass(2)}`}>
+            <div className={`min-w-[85%] md:min-w-[40%] lg:min-w-0 lg:col-span-1 ${boxClass(2)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
                         <div className={badgeClass(2)}>2</div>
@@ -153,14 +160,17 @@ export default function StepStatus() {
                     </button>
                 </div>
 
-                <div className="flex flex-col items-start justify-end w-full">
+
+
+                <div className="hidden lg:flex flex-col items-start justify-end w-full">
                     <p className="font-bold">{nomeVeicolo}</p>
-                    <p className="text-[#696969] mt-2">{prezzoVeicolo}</p>
+                    <p className="text-[#696969] mt-2">{prezzoVeicolo}{tipoPagamentoLabel}</p>
                 </div>
-            </div>
+            </div >
 
             {/* STEP 3 */}
-            <div className={`col-span-2 ${boxClass(3)}`}>
+            < div className={`min-w-[85%] md:min-w-[40%] lg:min-w-0 lg:col-span-2 ${boxClass(3)}`
+            }>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
                         <div className={badgeClass(3)}>3</div>
@@ -177,7 +187,9 @@ export default function StepStatus() {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-x-2">
+
+
+                <div className="hidden lg:grid grid-cols-2 gap-x-2">
                     <div className="flex flex-col items-start justify-start w-full">
                         <p className="font-bold">{pacchettoLabel}</p>
                         <p className="text-[#696969] mt-2">{protezioniPrezzo}</p>
@@ -188,10 +200,10 @@ export default function StepStatus() {
                         <p className="text-[#696969] mt-2">{formatPrice(extraTotale)}</p>
                     </div>
                 </div>
-            </div>
+            </div >
 
             {/* STEP 4 (riepilogo) */}
-            <div className={`col-span-1 ${boxClass(4)}`}>
+            < div className={`min-w-[85%] md:min-w-[40%] lg:min-w-0 lg:col-span-1 ${boxClass(4)}`}>
                 <div className="flex items-center w-full justify-between">
                     <div className="flex items-center w-full gap-x-2">
                         <div className={badgeClass(4)}>4</div>
@@ -208,11 +220,13 @@ export default function StepStatus() {
                     </button>
                 </div>
 
-                <div className="flex flex-col items-start justify-start w-full">
+
+
+                <div className="hidden lg:flex flex-col items-start justify-start w-full">
                     <p className="font-bold">Prezzo Totale</p>
                     <p className="text-[#696969] mt-2">{formatPrice(totale)}</p>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

@@ -1,13 +1,13 @@
 "use client";
 
-import React, {useMemo} from "react";
-import {Button} from "@/components/ui/button";
+import React, { useMemo } from "react";
+import { Button } from "@/components/ui/button";
 
 import MartelloIcon from "@/components/svg/martello";
 import FuocoIcon from "@/components/svg/fuoco";
 import CamioncinoRifiuti from "@/components/svg/camioncinoRifiuti";
 
-import {formatPrice} from "@/lib/formatPrice";
+import { formatPrice } from "@/lib/formatPrice";
 import {
     Dialog,
     DialogContent,
@@ -17,15 +17,15 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-import {useCheckoutStore} from "@/store/checkout.store";
-import type {Servizi} from "@/types/servizi";
-import {calcDays} from "@/lib/date";
-import {parsePrice} from "@/lib/price";
+import { useCheckoutStore } from "@/store/checkout.store";
+import type { Servizi } from "@/types/servizi";
+import { calcDays } from "@/lib/date";
+import { parsePrice } from "@/lib/price";
 
 export function TuteleDisponibili({
-                                      servizi,
-                                      title = "Formule di Tutela disponibili",
-                                  }: Readonly<{
+    servizi,
+    title = "Formule di Tutela disponibili",
+}: Readonly<{
     servizi: Servizi[];
     title?: string;
 }>) {
@@ -38,13 +38,13 @@ export function TuteleDisponibili({
         () => calcDays(ritiro?.data, riconsegna?.data),
         [ritiro?.data, riconsegna?.data]
     );
-    const icons = [<MartelloIcon/>, <FuocoIcon/>, <CamioncinoRifiuti/>];
+    const icons = [<MartelloIcon />, <FuocoIcon />, <CamioncinoRifiuti />];
 
     return (
         <div className="w-full">
             <div className="text-lg font-semibold mb-6 text-left">{title}</div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {servizi.map((servizio, index) => {
                     const codice = servizio.codiceServizio;
                     const nome = servizio.descrizioneServizio;
@@ -81,13 +81,13 @@ export function TuteleDisponibili({
                                     </DialogTrigger>
                                     <DialogContent className="sm:max-w-[520px]">
                                         <DialogHeader>
-                                        <DialogTitle>{nome}</DialogTitle>
-                                        <DialogDescription>
-                                            {servizio.noteServizio || "Dettaglio tutela disponibile."}
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                </DialogContent>
-                            </Dialog>
+                                            <DialogTitle>{nome}</DialogTitle>
+                                            <DialogDescription>
+                                                {servizio.noteServizio || "Dettaglio tutela disponibile."}
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                    </DialogContent>
+                                </Dialog>
                             </div>
 
                             {/* Prezzo */}

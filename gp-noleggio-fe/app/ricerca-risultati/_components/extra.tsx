@@ -1,7 +1,7 @@
-import React, {useEffect, useMemo, useState} from "react";
-import {formatPrice} from "@/lib/formatPrice";
-import {useCheckoutStore} from "@/store/checkout.store";
-import {calcDays} from "@/lib/date";
+import React, { useEffect, useMemo, useState } from "react";
+import { formatPrice } from "@/lib/formatPrice";
+import { useCheckoutStore } from "@/store/checkout.store";
+import { calcDays } from "@/lib/date";
 
 
 import {
@@ -11,7 +11,7 @@ import {
     DialogTitle,
     DialogDescription,
 } from "@/components/ui/dialog";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export type ProtectionKey = string;
 
@@ -31,13 +31,13 @@ type PacchettiProtectionProps = {
 };
 
 function Card({
-                  title,
-                  isSelected,
-                  onSelect,
-                  header,
-                  features,
-                  onMoreDetails,
-              }: {
+    title,
+    isSelected,
+    onSelect,
+    header,
+    features,
+    onMoreDetails,
+}: {
     title: string;
     isSelected: boolean;
     onSelect: () => void;
@@ -63,9 +63,9 @@ function Card({
                 <ul className="space-y-3 flex-1">
                     {features.map((f, i) => (
                         <li key={i} className="flex gap-3 text-sm text-gray-800">
-              <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white">
-                ✓
-              </span>
+                            <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-white">
+                                ✓
+                            </span>
                             {f}
                         </li>
                     ))}
@@ -104,9 +104,9 @@ function Card({
 }
 
 export default function PacchettiProtection({
-                                                options,
-                                                onChange,
-                                            }: PacchettiProtectionProps) {
+    options,
+    onChange,
+}: PacchettiProtectionProps) {
     // ✅ Basic selezionato di default
     const selected = useCheckoutStore(s => s.protezioni.pacchetto);
     const setPacchettoConPrezzo = useCheckoutStore(s => s.setPacchettoConPrezzo);
@@ -179,20 +179,21 @@ export default function PacchettiProtection({
 
     return (
         <>
-            <section className={"py-10"}>
+            <section className={"py-6 md:py-10"}>
                 <div className="mb-10  text-xl font-semibold ">
                     Pacchetti Protection
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 items-stretch">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                     {options.map((option) => {
                         const features = parseItems(option.note);
                         const prezzoTotale = option.importo * giorni;
+                        const franchigia = option.franchigiaDanno || option.franchigiaFurto;
                         const header = (
                             <>
                                 <div className="mt-2 text-sm text-gray-600">
                                     Importo massimo addebitabile per danni o furto:{" "}
-                                    {option.franchigiaDanno || option.franchigiaFurto || "—"}
+                                    {franchigia ? formatPrice(franchigia) : "—"}
                                 </div>
                                 <div className="mt-4">
                                     {option.importo === 0 ? (

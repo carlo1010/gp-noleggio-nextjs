@@ -43,16 +43,22 @@ export default function SceltaVeicolo() {
 
                 if (!veicolo) return null;
 
+                const cambio = veicolo.cambio ?? "Automatico";
+                const posti = veicolo.posti ?? 4;
+                const porte = veicolo.porte ?? 3;
+                const ariaCondizionata = veicolo.ariaCondizionata ?? true;
+                const etaMin = veicolo.etaMin ?? 18;
+
                 return (
                     <SceltaTariffa
                         veicolo={veicolo}
                         imageUrl={veicolo.urlImmagine}
                         nome={veicolo.descrizioneClasse}
-                        cambio={"automatico"}
-                        posti={4}
-                        ariaCondizionata={true}
-                        eta="26"
-                        porte={2}
+                        cambio={cambio}
+                        posti={posti}
+                        ariaCondizionata={ariaCondizionata}
+                        eta={String(etaMin)}
+                        porte={porte}
                         alimentazione={"Benzina"}
                         prezzoGiornalieroRitiro={veicolo.tariffaBanco}
                         prezzoGiornalieroOnline={veicolo.tariffaWeb}
@@ -81,17 +87,24 @@ export default function SceltaVeicolo() {
                     </div>
                 )}
 
-                {veicoli?.map((veicolo, idx: number) => (
+                {veicoli?.map((veicolo, idx: number) => {
+                    const cambio = veicolo.cambio ?? "Automatico";
+                    const posti = veicolo.posti ?? 4;
+                    const porte = veicolo.porte ?? 3;
+                    const ariaCondizionata = veicolo.ariaCondizionata ?? true;
+                    const etaMin = veicolo.etaMin ?? 18;
+
+                    return (
                     <CardNoleggio
                         key={veicolo.codiceClasse}
                         imageUrl={veicolo.urlImmagine}
                         nome={veicolo.descrizioneClasse}
                         codiceClasse={veicolo.codiceClasse}
-                        cambio={"Automatico"}
-                        posti={4}
-                        ariaCondizionata={true}
-                        eta={"26+"}
-                        porte={3}
+                        cambio={cambio}
+                        posti={posti}
+                        ariaCondizionata={ariaCondizionata}
+                        eta={`${etaMin}+`}
+                        porte={porte}
                         openDialog={(event, codiceClasse) => {
                             setSelectedVeicolo(codiceClasse);
                             setOpen(true);
@@ -100,7 +113,8 @@ export default function SceltaVeicolo() {
                         prezzoTotale={veicolo.totalTariffaWeb}
                         prezzoGiornaliero={veicolo.tariffaWeb}
                     />
-                ))}
+                    );
+                })}
             </div>
         </>
     );
