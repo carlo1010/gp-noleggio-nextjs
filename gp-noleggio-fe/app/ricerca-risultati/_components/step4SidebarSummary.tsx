@@ -184,12 +184,12 @@ function SummaryCard() {
                             <div>
                                 <p className="font-bold text-gray-900">Ritiro</p>
                                 <p className="font-bold text-gray-900">{ritiro?.luogoLabel ?? "—"}</p>
-                                <p className="text-gray-500">{ritiro?.data ?? "—"}</p>
+                                <p className="text-gray-500">{ritiro?.data ?? "—"} {ritiro?.ora}</p>
                             </div>
                             <div>
                                 <p className="font-bold text-gray-900">Riconsegna</p>
                                 <p className="font-bold text-gray-900">{riconsegna?.luogoLabel ?? "—"}</p>
-                                <p className="text-gray-500">{riconsegna?.data ?? "—"}</p>
+                                <p className="text-gray-500">{riconsegna?.data ?? "—"} {riconsegna?.ora}</p>
                             </div>
                         </div>
                     </div>
