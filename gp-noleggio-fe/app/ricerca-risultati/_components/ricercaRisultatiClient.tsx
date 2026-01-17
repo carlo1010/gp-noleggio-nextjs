@@ -146,14 +146,14 @@ export default function RicercaRisultatiClient() {
         // 1. Check Step 1 Data (search params in store)
         // If we don't have search data (e.g. ritiro.data), we shouldn't be here -> Home
         // Exception: maybe we rehydrated from URL? But for now, strict check on store.
-        if (!searchData) {
+        if (!searchData && !pickupDate) {
             router.push("/");
             return;
         }
 
         // 2. Check Step 2 Data (selected vehicle)
         // If we are on step 3 or 4, we MUST have a vehicle.
-        if (currentStep >= 3 && !checkout.veicolo) {
+        if (currentStep >= 3 && !checkout.veicolo && !classe) {
             // reconstruct params to keep search context
             const params = new URLSearchParams(sp.toString());
             params.set("step", "2");
