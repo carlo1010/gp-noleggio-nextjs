@@ -52,12 +52,14 @@ export default function SearchCard() {
     const codicePromo = useCheckoutStore((s) => s.search.codicePromo);
 
     // ====== STORE (actions) ======
+
     const setTipoCliente = useCheckoutStore((s) => s.setTipoCliente);
     const setTipoVeicolo = useCheckoutStore((s) => s.setTipoVeicolo);
     const setEta = useCheckoutStore((s) => s.setEta);
     const setRitiro = useCheckoutStore((s) => s.setRitiro);
     const setRiconsegna = useCheckoutStore((s) => s.setRiconsegna);
     const setCodicePromo = useCheckoutStore((s) => s.setCodicePromo);
+    const resetCheckout = useCheckoutStore((s) => s.resetCheckout);
 
     // ====== DERIVATI ======
     const stessoUfficio = riconsegna.stessoUfficio;
@@ -71,6 +73,8 @@ export default function SearchCard() {
 
     const pickupOfficeId = ritiro.luogo || undefined;
     const dropoffOfficeId = riconsegna.luogo || undefined;
+    const pickupOfficeLabel = ritiro.luogoLabel;
+    const dropoffOfficeLabel = riconsegna.luogoLabel;
 
 
 
@@ -140,6 +144,34 @@ export default function SearchCard() {
     function handleSearch() {
         if (!validateBeforeSearch()) return;
 
+        // Reset store to clear previous data
+        resetCheckout();
+
+        // Re-populate store with current search data
+        setTipoCliente(tipoCliente);
+        setTipoVeicolo(tipoVeicolo);
+        setEta(eta);
+        setCodicePromo(codicePromo);
+
+        setRitiro({
+            data: pickupDateStr,
+            ora: pickupTime,
+            luogo: pickupOfficeId,
+            luogoLabel: pickupOfficeLabel
+        });
+
+        const finalDropoffOfficeId = String(stessoUfficio ? pickupOfficeId : dropoffOfficeId);
+        const finalDropoffOfficeLabel = stessoUfficio ? pickupOfficeLabel : dropoffOfficeLabel;
+
+        setRiconsegna({
+            data: dropoffDateStr,
+            ora: dropoffTime,
+            stessoUfficio: stessoUfficio,
+            luogo: finalDropoffOfficeId,
+            luogoLabel: finalDropoffOfficeLabel
+        });
+
+
         // Qui continui a passare i parametri in url come prima (step 2)
         const payloadUrl: Record<string, string> = {
             step: "2",
@@ -148,16 +180,13 @@ export default function SearchCard() {
             tipoCliente,
             tipoVeicolo,
             pickupOfficeId: String(pickupOfficeId),
-            dropoffOfficeId: String(stessoUfficio ? pickupOfficeId : dropoffOfficeId),
+            dropoffOfficeId: finalDropoffOfficeId,
             pickupTime: String(pickupTime),
             dropoffTime: String(dropoffTime),
             eta: String(eta),
         };
 
         if (codicePromo) payloadUrl.codicePromo = codicePromo;
-
-        setRitiro({ data: pickupDateStr });
-        setRiconsegna({ data: dropoffDateStr });
 
         const params = new URLSearchParams(payloadUrl);
         const url = `/ricerca-risultati?${params.toString()}`;
