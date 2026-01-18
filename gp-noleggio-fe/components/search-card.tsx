@@ -35,6 +35,7 @@ import { useCheckoutStore } from "@/store/checkout.store";
 
 export default function SearchCard() {
     const router = useRouter();
+    const ROW_HEIGHT = "h-11!";
     const parseYMDToLocalDate = (ymd: string) => {
         const [y, m, d] = ymd.split("-").map(Number);
         return new Date(y, m - 1, d); // ✅ locale, no shift
@@ -208,15 +209,15 @@ export default function SearchCard() {
     };
 
     return (
-        <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full p-4 md:p-8 space-y-6">
+        <div className="bg-white rounded-br-3xl rounded-tl-3xl shadow-xl w-full p-4 md:p-8 space-y-4 md:space-y-6">
             {/* RIGA 1: SELETTORI - DESIGN FOGLIA (LEAF) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                 {/* PRIVATO / AZIENDA */}
                 <div className="flex flex-col gap-2">
                     <span className="text-sm font-semibold">Scegli un’opzione</span>
 
                     <RadioGroup
-                        className="grid grid-cols-2 gap-0 border w-[280px] rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="grid grid-cols-2 gap-0 border w-full md:w-[280px] rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={tipoCliente}
                         onValueChange={(val) => setTipoCliente(val as "privato" | "azienda")}
                     >
@@ -246,7 +247,7 @@ export default function SearchCard() {
                     <span className="text-sm font-semibold">Scegli il tipo di veicolo</span>
 
                     <RadioGroup
-                        className="grid grid-cols-2 gap-0 border w-[280px] rounded-tl-sm rounded-br-sm overflow-hidden"
+                        className="grid grid-cols-2 gap-0 border w-full md:w-[280px] rounded-tl-sm rounded-br-sm overflow-hidden"
                         value={tipoVeicolo}
                         onValueChange={(val) => setTipoVeicolo(val as "auto" | "furgone")}
                     >
@@ -272,7 +273,7 @@ export default function SearchCard() {
             </div>
 
             {/* MAIN SEARCH GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-6 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-3 md:gap-y-6 items-end">
                 {/* CITTÀ RITIRO */}
                 <div className="col-span-1 space-y-2">
                     <div className="flex items-center justify-between">
@@ -329,7 +330,7 @@ export default function SearchCard() {
                         >
                             <SelectTrigger
                                 className={[
-                                    "w-full h-14 rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none",
+                                    `w-full ${ROW_HEIGHT} rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none`,
                                     errors.pickupOffice ? "border-red-500" : "border-gray-300",
                                 ].join(" ")}
                             >
@@ -366,7 +367,7 @@ export default function SearchCard() {
 
                     <div
                         className={[
-                            "flex h-11 rounded-tl-sm rounded-br-sm border overflow-hidden group",
+                            `flex ${ROW_HEIGHT} rounded-tl-sm rounded-br-sm border overflow-hidden group`,
                             errors.pickupTime ? "border-red-500" : "border-gray-300",
                         ].join(" ")}
                     >
@@ -413,7 +414,7 @@ export default function SearchCard() {
 
                             >
                                 <SelectTrigger
-                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none">
+                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent px-3 rounded-none">
                                     <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
                                         <ClockArrowUp className="w-4 h-4 text-[#0700DE] shrink-0" />
                                         <SelectValue placeholder="Ora" />
@@ -444,7 +445,7 @@ export default function SearchCard() {
 
                     <div
                         className={[
-                            "flex h-11 rounded-tl-sm rounded-br-sm border overflow-hidden",
+                            `flex ${ROW_HEIGHT} rounded-tl-sm rounded-br-sm border overflow-hidden`,
                             errors.dropoffTime ? "border-red-500" : "border-gray-300",
                         ].join(" ")}
                     >
@@ -489,7 +490,7 @@ export default function SearchCard() {
                                 }}
                             >
                                 <SelectTrigger
-                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent p-0 rounded-none">
+                                    className="h-full w-full border-none shadow-none focus:ring-0 focus:ring-offset-0 bg-transparent px-3 rounded-none">
                                     <div className="flex items-center justify-center w-full h-full gap-2 leading-none">
                                         <ClockArrowDown className="w-4 h-4 text-[#0700DE] shrink-0" />
                                         <SelectValue placeholder="Ora" />
@@ -543,7 +544,7 @@ export default function SearchCard() {
                             >
                                 <SelectTrigger
                                     className={[
-                                        "w-full h-14 rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none",
+                                        `w-full ${ROW_HEIGHT} rounded-none rounded-br-sm rounded-tl-sm border pl-10 pr-3 text-sm focus:ring-1 focus:ring-[#0700DE] outline-none`,
                                         errors.dropoffOffice ? "border-red-500" : "border-gray-300",
                                     ].join(" ")}
                                 >
@@ -577,14 +578,14 @@ export default function SearchCard() {
             </div>
 
             {/* FILTRI BASSO & PROMO */}
-            <div className="flex flex-col md:flex-row flex-wrap items-center justify-between pt-4 gap-2 md:gap-4">
+            <div className="flex flex-col md:flex-row flex-wrap items-center justify-between pt-4 gap-1 md:gap-4">
                 <div className="flex flex-row flex-wrap justify-between md:justify-start items-center gap-2 md:gap-x-12 w-full md:w-auto">
                     {/* ETA */}
                     <div className="flex items-center gap-2 md:gap-3 w-auto">
                         <span className="text-sm text-gray-700 whitespace-nowrap">Età</span>
                         <Select value={String(eta)} onValueChange={(v) => setEta(Number(v))}>
                             <SelectTrigger
-                                className="h-10 w-[70px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
+                                className={`${ROW_HEIGHT} w-[70px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300`}>
                                 <SelectValue placeholder="Età" />
                             </SelectTrigger>
                             <SelectContent>
@@ -600,7 +601,7 @@ export default function SearchCard() {
                         <span className="text-sm text-gray-700 whitespace-nowrap">Vivo in</span>
                         <Select value={country} onValueChange={(v) => setCountry(v as "italia" | "estero")}>
                             <SelectTrigger
-                                className="h-10 w-[110px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300">
+                                className={`${ROW_HEIGHT} w-[110px] rounded-none rounded-br-sm rounded-tl-sm border border-gray-300`}>
                                 <SelectValue placeholder="Paese" />
                             </SelectTrigger>
                             <SelectContent>
@@ -611,7 +612,7 @@ export default function SearchCard() {
                     </div>
 
                     {/* CODICE PROMO */}
-                    <div className="flex items-center gap-4 w-full md:w-auto">
+                    <div className="flex items-center gap-3 w-full md:w-auto min-h-[40px]">
                         <div className="flex items-center gap-2 text-sm text-gray-800">
                             <Checkbox
                                 id="hasPromo"
@@ -625,13 +626,13 @@ export default function SearchCard() {
                             {!hasPromo && (
                                 <label htmlFor="hasPromo" className="cursor-pointer whitespace-nowrap text-s md:text-sm">
                                     <span className="hidden xs:inline">Ho un </span><span
-                                        className="font-semibold">Codice sconto</span>
+                                    className="font-semibold">Codice sconto</span>
                                 </label>
                             )}
                         </div>
 
                         {hasPromo && (
-                            <div className="animate-in fade-in zoom-in-95 duration-200">
+                            <div className="animate-in fade-in zoom-in-95 duration-200 flex items-center">
                                 <input
                                     type="text"
                                     placeholder="Inserisci codice"
