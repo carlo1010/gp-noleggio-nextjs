@@ -21,7 +21,7 @@ export default function CheckoutTopBar({ totale }: CheckoutTopBarProps) {
 
     return (
         <div className="w-full bg-white">
-            <div className="container mx-auto py-6 md:py-14 px-4 md:px-8 lg:px-0">
+            <div className="container mx-auto py-4 md:py-6 px-4 md:px-8 lg:px-0">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-0">
                     {/* Titolo */}
                     <div className="text-xl md:text-2xl font-semibold">

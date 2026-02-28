@@ -87,11 +87,11 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
 
     return (
         <Dialog open={props.open} onOpenChange={props.onOpenChange}>
-            <DialogContent showCloseButton={true} className="w-[95vw] mobile:max-w-[95vw] md:max-w-[85vw] lg:max-w-5xl p-4 md:p-8 max-h-[90vh] overflow-y-auto rounded-none rounded-tl-xl rounded-br-xl lg:rounded-tl-3xl lg:rounded-br-3xl">
+            <DialogContent showCloseButton={true} className="w-[95vw] mobile:max-w-[95vw] md:max-w-[85vw] lg:max-w-7xl p-6 pt-12 md:p-10 md:pt-14 max-h-[90vh] overflow-y-auto rounded-none rounded-tl-xl rounded-br-xl lg:rounded-tl-3xl lg:rounded-br-3xl">
                 <DialogTitle className="sr-only">Scelta Tariffa</DialogTitle>
 
                 <div className="flex flex-col lg:flex-row gap-6 lg:gap-x-10">
-                    <div className="flex flex-col w-full lg:w-1/3 gap-y-4">
+                    <div className="flex flex-col w-full lg:w-[40%] gap-y-4">
                         <div className="flex items-center text-primary font-bold text-xl lg:text-lg">
                             SCELTA TARIFFA
                         </div>
@@ -116,7 +116,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
                         </div>
 
                         {/* Car Features Grid */}
-                        <div className="grid grid-cols-3 gap-2 lg:flex lg:flex-row lg:flex-wrap lg:gap-x-4 font-bold text-sm lg:text-base mt-2 lg:mt-0">
+                        <div className="grid grid-cols-3 gap-2 lg:flex lg:flex-row lg:flex-nowrap lg:justify-between font-bold text-sm lg:text-base mt-2 lg:mt-0">
                             <div className="flex flex-row gap-x-1 items-center">
                                 <CambioIcon />
                                 <span className="truncate">{props.cambio}</span>
@@ -142,7 +142,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
 
                     {/* Pagamento al ritiro */}
                     <div
-                        className="flex flex-col w-full lg:w-1/3 gap-y-4 border border-gray-200 rounded-none rounded-tl-xl rounded-br-xl lg:rounded-tl-2xl lg:rounded-br-2xl overflow-hidden justify-between shadow-sm">
+                        className="flex flex-col w-full lg:w-[30%] gap-y-4 border border-gray-200 rounded-none rounded-tl-xl rounded-br-xl lg:rounded-tl-2xl lg:rounded-br-2xl overflow-hidden justify-between shadow-sm">
                         <div className="bg-[#F6F6FF] p-4">
                             <p className={"text-black font-bold "}>Pagamento al ritiro</p>
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
@@ -186,7 +186,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
 
                     {/* Pagamento online */}
                     <div
-                        className="flex flex-col w-full lg:w-1/3 gap-y-4 noleggioCard-active border border-[#0700DE] rounded-none rounded-tl-xl rounded-br-xl lg:rounded-tl-2xl lg:rounded-br-2xl overflow-hidden justify-between shadow-lg relative">
+                        className="flex flex-col w-full lg:w-[30%] gap-y-4 noleggioCard-active border border-[#0700DE] rounded-none rounded-tl-xl rounded-br-xl lg:rounded-tl-2xl lg:rounded-br-2xl overflow-hidden justify-between shadow-lg relative">
                         <div className="bg-[#F6F6FF] p-4">
                             <p className={"text-black font-bold "}>Pagamento Online</p>
                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>

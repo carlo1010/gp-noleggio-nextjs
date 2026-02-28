@@ -78,8 +78,8 @@ export default function StepStatus() {
     const luogoRitiro = ritiro?.luogoLabel || "—";
     const luogoRiconsegna = riconsegna?.luogoLabel || "—";
 
-    const dataRitiro = ritiro?.data || "—";
-    const dataRiconsegna = riconsegna?.data || "—";
+    const dataRitiro = ritiro?.data ? `${ritiro.data} - ${ritiro.ora || ''}`.trim() : "—";
+    const dataRiconsegna = riconsegna?.data ? `${riconsegna.data} - ${riconsegna.ora || ''}`.trim() : "—";
 
     const nomeVeicolo = veicolo?.descrizioneClasse || "—";
     const prezzoVeicolo = tariffa?.prezzoTotale ? formatPrice(tariffa.prezzoTotale) : "—";
@@ -116,14 +116,16 @@ export default function StepStatus() {
                         <p className={titleClass(1)}>PUNTO DI NOLEGGIO</p>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={() => goToStep(1)}
-                        className="cursor-pointer"
-                        aria-label="Modifica punto di noleggio"
-                    >
-                        <PencilLine className="text-primary w-4 h-4" />
-                    </button>
+                    {activeStep >= 1 && (
+                        <button
+                            type="button"
+                            onClick={() => goToStep(1)}
+                            className="cursor-pointer"
+                            aria-label="Modifica punto di noleggio"
+                        >
+                            <PencilLine className="text-primary w-4 h-4" />
+                        </button>
+                    )}
                 </div>
 
 
@@ -150,14 +152,16 @@ export default function StepStatus() {
                         <p className={titleClass(2)}>SCELTA VEICOLO</p>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={() => goToStep(2)}
-                        className="cursor-pointer"
-                        aria-label="Modifica veicolo"
-                    >
-                        <PencilLine className="text-primary w-4 h-4" />
-                    </button>
+                    {activeStep >= 2 && (
+                        <button
+                            type="button"
+                            onClick={() => goToStep(2)}
+                            className="cursor-pointer"
+                            aria-label="Modifica veicolo"
+                        >
+                            <PencilLine className="text-primary w-4 h-4" />
+                        </button>
+                    )}
                 </div>
 
 
@@ -177,14 +181,16 @@ export default function StepStatus() {
                         <p className={titleClass(3)}>EXTRA</p>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={() => goToStep(3)}
-                        className="cursor-pointer"
-                        aria-label="Modifica extra"
-                    >
-                        <PencilLine className="text-primary w-4 h-4" />
-                    </button>
+                    {activeStep >= 3 && (
+                        <button
+                            type="button"
+                            onClick={() => goToStep(3)}
+                            className="cursor-pointer"
+                            aria-label="Modifica extra"
+                        >
+                            <PencilLine className="text-primary w-4 h-4" />
+                        </button>
+                    )}
                 </div>
 
 
@@ -210,14 +216,16 @@ export default function StepStatus() {
                         <p className={titleClass(4)}>RIEPILOGO</p>
                     </div>
 
-                    <button
-                        type="button"
-                        onClick={() => goToStep(4)}
-                        className="cursor-pointer"
-                        aria-label="Vai al riepilogo"
-                    >
-                        <PencilLine className="text-primary w-4 h-4" />
-                    </button>
+                    {activeStep >= 4 && (
+                        <button
+                            type="button"
+                            onClick={() => goToStep(4)}
+                            className="cursor-pointer"
+                            aria-label="Vai al riepilogo"
+                        >
+                            <PencilLine className="text-primary w-4 h-4" />
+                        </button>
+                    )}
                 </div>
 
 

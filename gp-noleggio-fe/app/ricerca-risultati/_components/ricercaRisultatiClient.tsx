@@ -212,7 +212,7 @@ export default function RicercaRisultatiClient() {
     if (step === "2") {
         return (
             <div className="max-w-7xl mx-auto">
-                <SceltaVeicolo />;)
+                <SceltaVeicolo />
             </div>
         );
     }

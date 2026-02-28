@@ -72,12 +72,13 @@ export default function SceltaVeicolo() {
             })()}
 
 
-            <div className="container mx-auto py-4 space-y-10">
+            <div className="container mx-auto py-4 space-y-10 min-h-[80vh] relative">
                 <FiltroAuto />
 
+                {/* Show Loading Overlay or Text without unmounting the list if possible */}
                 {isLoadingVeicoli && (
-                    <div className="text-sm text-muted-foreground">
-                        Caricamento veicoli...
+                    <div className="text-sm text-primary font-bold animate-pulse absolute top-32 left-1/2 transform -translate-x-1/2">
+                        Aggiornamento veicoli...
                     </div>
                 )}
 
@@ -87,34 +88,36 @@ export default function SceltaVeicolo() {
                     </div>
                 )}
 
-                {veicoli?.map((veicolo, idx: number) => {
-                    const cambio = veicolo.cambio ?? "Automatico";
-                    const posti = veicolo.posti ?? 4;
-                    const porte = veicolo.porte ?? 3;
-                    const ariaCondizionata = veicolo.ariaCondizionata ?? true;
-                    const etaMin = veicolo.etaMin ?? 18;
+                <div className={`space-y-10 transition-opacity duration-300 ${isLoadingVeicoli ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+                    {veicoli?.map((veicolo, idx: number) => {
+                        const cambio = veicolo.cambio ?? "Automatico";
+                        const posti = veicolo.posti ?? 4;
+                        const porte = veicolo.porte ?? 3;
+                        const ariaCondizionata = veicolo.ariaCondizionata ?? true;
+                        const etaMin = veicolo.etaMin ?? 18;
 
-                    return (
-                    <CardNoleggio
-                        key={veicolo.codiceClasse}
-                        imageUrl={veicolo.urlImmagine}
-                        nome={veicolo.descrizioneClasse}
-                        codiceClasse={veicolo.codiceClasse}
-                        cambio={cambio}
-                        posti={posti}
-                        ariaCondizionata={ariaCondizionata}
-                        eta={`${etaMin}+`}
-                        porte={porte}
-                        openDialog={(event, codiceClasse) => {
-                            setSelectedVeicolo(codiceClasse);
-                            setOpen(true);
-                        }}
-                        alimentazione={"diesel"}
-                        prezzoTotale={veicolo.totalTariffaWeb}
-                        prezzoGiornaliero={veicolo.tariffaWeb}
-                    />
-                    );
-                })}
+                        return (
+                            <CardNoleggio
+                                key={veicolo.codiceClasse}
+                                imageUrl={veicolo.urlImmagine}
+                                nome={veicolo.descrizioneClasse}
+                                codiceClasse={veicolo.codiceClasse}
+                                cambio={cambio}
+                                posti={posti}
+                                ariaCondizionata={ariaCondizionata}
+                                eta={`${etaMin}+`}
+                                porte={porte}
+                                openDialog={(event, codiceClasse) => {
+                                    setSelectedVeicolo(codiceClasse);
+                                    setOpen(true);
+                                }}
+                                alimentazione={"diesel"}
+                                prezzoTotale={veicolo.totalTariffaWeb}
+                                prezzoGiornaliero={veicolo.tariffaWeb}
+                            />
+                        );
+                    })}
+                </div>
             </div>
         </>
     );

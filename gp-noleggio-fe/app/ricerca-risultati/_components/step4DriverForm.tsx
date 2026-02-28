@@ -20,12 +20,12 @@ import {
 } from "@/components/ui/form";
 
 const driverSchema = z.object({
-    nome: z.string().min(1, "Nome obbligatorio"),
-    cognome: z.string().min(1, "Cognome obbligatorio"),
-    dataNascita: z.string().min(1, "Data di nascita obbligatoria"),
+    nome: z.string().min(2, "Minimo 2 caratteri").regex(/^[A-Za-zÀ-ÿ\s']+$/, "Solo lettere, spazi e apostrofi ammessi"),
+    cognome: z.string().min(2, "Minimo 2 caratteri").regex(/^[A-Za-zÀ-ÿ\s']+$/, "Solo lettere, spazi e apostrofi ammessi"),
+    dataNascita: z.string().regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/\d{4}$/, "Formato non valido (GG/MM/AAAA)"),
     email: z.string().email("Email non valida"),
-    telefono: z.string().min(1, "Telefono obbligatorio"),
-    codiceFiscale: z.string().min(1, "Codice fiscale obbligatorio"),
+    telefono: z.string().min(9, "Numero troppo corto").regex(/^[0-9]+$/, "Solo numeri ammessi"),
+    codiceFiscale: z.string().regex(/^[A-Z]{6}[0-9LMNPQRSTUV]{2}[ABCDEHLMPRST][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]$/i, "Codice fiscale non valido"),
     numeroVolo: z.string().optional(),
     programmaFedelta: z.string().optional(),
     privacyInfo: z.boolean().optional(),
@@ -89,261 +89,209 @@ export default function Step4DriverForm() {
         return () => subscription.unsubscribe();
     }, [watch, setConducente, setCodicePromo]);
 
-    const onSubmit = handleSubmit(() => {});
+    const onSubmit = handleSubmit(() => { });
 
     return (
         <div className="bg-[#F7F7F7] p-6 w-full rounded-tl-3xl rounded-br-3xl shadow-sm">
             <Form {...form}>
-            <form onSubmit={onSubmit}>
-            {/* Titolo */}
-            <h2 className="font-bold text-xl text-gray-900 mb-6">
-                Dettagli del conducente
-            </h2>
+                <form onSubmit={onSubmit}>
+                    {/* Titolo */}
+                    <h2 className="font-bold text-xl text-gray-900 mb-6">
+                        Dettagli del conducente
+                    </h2>
 
-            {/* Campi */}
-            <div className="space-y-3">
-                <FormField
-                    control={control}
-                    name="nome"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1">
-                            <FormLabel className="text-sm font-semibold text-gray-700">
-                                Nome*
-                            </FormLabel>
-                            <FormControl>
-                                <Input
-                                    className="h-9 bg-white"
-                                    placeholder="Es. Luigi"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage className="text-xs text-red-600" />
-                        </FormItem>
-                    )}
-                />
+                    {/* Campi */}
+                    <div className="space-y-3">
+                        <FormField
+                            control={control}
+                            name="nome"
+                            render={({ field }) => (
+                                <FormItem className="space-y-1">
+                                    <FormLabel className="text-sm font-semibold text-gray-700">
+                                        Nome*
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="h-9 bg-white"
+                                            placeholder="Es. Luigi"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="text-xs text-red-600" />
+                                </FormItem>
+                            )}
+                        />
 
-                <FormField
-                    control={control}
-                    name="cognome"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1">
-                            <FormLabel className="text-sm font-semibold text-gray-700">
-                                Cognome*
-                            </FormLabel>
-                            <FormControl>
-                                <Input
-                                    className="h-9 bg-white"
-                                    placeholder="Es. Rossi"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage className="text-xs text-red-600" />
-                        </FormItem>
-                    )}
-                />
+                        <FormField
+                            control={control}
+                            name="cognome"
+                            render={({ field }) => (
+                                <FormItem className="space-y-1">
+                                    <FormLabel className="text-sm font-semibold text-gray-700">
+                                        Cognome*
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="h-9 bg-white"
+                                            placeholder="Es. Rossi"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="text-xs text-red-600" />
+                                </FormItem>
+                            )}
+                        />
 
-                <FormField
-                    control={control}
-                    name="dataNascita"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1">
-                            <FormLabel className="text-sm font-semibold text-gray-700">
-                                Data di nascita*
-                            </FormLabel>
-                            <FormControl>
-                                <Input
-                                    className="h-9 bg-white"
-                                    placeholder="GG/MM/AA"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage className="text-xs text-red-600" />
-                        </FormItem>
-                    )}
-                />
+                        <FormField
+                            control={control}
+                            name="dataNascita"
+                            render={({ field }) => (
+                                <FormItem className="space-y-1">
+                                    <FormLabel className="text-sm font-semibold text-gray-700">
+                                        Data di nascita*
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="h-9 bg-white"
+                                            placeholder="GG/MM/AA"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="text-xs text-red-600" />
+                                </FormItem>
+                            )}
+                        />
 
-                <FormField
-                    control={control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1">
-                            <FormLabel className="text-sm font-semibold text-gray-700">
-                                E-mail*
-                            </FormLabel>
-                            <FormControl>
-                                <Input
-                                    className="h-9 bg-white"
-                                    placeholder="nome@email.com"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage className="text-xs text-red-600" />
-                        </FormItem>
-                    )}
-                />
+                        <FormField
+                            control={control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem className="space-y-1">
+                                    <FormLabel className="text-sm font-semibold text-gray-700">
+                                        E-mail*
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="h-9 bg-white"
+                                            placeholder="nome@email.com"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="text-xs text-red-600" />
+                                </FormItem>
+                            )}
+                        />
 
-                {/* Checkbox */}
-                <div className="pt-1 space-y-3">
-                    <FormField
-                        control={control}
-                        name="privacyInfo"
-                        render={({ field }) => (
-                            <FormItem className="flex items-start gap-3 space-y-0">
-                                <FormControl>
-                                    <Checkbox
-                                        checked={Boolean(field.value)}
-                                        onCheckedChange={field.onChange}
-                                        className="mt-0.5 border-[#0700DE] data-[state=checked]:bg-[#0700DE]"
-                                    />
-                                </FormControl>
-                                <FormLabel className="text-xs leading-4 text-gray-500 font-normal cursor-pointer">
-                                    Desidero ricevere informazioni e offerte speciali e acconsento al trattamento dei dati forniti.
-                                </FormLabel>
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={control}
-                        name="marketing"
-                        render={({ field }) => (
-                            <FormItem className="flex items-start gap-3 space-y-0">
-                                <FormControl>
-                                    <Checkbox
-                                        checked={Boolean(field.value)}
-                                        onCheckedChange={field.onChange}
-                                        className="mt-0.5 border-[#0700DE] data-[state=checked]:bg-[#0700DE]"
-                                    />
-                                </FormControl>
-                                <FormLabel className="text-xs leading-4 text-gray-500 font-normal cursor-pointer">
-                                    Presto il mio consenso per ricevere comunicazioni marketing.
-                                </FormLabel>
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                {/* Telefono */}
-                <FormField
-                    control={control}
-                    name="telefono"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1">
-                            <FormLabel className="text-sm font-semibold text-gray-700">
-                                Numero di telefono*
-                            </FormLabel>
-                            <FormControl>
-                                <div className="flex gap-2">
-                                    <div className="h-9 px-2 bg-white border rounded-md flex items-center gap-2 text-xs">
-                                        <span>🇮🇹</span>
-                                        <span>+39</span>
-                                    </div>
-                                    <Input
-                                        className="h-9 bg-white"
-                                        placeholder="Numero di telefono"
-                                        {...field}
-                                    />
-                                </div>
-                            </FormControl>
-                            <FormMessage className="text-xs text-red-600" />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={control}
-                    name="codiceFiscale"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1">
-                            <FormLabel className="text-sm font-semibold text-gray-700">
-                                Codice fiscale*
-                            </FormLabel>
-                            <FormControl>
-                                <Input
-                                    className="h-9 bg-white"
-                                    placeholder="Es. RSSL..."
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage className="text-xs text-red-600" />
-                        </FormItem>
-                    )}
-                />
-            </div>
-
-            {/* Divider */}
-            <div className="my-6 h-px bg-gray-200" />
-
-            {/* Info volo */}
-            <div className="flex items-center gap-2 mb-3 mt-8">
-                <p className="font-bold text-base text-gray-900">Informazioni sul volo</p>
-                <Info className="w-4 h-4 text-[#0700DE]" />
-            </div>
-
-            <FormField
-                control={control}
-                name="numeroVolo"
-                render={({ field }) => (
-                    <FormItem className="space-y-1">
-                        <FormLabel className="text-sm font-semibold text-gray-700">
-                            Numero di volo
-                        </FormLabel>
-                        <FormControl>
-                            <Input
-                                className="h-9 bg-white"
-                                placeholder="Es. AZ 1230"
-                                {...field}
+                        {/* Checkbox */}
+                        <div className="pt-1 space-y-3">
+                            <FormField
+                                control={control}
+                                name="privacyInfo"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-start gap-3 space-y-0">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={Boolean(field.value)}
+                                                onCheckedChange={field.onChange}
+                                                className="mt-0.5 border-[#0700DE] data-[state=checked]:bg-[#0700DE]"
+                                            />
+                                        </FormControl>
+                                        <FormLabel className="text-xs leading-4 text-gray-500 font-normal cursor-pointer">
+                                            Desidero ricevere informazioni e offerte speciali e acconsento al trattamento dei dati forniti.
+                                        </FormLabel>
+                                    </FormItem>
+                                )}
                             />
-                        </FormControl>
-                        <FormMessage className="text-xs text-red-600" />
-                    </FormItem>
-                )}
-            />
 
-            {/* Programma fedeltà */}
-            <DropdownRow
-                label="Fai parte di un programma fedeltà?"
-                open={openFedelta}
-                onToggle={() => setOpenFedelta(!openFedelta)}
-            />
+                            <FormField
+                                control={control}
+                                name="marketing"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-start gap-3 space-y-0">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={Boolean(field.value)}
+                                                onCheckedChange={field.onChange}
+                                                className="mt-0.5 border-[#0700DE] data-[state=checked]:bg-[#0700DE]"
+                                            />
+                                        </FormControl>
+                                        <FormLabel className="text-xs leading-4 text-gray-500 font-normal cursor-pointer">
+                                            Presto il mio consenso per ricevere comunicazioni marketing.
+                                        </FormLabel>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
-            {openFedelta && (
-                <FormField
-                    control={control}
-                    name="programmaFedelta"
-                    render={({ field }) => (
-                        <FormItem className="space-y-1 mt-2">
-                            <FormControl>
-                                <Input
-                                    className="h-9 bg-white"
-                                    placeholder="Es. Miles&More"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage className="text-xs text-red-600" />
-                        </FormItem>
-                    )}
-                />
-            )}
+                        {/* Telefono */}
+                        <FormField
+                            control={control}
+                            name="telefono"
+                            render={({ field }) => (
+                                <FormItem className="space-y-1">
+                                    <FormLabel className="text-sm font-semibold text-gray-700">
+                                        Numero di telefono*
+                                    </FormLabel>
+                                    <FormControl>
+                                        <div className="flex gap-2">
+                                            <div className="h-9 px-2 bg-white border rounded-md flex items-center gap-2 text-xs">
+                                                <span>🇮🇹</span>
+                                                <span>+39</span>
+                                            </div>
+                                            <Input
+                                                className="h-9 bg-white"
+                                                placeholder="Numero di telefono"
+                                                {...field}
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage className="text-xs text-red-600" />
+                                </FormItem>
+                            )}
+                        />
 
-            {/* Coupon */}
-            <DropdownRow
-                label="Aggiungi un Codice Coupon"
-                open={openCoupon}
-                onToggle={() => setOpenCoupon(!openCoupon)}
-            />
+                        <FormField
+                            control={control}
+                            name="codiceFiscale"
+                            render={({ field }) => (
+                                <FormItem className="space-y-1">
+                                    <FormLabel className="text-sm font-semibold text-gray-700">
+                                        Codice fiscale*
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            className="h-9 bg-white"
+                                            placeholder="Es. RSSL..."
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="text-xs text-red-600" />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
 
-            {openCoupon && (
-                <div className="mt-2 space-y-2">
+                    {/* Divider */}
+                    <div className="my-6 h-px bg-gray-200" />
+
+                    {/* Info volo */}
+                    <div className="flex items-center gap-2 mb-3 mt-8">
+                        <p className="font-bold text-base text-gray-900">Informazioni sul volo</p>
+                        <Info className="w-4 h-4 text-[#0700DE]" />
+                    </div>
+
                     <FormField
                         control={control}
-                        name="codicePromo"
+                        name="numeroVolo"
                         render={({ field }) => (
                             <FormItem className="space-y-1">
+                                <FormLabel className="text-sm font-semibold text-gray-700">
+                                    Numero di volo
+                                </FormLabel>
                                 <FormControl>
                                     <Input
                                         className="h-9 bg-white"
-                                        placeholder="Inserisci coupon"
+                                        placeholder="Es. AZ 1230"
                                         {...field}
                                     />
                                 </FormControl>
@@ -351,13 +299,65 @@ export default function Step4DriverForm() {
                             </FormItem>
                         )}
                     />
-                    <Button type="button" className="h-9 w-full">
-                        Applica coupon
-                    </Button>
-                </div>
-            )}
 
-            </form>
+                    {/* Programma fedeltà */}
+                    <DropdownRow
+                        label="Fai parte di un programma fedeltà?"
+                        open={openFedelta}
+                        onToggle={() => setOpenFedelta(!openFedelta)}
+                    />
+
+                    {openFedelta && (
+                        <FormField
+                            control={control}
+                            name="programmaFedelta"
+                            render={({ field }) => (
+                                <FormItem className="space-y-1 mt-2">
+                                    <FormControl>
+                                        <Input
+                                            className="h-9 bg-white"
+                                            placeholder="Es. Miles&More"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage className="text-xs text-red-600" />
+                                </FormItem>
+                            )}
+                        />
+                    )}
+
+                    {/* Coupon */}
+                    <DropdownRow
+                        label="Aggiungi un Codice Coupon"
+                        open={openCoupon}
+                        onToggle={() => setOpenCoupon(!openCoupon)}
+                    />
+
+                    {openCoupon && (
+                        <div className="mt-2 space-y-2">
+                            <FormField
+                                control={control}
+                                name="codicePromo"
+                                render={({ field }) => (
+                                    <FormItem className="space-y-1">
+                                        <FormControl>
+                                            <Input
+                                                className="h-9 bg-white"
+                                                placeholder="Inserisci coupon"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-xs text-red-600" />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="button" className="h-9 w-full">
+                                Applica coupon
+                            </Button>
+                        </div>
+                    )}
+
+                </form>
             </Form>
         </div>
     );
