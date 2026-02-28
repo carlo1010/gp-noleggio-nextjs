@@ -146,7 +146,9 @@ type CheckoutActions = {
 
     addVisitedStep: (step: number) => void;
 
-
+    /** Funzione di trigger della validazione del form conducente (registrata da step4DriverForm) */
+    triggerDriverValidation?: () => Promise<boolean>;
+    setTriggerDriverValidation: (fn: (() => Promise<boolean>) | undefined) => void;
 };
 
 const initialCheckoutState: CheckoutState = {
@@ -401,5 +403,7 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
             if (s.visitedSteps.includes(step)) return s;
             return { visitedSteps: [...s.visitedSteps, step] };
         }),
+
+    setTriggerDriverValidation: (fn) => set({ triggerDriverValidation: fn }),
 
 }));
