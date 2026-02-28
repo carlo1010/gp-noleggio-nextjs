@@ -34,8 +34,8 @@ export default function Header({ dark = false }: HeaderProps) {
         <>
             <header
                 className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled
-                        ? "bg-white/90 backdrop-blur-md shadow-md py-3 md:py-2"
-                        : "bg-transparent py-4"
+                    ? "bg-white/90 backdrop-blur-md shadow-md py-3 md:py-2"
+                    : "bg-transparent py-4"
                     }`}
             >
                 <div className={`mx-auto px-4 md:px-6 max-w-7xl flex items-center justify-between transition-all duration-300 ${isScrolled ? "h-16 md:h-14" : "h-20"
@@ -59,7 +59,7 @@ export default function Header({ dark = false }: HeaderProps) {
                         className={`flex items-center gap-4 md:gap-8 transition-colors duration-300 ${(dark || isScrolled) ? "text-black" : "text-white"
                             }`}
                     >
-                        <Link href="#" className="flex items-center gap-2 text-sm">
+                        <Link href="/aiuto" className="flex items-center gap-2 text-sm">
                             <Info width={20} height={20} />
                             <span className="font-bold hidden md:inline">Aiuto</span>
                         </Link>

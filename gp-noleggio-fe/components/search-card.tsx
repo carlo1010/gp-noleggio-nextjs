@@ -611,6 +611,7 @@ export default function SearchCard() {
                     </div>
 
                     {/* CODICE PROMO */}
+                    {/*
                     <div className="flex items-center gap-4 w-full md:w-auto">
                         <div className="flex items-center gap-2 text-sm text-gray-800">
                             <Checkbox
@@ -642,6 +643,7 @@ export default function SearchCard() {
                             </div>
                         )}
                     </div>
+                    */}
                 </div>
 
                 <div className="w-full md:w-auto min-w-[150px]">

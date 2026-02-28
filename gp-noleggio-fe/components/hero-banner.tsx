@@ -14,15 +14,16 @@ interface HeroBannerProps {
         topText: string;
         bottomText: string;
     };
+    showSearch?: boolean;
 }
 
-export default function HeroBanner({ imageUrl, title, description, promo }: HeroBannerProps) {
+export default function HeroBanner({ imageUrl, title, description, promo, showSearch = true }: HeroBannerProps) {
     const hasContent = title || promo;
 
     return (
         <section className={`relative flex flex-col justify-end pt-32 md:pt-0 ${hasContent
-                ? "min-h-dvh md:min-h-[600px] lg:min-h-[750px]"
-                : "min-h-[700px] md:min-h-[600px] lg:min-h-[750px]"
+            ? "min-h-dvh md:min-h-[600px] lg:min-h-[750px]"
+            : "min-h-[700px] md:min-h-[600px] lg:min-h-[750px]"
             }`}>
             <div className="absolute top-0 left-0 w-full z-40">
                 <OfferBanner />
@@ -69,12 +70,13 @@ export default function HeroBanner({ imageUrl, title, description, promo }: Hero
             )}
 
             {/* SEARCH CARD CONTAINER */}
-            <div className={`relative w-full z-30 pb-8 md:pb-16 ${hasContent ? "mt-auto" : ""
-                }`}>
-                <div className="container mx-auto px-4 max-w-[1240px]">
-                    <SearchCard />
+            {showSearch && (
+                <div className={`relative w-full z-30 pb-8 md:pb-16 ${hasContent ? "mt-auto" : ""}`}>
+                    <div className="container mx-auto px-4 max-w-[1240px]">
+                        <SearchCard />
+                    </div>
                 </div>
-            </div>
+            )}
         </section>
     );
 }
