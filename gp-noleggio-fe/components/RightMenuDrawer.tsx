@@ -77,7 +77,7 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
                         <Image
                             src="/logo-rent-nero.png"
                             alt="Piccirillo Rent"
-                            sizes={266}
+                            sizes="266px"
                             fill
                             className="object-contain"
                             priority
