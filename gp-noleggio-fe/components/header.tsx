@@ -33,7 +33,8 @@ export default function Header({ dark = false }: HeaderProps) {
     return (
         <>
             <header
-                className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled
+                style={{ paddingRight: "var(--removed-body-scroll-bar-size, 0)" }}
+                className={`fixed top-0 left-0 w-full z-50 transition-[padding-top,padding-bottom,background-color,box-shadow,backdrop-filter] duration-300 ${isScrolled
                         ? "bg-white/90 backdrop-blur-md shadow-md py-3 md:py-2"
                         : "bg-transparent py-4"
                     }`}

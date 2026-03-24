@@ -189,13 +189,17 @@ export default function RicercaRisultatiClient() {
 
 
     const { tutele, extra } = useMemo(() => {
-        const tuteleList = (servizi ?? []).filter((s) => s.flagQtaServizio === 0);
-        const extraList = (servizi ?? []).filter((s) => s.flagQtaServizio === 1);
+        const safeServizi = Array.isArray(servizi) ? servizi : [];
+
+        const tuteleList = safeServizi.filter((s) => s.flagQtaServizio === 0);
+        const extraList = safeServizi.filter((s) => s.flagQtaServizio === 1);
         return { tutele: tuteleList, extra: extraList };
     }, [servizi]);
 
     const pacchetti = useMemo(() => {
-        return (protezioni ?? [])
+        const safeProtezioni = Array.isArray(protezioni) ? protezioni : [];
+
+        return safeProtezioni
             .filter((p) => Boolean(p.nomeTariffa))
             .map((p) => ({
                 key: p.nomeTariffa,
