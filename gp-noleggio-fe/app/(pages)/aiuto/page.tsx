@@ -2,8 +2,10 @@ import HeroBanner from "@/components/hero-banner";
 import FaqAccordion from "@/components/faq-accordion";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { getFAQs } from "@/lib/fetchPayload";
 
-export default function AiutoPage() {
+export default async function AiutoPage() {
+    const faqs = await getFAQs();
     return (
         <main className="min-h-screen bg-white">
             <HeroBanner imageUrl="/faq-bg.png" showSearch={false} />
@@ -21,7 +23,7 @@ export default function AiutoPage() {
                 </div>
             </div>
 
-            <FaqAccordion />
+            <FaqAccordion faqs={faqs} />
         </main>
     );
 }
