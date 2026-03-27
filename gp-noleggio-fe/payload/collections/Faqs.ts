@@ -19,7 +19,7 @@ export const Faqs: CollectionConfig = {
         },
         {
             name: 'answer',
-            type: 'richText',
+            type: 'textarea',
             required: true,
             label: 'Risposta',
         },
