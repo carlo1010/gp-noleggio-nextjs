@@ -1,23 +1,24 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+/* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
+/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+import type { Metadata } from 'next'
 
-// Admin panel — gestito interamente da Payload CMS
-import { RootPage, generatePageMetadata } from '@payloadcms/next/views'
 import config from '@payload-config'
-
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+import { RootPage, generatePageMetadata } from '@payloadcms/next/views'
+import { importMap } from '../importMap'
 
 type Args = {
-    params: Promise<{
-        segments: string[]
-    }>
+  params: Promise<{
+    segments: string[]
+  }>
+  searchParams: Promise<{
+    [key: string]: string | string[]
+  }>
 }
 
-export default function Page({ params }: Args) {
-    return RootPage({ config, params })
-}
+export const generateMetadata = ({ params, searchParams }: Args): Promise<Metadata> =>
+  generatePageMetadata({ config, params, searchParams })
 
-export async function generateMetadata({ params }: Args) {
-    return generatePageMetadata({ config, params })
-}
+const Page = ({ params, searchParams }: Args) =>
+  RootPage({ config, params, searchParams, importMap })
+
+export default Page
