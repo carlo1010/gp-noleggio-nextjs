@@ -21,7 +21,7 @@ export default async function AiutoPage() {
     return (
         <main className="min-h-screen bg-white">
             <FAQSchema faqs={faqs} />
-            <HeroBanner imageUrl="/faq-bg.png" showSearch={false} />
+            <HeroBanner imageUrl="/faq-bg.png" showSearch={false} compact />
 
             {/* BREADCRUMB */}
             <div className="bg-white py-4 md:py-6 border-b border-gray-100 relative z-10">

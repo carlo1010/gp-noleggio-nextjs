@@ -15,16 +15,20 @@ interface HeroBannerProps {
         bottomText: string;
     };
     showSearch?: boolean;
+    compact?: boolean;
 }
 
-export default function HeroBanner({ imageUrl, title, description, promo, showSearch = true }: HeroBannerProps) {
+export default function HeroBanner({ imageUrl, title, description, promo, showSearch = true, compact = false }: HeroBannerProps) {
     const hasContent = title || promo;
 
-    return (
-        <section className={`relative flex flex-col justify-end pt-32 md:pt-0 ${hasContent
+    const heightClass = compact
+        ? "min-h-[160px] md:min-h-[200px]"
+        : hasContent
             ? "min-h-dvh md:min-h-[600px] lg:min-h-[750px]"
-            : "min-h-[700px] md:min-h-[600px] lg:min-h-[750px]"
-            }`}>
+            : "min-h-[700px] md:min-h-[600px] lg:min-h-[750px]";
+
+    return (
+        <section className={`relative flex flex-col justify-end pt-32 md:pt-0 ${heightClass}`}>
             <div className="absolute top-0 left-0 w-full z-40">
                 <OfferBanner />
             </div>
