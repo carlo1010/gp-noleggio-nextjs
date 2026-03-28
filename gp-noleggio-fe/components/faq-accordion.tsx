@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
     Accordion,
     AccordionContent,
@@ -18,15 +19,19 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
         
         // Se non c'è sottocategoria, la mettiamo in "Altro" o la ignoriamo (per ora Altro)
         const subcategoryTitle = typeof subcategory === 'object' ? subcategory.title : "Altro";
+        const subcategorySlug = typeof subcategory === 'object' ? subcategory.slug : "altro";
+
         const category = typeof subcategory === 'object' && typeof subcategory.category === 'object' 
             ? subcategory.category 
-            : { title: "Generale", id: "generale" };
+            : { title: "Generale", id: "generale", slug: "generale" };
             
         const categoryTitle = category.title;
+        const categorySlug = category.slug;
 
         if (!acc[categoryTitle]) {
             acc[categoryTitle] = {
                 title: categoryTitle,
+                slug: categorySlug,
                 subcategories: {}
             };
         }
@@ -34,6 +39,7 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
         if (!acc[categoryTitle].subcategories[subcategoryTitle]) {
             acc[categoryTitle].subcategories[subcategoryTitle] = {
                 title: subcategoryTitle,
+                slug: subcategorySlug,
                 faqs: []
             };
         }
@@ -45,11 +51,11 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
     const categories = Object.values(groupedFaqs);
 
     return (
-        <section className="py-12 md:py-20 bg-white">
+        <section className="py-8 md:py-12 bg-white">
             <div className="container mx-auto px-4 md:px-6 md:max-w-4xl">
                 {/* Titolo e Descrizione */}
-                <div className="mb-12">
-                    <h1 className="text-3xl md:text-4xl font-extrabold mb-4 uppercase text-black">FAQ - Aiuto</h1>
+                <div className="mb-8">
+                    <h1 className="text-3xl md:text-4xl font-extrabold mb-3 uppercase text-black">FAQ - Aiuto</h1>
                     <p className="text-gray-700 text-sm md:text-base leading-relaxed">
                         In questa sezione trovi le risposte alle domande più frequenti organizzate per categoria. 
                         Esplora le sezioni qui sotto per trovare rapidamente l'informazione che cerchi.
@@ -57,46 +63,49 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
                 </div>
 
                 {/* FAQ STRUCTURE */}
-                <div className="w-full space-y-16">
+                <div className="w-full space-y-8">
                     {categories.length === 0 ? (
                         <p className="text-gray-500 text-sm">Nessuna FAQ disponibile al momento.</p>
                     ) : (
                         categories.map((category: any, catIndex: number) => (
-                            <div key={catIndex} className="space-y-8">
-                                <h2 className="text-2xl md:text-3xl font-bold text-[#0700DE] border-b-2 border-gray-100 pb-2">
+                            <div key={catIndex} className="space-y-4">
+                                <h2 className="text-2xl font-bold text-[#0700DE] border-b border-gray-100 pb-2">
                                     {category.title}
                                 </h2>
                                 
-                                <div className="space-y-10 pl-2 md:pl-4">
-                                    {Object.values(category.subcategories).map((sub: any, subIndex: number) => (
-                                        <div key={subIndex} className="space-y-4">
-                                            <h3 className="text-lg md:text-xl font-semibold text-gray-800 flex items-center gap-2">
-                                                <span className="w-1.5 h-6 bg-gray-200 rounded-full"></span>
-                                                {sub.title}
-                                            </h3>
-                                            
-                                            <Accordion type="single" collapsible className="w-full space-y-3">
-                                                {sub.faqs.map((faq: any, faqIndex: number) => (
-                                                    <AccordionItem
-                                                        key={faq.id}
-                                                        value={`item-${catIndex}-${subIndex}-${faqIndex}`}
-                                                        className="border rounded-lg px-4 md:px-6 bg-gray-50/50 hover:bg-white transition-all duration-300"
-                                                    >
-                                                        <AccordionTrigger className="text-sm md:text-base font-medium hover:no-underline hover:text-[#0700DE] transition-colors text-left py-4">
-                                                            {faq.question}
-                                                        </AccordionTrigger>
-                                                        <AccordionContent className="text-gray-600 text-sm md:text-base leading-relaxed pb-6 border-t border-gray-100 pt-4 mt-2">
-                                                            {typeof faq.answer === "string" ? (
-                                                                <div className="whitespace-pre-line">{faq.answer}</div>
-                                                            ) : (
-                                                                "Risposta non disponibile"
-                                                            )}
-                                                        </AccordionContent>
-                                                    </AccordionItem>
-                                                ))}
-                                            </Accordion>
-                                        </div>
-                                    ))}
+                                <div className="pl-0 md:pl-2">
+                                    <Accordion type="single" collapsible className="w-full">
+                                        {Object.values(category.subcategories).map((sub: any, subIndex: number) => (
+                                            <AccordionItem
+                                                key={subIndex}
+                                                value={`sub-${catIndex}-${subIndex}`}
+                                                className="border-b border-gray-200"
+                                            >
+                                                <AccordionTrigger className="text-lg md:text-xl font-semibold text-gray-800 hover:text-[#0700DE] transition-colors py-4">
+                                                    {sub.title}
+                                                </AccordionTrigger>
+                                                <AccordionContent className="pt-2 pb-6 px-1 md:px-2">
+                                                    <div className="w-full space-y-2 flex flex-col pt-2 pb-2">
+                                                        {sub.faqs.map((faq: any) => {
+                                                            // Fallback id in case slug isn't generated yet for old records
+                                                            const faqSlug = faq.slug || faq.id;
+                                                            const faqUrl = `/aiuto/${category.slug}/${sub.slug}/${faqSlug}`;
+
+                                                            return (
+                                                                <Link 
+                                                                    href={faqUrl}
+                                                                    key={faq.id}
+                                                                    className="border rounded-md px-4 py-3 bg-gray-50/50 hover:bg-white hover:border-[#0700DE]/30 hover:shadow-sm transition-all duration-300 text-sm md:text-base font-medium text-gray-800 hover:text-[#0700DE] block text-left w-full"
+                                                                >
+                                                                    {faq.question}
+                                                                </Link>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </AccordionContent>
+                                            </AccordionItem>
+                                        ))}
+                                    </Accordion>
                                 </div>
                             </div>
                         ))

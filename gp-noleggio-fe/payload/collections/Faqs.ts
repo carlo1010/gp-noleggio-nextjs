@@ -18,6 +18,26 @@ export const Faqs: CollectionConfig = {
             label: 'Domanda',
         },
         {
+            name: 'slug',
+            type: 'text',
+            unique: true,
+            admin: {
+                position: 'sidebar',
+                description: 'Identificativo univoco per la URL (generato automaticamente)',
+            },
+            hooks: {
+                beforeValidate: [
+                    ({ value, data }) => {
+                        if (value) return value
+                        return data?.question
+                            ?.toLowerCase()
+                            .replace(/ /g, '-')
+                            .replace(/[^\w-]+/g, '')
+                    },
+                ],
+            },
+        },
+        {
             name: 'answer',
             type: 'textarea',
             required: true,
