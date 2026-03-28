@@ -4,7 +4,7 @@ export const Faqs: CollectionConfig = {
     slug: 'faqs',
     admin: {
         useAsTitle: 'question',
-        defaultColumns: ['question', 'category', 'order', 'isActive'],
+        defaultColumns: ['question', 'subcategory', 'order', 'isActive'],
         description: 'Gestisci le domande frequenti del sito.',
     },
     access: {
@@ -24,16 +24,14 @@ export const Faqs: CollectionConfig = {
             label: 'Risposta',
         },
         {
-            name: 'category',
-            type: 'select',
-            label: 'Categoria',
-            options: [
-                { label: 'Prenotazione', value: 'prenotazione' },
-                { label: 'Pagamento', value: 'pagamento' },
-                { label: 'Veicoli', value: 'veicoli' },
-                { label: 'Ritiro e Riconsegna', value: 'ritiro-riconsegna' },
-                { label: 'Altro', value: 'altro' },
-            ],
+            name: 'subcategory',
+            type: 'relationship',
+            relationTo: 'faqsubcategories',
+            label: 'Sottocategoria',
+            required: false,
+            admin: {
+                description: 'Associa questa FAQ a una sottocategoria (Struttura: Categoria > Sottocategoria > FAQ)',
+            },
         },
         {
             name: 'order',

@@ -16,7 +16,8 @@ export async function getFAQs(): Promise<Faq[]> {
             },
         },
         sort: 'order',
-        limit: 100,
+        limit: 200, // Aumentato il limite per sicurezza
+        depth: 2, // Per includere Sottocategoria e Categoria
     })
 
     return result.docs
