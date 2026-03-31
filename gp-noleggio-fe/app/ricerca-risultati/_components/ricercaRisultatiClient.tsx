@@ -12,7 +12,7 @@ import CheckoutTopBar from "@/app/ricerca-risultati/_components/topBarExtra";
 import { useCheckoutStore } from "@/store/checkout.store";
 import Step4Checkout from "@/app/ricerca-risultati/_components/step4Checkout";
 import { listaProtezioni, listaServizi } from "@/hook/useService";
-import { listaVeicoli } from "@/hook/useVeicoli";
+import { useListaVeicoli } from "@/hook/useVeicoli";
 import { parsePrice } from "@/lib/price";
 import { listaAgenzia } from "@/hook/useAgenzia";
 
@@ -47,7 +47,7 @@ export default function RicercaRisultatiClient() {
     const needRehydrate =
         (step === "3" || step === "4") && !checkout.veicolo && Boolean(classe);
 
-    const { data: veicoliRehydrate } = listaVeicoli({
+    const { data: veicoliRehydrate } = useListaVeicoli({
         datainizio: needRehydrate ? pickupDate : null,
         datafine: needRehydrate ? dropoffDate : null,
         cambio,

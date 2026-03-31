@@ -21,7 +21,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Step4SidebarSummary() {
     return (
@@ -80,7 +79,7 @@ function SummaryCard() {
     // VEICOLO DATA
     const brand = veicolo?.descrizioneAgenzia ?? "—";
     const nome = veicolo?.descrizioneClasse ?? "—";
-    const img = veicolo?.urlImmagine ?? "/fiat-500.png";
+    const { src: img, unoptimized } = normalizeVehicleImageSrc(veicolo?.urlImmagine);
     const prezzoVeicolo = Number(tariffa?.prezzoTotale ?? 0);
 
     // SPECS
@@ -134,6 +133,7 @@ function SummaryCard() {
                                     alt={nome}
                                     fill
                                     sizes="120px"
+                                    unoptimized={unoptimized}
                                     className="object-contain"
                                 />
                             </div>
@@ -297,4 +297,22 @@ function SpecItem({ icon, text }: { icon: React.ReactNode; text: string }) {
             <span className="text-xs font-bold text-gray-900">{text}</span>
         </div>
     );
+}
+
+function normalizeVehicleImageSrc(url?: string | null): { src: string; unoptimized: boolean } {
+    const fallback = "/fiat-500.png";
+    if (!url) return { src: fallback, unoptimized: false };
+
+    const trimmed = url.trim();
+    if (!trimmed) return { src: fallback, unoptimized: false };
+
+    if (trimmed.startsWith("/")) {
+        return { src: trimmed, unoptimized: false };
+    }
+
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+        return { src: trimmed, unoptimized: true };
+    }
+
+    return { src: fallback, unoptimized: false };
 }

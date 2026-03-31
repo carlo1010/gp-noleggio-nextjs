@@ -7,7 +7,7 @@ import StepStatus from "@/components/checkout/stepstatus";
 import CardNoleggio from "@/components/card-noleggio";
 import FiltroAuto from "@/components/filtro-auto";
 import { SceltaTariffa } from "@/components/scelta-tariffa";
-import { listaVeicoli } from "@/hook/useVeicoli";
+import { useListaVeicoli } from "@/hook/useVeicoli";
 
 export default function SceltaVeicolo() {
     const [open, setOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function SceltaVeicolo() {
     const prezzo = sp.get("prezzo") ?? "all";
     const sort = sp.get("sort") ?? "price_desc";
 
-    const { isPending: isLoadingVeicoli, data: veicoli } = listaVeicoli({
+    const { isPending: isLoadingVeicoli, data: veicoli } = useListaVeicoli({
         datainizio: pickupDate,
         datafine: dropoffDate,
         cambio,
