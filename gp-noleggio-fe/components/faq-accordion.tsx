@@ -1,28 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion";
+// Rimosso import di Accordion in quanto ora tutto è sempre visibile
 
 interface FaqAccordionProps {
-    faqs: any[]; // Usiamo any temporaneamente per gestire i nuovi tipi espansi (Category > Subcategory > FAQ)
+    faqs: any[]; // Usiamo any temporaneamente per gestire i nuovi tipi espansi
 }
 
 export default function FaqAccordion({ faqs }: FaqAccordionProps) {
-    // Raggruppamento delle FAQ per Categoria e Sottocategoria
+    // Raggruppamento delle FAQ per Categoria
     const groupedFaqs = faqs.reduce((acc: any, faq: any) => {
-        const subcategory = faq.subcategory;
-        
-        // Se non c'è sottocategoria, la mettiamo in "Altro" o la ignoriamo (per ora Altro)
-        const subcategoryTitle = typeof subcategory === 'object' ? subcategory.title : "Altro";
-        const subcategorySlug = typeof subcategory === 'object' ? subcategory.slug : "altro";
-
-        const category = typeof subcategory === 'object' && typeof subcategory.category === 'object' 
-            ? subcategory.category 
+        const category = typeof faq.category === 'object' && faq.category !== null
+            ? faq.category 
             : { title: "Generale", id: "generale", slug: "generale" };
             
         const categoryTitle = category.title;
@@ -32,19 +21,11 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
             acc[categoryTitle] = {
                 title: categoryTitle,
                 slug: categorySlug,
-                subcategories: {}
-            };
-        }
-
-        if (!acc[categoryTitle].subcategories[subcategoryTitle]) {
-            acc[categoryTitle].subcategories[subcategoryTitle] = {
-                title: subcategoryTitle,
-                slug: subcategorySlug,
                 faqs: []
             };
         }
 
-        acc[categoryTitle].subcategories[subcategoryTitle].faqs.push(faq);
+        acc[categoryTitle].faqs.push(faq);
         return acc;
     }, {});
 
@@ -67,51 +48,45 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
                     {categories.length === 0 ? (
                         <p className="text-gray-500 text-sm">Nessuna FAQ disponibile al momento.</p>
                     ) : (
-                        categories.map((category: any, catIndex: number) => (
-                            <div key={catIndex} className="space-y-4">
-                                <h2 className="text-2xl font-bold text-[#0700DE] border-b border-gray-100 pb-2">
-                                    {category.title}
-                                </h2>
-                                
-                                <div className="pl-0 md:pl-2">
-                                    <Accordion type="single" collapsible className="w-full">
-                                        {Object.values(category.subcategories).map((sub: any, subIndex: number) => (
-                                            <AccordionItem
-                                                key={subIndex}
-                                                value={`sub-${catIndex}-${subIndex}`}
-                                                className="border-b border-gray-200"
-                                            >
-                                                <AccordionTrigger className="text-lg md:text-xl font-semibold text-gray-800 hover:text-[#0700DE] transition-colors py-4">
-                                                    {sub.title}
-                                                </AccordionTrigger>
-                                                <AccordionContent className="pt-2 pb-6 px-1 md:px-2">
-                                                    <div className="w-full space-y-2 flex flex-col pt-2 pb-2">
-                                                        {sub.faqs.map((faq: any) => {
-                                                            // Fallback id in case slug isn't generated yet for old records
-                                                            const faqSlug = faq.slug || faq.id;
-                                                            const faqUrl = `/aiuto/${category.slug}/${sub.slug}/${faqSlug}`;
+                        <div className="w-full space-y-6">
+                            {categories.map((category: any, catIndex: number) => (
+                                <div
+                                    key={catIndex}
+                                    className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm"
+                                >
+                                    <div className="bg-gray-50/80 border-b border-gray-200 px-5 py-4">
+                                        <h2 className="text-xl md:text-2xl font-bold text-[#0700DE]">
+                                            {category.title}
+                                        </h2>
+                                    </div>
+                                    <div className="p-4 md:p-5">
+                                        <div className="w-full flex flex-col space-y-3">
+                                            {category.faqs.map((faq: any) => {
+                                                const faqSlug = faq.slug || faq.id;
+                                                const faqUrl = `/aiuto/${category.slug}/${faqSlug}`;
 
-                                                            return (
-                                                                <Link 
-                                                                    href={faqUrl}
-                                                                    key={faq.id}
-                                                                    className="border rounded-md px-4 py-3 bg-gray-50/50 hover:bg-white hover:border-[#0700DE]/30 hover:shadow-sm transition-all duration-300 text-sm md:text-base font-medium text-gray-800 hover:text-[#0700DE] block text-left w-full"
-                                                                >
-                                                                    {faq.question}
-                                                                </Link>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </AccordionContent>
-                                            </AccordionItem>
-                                        ))}
-                                    </Accordion>
+                                                return (
+                                                    <Link 
+                                                        href={faqUrl}
+                                                        key={faq.id}
+                                                        className="group flex justify-between items-center border border-gray-100 rounded-lg px-5 py-4 bg-white hover:border-[#0700DE]/30 hover:shadow-md transition-all duration-300 text-sm md:text-base font-semibold text-gray-800 hover:text-[#0700DE] w-full"
+                                                    >
+                                                        <span>{faq.question}</span>
+                                                        <span className="text-[#0700DE] opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1 duration-300">
+                                                            →
+                                                        </span>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            ))}
+                        </div>
                     )}
                 </div>
             </div>
         </section>
     );
 }
+

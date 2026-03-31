@@ -17,7 +17,7 @@ export async function getFAQs(): Promise<Faq[]> {
         },
         sort: 'order',
         limit: 200, // Aumentato il limite per sicurezza
-        depth: 2, // Per includere Sottocategoria e Categoria
+        depth: 1, // Per includere Categoria
     })
 
     return result.docs
@@ -58,7 +58,7 @@ export async function getFaqBySlug(slug: string): Promise<Faq | null> {
                     equals: true,
                 },
             },
-            depth: 2,
+            depth: 1,
             limit: 1,
         })
 
@@ -69,7 +69,7 @@ export async function getFaqBySlug(slug: string): Promise<Faq | null> {
             const faq = await payload.findByID({
                 collection: 'faqs',
                 id: slug,
-                depth: 2,
+                depth: 1,
             })
             // Verifica che la FAQ sia attiva
             if (faq && faq.isActive) return faq

@@ -4,7 +4,7 @@ export const Faqs: CollectionConfig = {
     slug: 'faqs',
     admin: {
         useAsTitle: 'question',
-        defaultColumns: ['question', 'subcategory', 'order', 'isActive'],
+        defaultColumns: ['question', 'category', 'order', 'isActive'],
         description: 'Gestisci le domande frequenti del sito.',
     },
     access: {
@@ -44,13 +44,13 @@ export const Faqs: CollectionConfig = {
             label: 'Risposta',
         },
         {
-            name: 'subcategory',
+            name: 'category',
             type: 'relationship',
-            relationTo: 'faqsubcategories',
-            label: 'Sottocategoria',
+            relationTo: 'faqcategories',
+            label: 'Categoria',
             required: false,
             admin: {
-                description: 'Associa questa FAQ a una sottocategoria (Struttura: Categoria > Sottocategoria > FAQ)',
+                description: 'Associa questa FAQ a una categoria',
             },
         },
         {

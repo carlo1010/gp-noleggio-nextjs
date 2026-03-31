@@ -8,7 +8,6 @@ import { getFaqBySlug } from "@/lib/fetchPayload";
 type Props = {
     params: Promise<{
         categorySlug: string;
-        subcategorySlug: string;
         faqSlug: string;
     }>;
 };
@@ -48,17 +47,11 @@ export default async function SingleFaqPage({ params }: Props) {
     }
 
     // Risolviamo i titoli per il breadcrumb usando la relazione se possibile
-    // Se la relazione subcategory - category c'è, prendiamola da lì, altrimenti usiamo lo slug.
-    const subcategory = typeof faq.subcategory === 'object' ? faq.subcategory : null;
+    const category = typeof faq.category === 'object' ? faq.category : null;
     let categoryTitle = resolvedParams.categorySlug;
-    let subcategoryTitle = resolvedParams.subcategorySlug;
 
-    if (subcategory) {
-        subcategoryTitle = subcategory.title || subcategoryTitle;
-        const category = typeof subcategory.category === 'object' ? subcategory.category : null;
-        if (category) {
-            categoryTitle = category.title || categoryTitle;
-        }
+    if (category) {
+        categoryTitle = category.title || categoryTitle;
     }
 
     return (
@@ -78,8 +71,6 @@ export default async function SingleFaqPage({ params }: Props) {
                         </Link>
                         <ChevronRight className="w-4 h-4 mx-1 flex-shrink-0" />
                         <span className="text-gray-500 whitespace-nowrap">{categoryTitle}</span>
-                        <ChevronRight className="w-4 h-4 mx-1 flex-shrink-0" />
-                        <span className="text-gray-500 whitespace-nowrap">{subcategoryTitle}</span>
                         <ChevronRight className="w-4 h-4 mx-1 flex-shrink-0" />
                         <span className="text-gray-500 truncate max-w-[150px] md:max-w-xs">{faq.question}</span>
                     </nav>
