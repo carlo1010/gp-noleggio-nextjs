@@ -1,0 +1,35 @@
+input {
+  display: block;
+  width: 100%;
+  line-height: 1.5;
+  padding: 8px 10px;
+  height: 50px;
+  background-color: transparent;
+  border: 1px solid rgba(50, 50, 50, 0.5);
+  border-radius: 2px;
+  transition: all 0.2s ease-in-out;
+  font-family: Arial, sans-serif !important;
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+}
+
+#CARD_NUMBER {
+  border-color: rgba(45, 50, 170, 0.5);
+}
+
+#EXPIRATION_DATE {
+  border-color: rgba(45, 50, 170, 0.5);
+}
+
+#SECURITY_CODE {
+  border-color: rgba(45, 50, 170, 0.5);
+}
+
+#CARDHOLDER_NAME {
+  border-color: rgba(45, 50, 170, 0.5);
+}
+
+#CARDHOLDER_EMAIL {
+  border-color: rgba(45, 50, 170, 0.5);
+}

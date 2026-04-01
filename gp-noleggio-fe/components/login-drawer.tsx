@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 type LoginDrawerProps = {
     open: boolean;
@@ -69,15 +70,29 @@ export default function LoginDrawer({ open, onClose }: LoginDrawerProps) {
                 aria-hidden={!open}
             >
                 <div className="flex items-start justify-between p-8">
-                    <div>
-                        <p className="text-xs text-gray-500">Hai un account aziendale?</p>
-                        <Link href="#" className="mt-2 inline-flex text-sm font-semibold text-[#0700DE] hover:underline">
-                            Collegati a Piccirillo Rent
-                        </Link>
+                    <div className="flex flex-col gap-6">
+                        {/* Logo */}
+                        <div className="relative h-10 w-44">
+                            <Image
+                                src="/logo-rent-nero.png"
+                                alt="Piccirillo Rent"
+                                sizes="266px"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
+                        </div>
 
-                        <h2 className="mt-6 text-lg font-semibold text-black">
-                            Accedi al tuo profilo personale
-                        </h2>
+                        <div>
+                            <p className="text-xs text-gray-500">Hai un account aziendale?</p>
+                            <Link href="#" className="mt-2 inline-flex text-sm font-semibold text-[#0700DE] hover:underline">
+                                Collegati a Piccirillo Rent
+                            </Link>
+
+                            <h2 className="mt-6 text-lg font-semibold text-black">
+                                Accedi al tuo profilo personale
+                            </h2>
+                        </div>
                     </div>
 
                     <button

@@ -14,7 +14,7 @@ export type VeicoliFilters = {
     sort?: string | null;
 };
 
-export function listaVeicoli(filters: VeicoliFilters) {
+export function useListaVeicoli(filters: VeicoliFilters) {
     const {
         datainizio,
         datafine,

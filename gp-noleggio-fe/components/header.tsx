@@ -60,7 +60,7 @@ export default function Header({ dark = false }: HeaderProps) {
                         className={`flex items-center gap-4 md:gap-8 transition-colors duration-300 ${(dark || isScrolled) ? "text-black" : "text-white"
                             }`}
                     >
-                        <Link href="#" className="flex items-center gap-2 text-sm">
+                        <Link href="/aiuto" className="flex items-center gap-2 text-sm">
                             <Info width={20} height={20} />
                             <span className="font-bold hidden md:inline">Aiuto</span>
                         </Link>

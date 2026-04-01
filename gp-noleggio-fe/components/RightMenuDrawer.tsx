@@ -1,16 +1,16 @@
 "use client";
 
-import {useEffect} from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {X} from "lucide-react";
+import { X } from "lucide-react";
 
 type RightMenuDrawerProps = {
     open: boolean;
     onClose: () => void;
 };
 
-export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
+export default function RightMenuDrawer({ open, onClose }: RightMenuDrawerProps) {
     // Chiudi con ESC
     useEffect(() => {
         if (!open) return;
@@ -32,7 +32,7 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
     //         document.body.style.overflow = prev;
     //     };
     // }, [open]);
-// rimuovere scroll verticale causa spostamento del layout, per questo commentato. La soluzione sottostante impedisce l'uso dello scroll ma previene lo spostamento
+    // rimuovere scroll verticale causa spostamento del layout, per questo commentato. La soluzione sottostante impedisce l'uso dello scroll ma previene lo spostamento
     useEffect(() => {
         if (!open) return;
 
@@ -41,10 +41,10 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
         };
 
         // Wheel & trackpad
-        window.addEventListener("wheel", preventScroll, {passive: false});
+        window.addEventListener("wheel", preventScroll, { passive: false });
 
         // Touch (mobile)
-        window.addEventListener("touchmove", preventScroll, {passive: false});
+        window.addEventListener("touchmove", preventScroll, { passive: false });
 
         return () => {
             window.removeEventListener("wheel", preventScroll);
@@ -56,9 +56,8 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
         <>
             {/* Overlay */}
             <div
-                className={`fixed inset-0 z-40 transition-opacity duration-200 ${
-                    open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-                } bg-black/50 backdrop-blur-sm`}
+                className={`fixed inset-0 z-40 transition-opacity duration-200 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+                    } bg-black/50 backdrop-blur-sm`}
                 onClick={onClose}
             />
 
@@ -89,7 +88,7 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
                         className="ml-4 inline-flex h-10 w-10 items-center justify-center rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50"
                         aria-label="Chiudi menu"
                     >
-                        <X size={18}/>
+                        <X size={18} />
                     </button>
                 </div>
 
@@ -105,13 +104,13 @@ export default function RightMenuDrawer({open, onClose}: RightMenuDrawerProps) {
                             <div className="font-semibold">La nostra flotta</div>
                             <ul className="mt-3 space-y-2 pl-4 text-gray-700">
                                 <li><Link href="/tipo-noleggio/noleggio-auto" onClick={onClose}
-                                          className="hover:underline">Auto</Link></li>
+                                    className="hover:underline">Auto</Link></li>
                                 <li><Link href="/tipo-noleggio/noleggio-premium" onClick={onClose}
-                                          className="hover:underline">Premium</Link></li>
+                                    className="hover:underline">Premium</Link></li>
                                 <li><Link href="/tipo-noleggio/noleggio-elettriche" onClick={onClose}
-                                          className="hover:underline">Elettriche</Link></li>
+                                    className="hover:underline">Elettriche</Link></li>
                                 <li><Link href="/tipo-noleggio/noleggio-furgoni" onClick={onClose}
-                                          className="hover:underline">Furgoni</Link></li>
+                                    className="hover:underline">Furgoni</Link></li>
                             </ul>
                         </li>
 

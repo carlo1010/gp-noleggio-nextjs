@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 import type { ListaVeicolo } from "@/types/veicolo";
+import type { PaymentProvider } from "@/lib/payments/types";
 import { calcDays } from "@/lib/date";
 
 export type ClienteTipo = "privato" | "azienda";
@@ -73,6 +74,7 @@ export type CheckoutState = {
     };
 
     pagamento: {
+        provider: PaymentProvider;
         tokenCarta?: string;
         terminiAccettati: boolean;
     };
@@ -134,6 +136,7 @@ type CheckoutActions = {
     // pagamento
     setTermini: (value: boolean) => void;
     setTokenCarta: (token?: string) => void;
+    setPaymentProvider: (provider: PaymentProvider) => void;
 
     // reset
     resetCheckout: () => void;
@@ -196,6 +199,7 @@ const initialCheckoutState: CheckoutState = {
     },
 
     pagamento: {
+        provider: "stripe",
         tokenCarta: undefined,
         terminiAccettati: false,
     },
@@ -363,6 +367,8 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
 
     setTokenCarta: (token) =>
         set((s) => ({ pagamento: { ...s.pagamento, tokenCarta: token } })),
+    setPaymentProvider: (provider) =>
+        set((s) => ({ pagamento: { ...s.pagamento, provider } })),
 
 
     getTotale: () => {
