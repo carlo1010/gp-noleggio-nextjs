@@ -24,8 +24,11 @@ export async function POST(req: Request) {
 
     const result = await initNexiBuildSession(parsed.data);
     if ("error" in result) {
-      const status = result.error.startsWith("Missing ") ? 400 : 500;
-      return NextResponse.json({ error: result.error }, { status });
+      const message = typeof result.error === "string"
+        ? result.error
+        : "Failed to initialize Nexi Build session.";
+      const status = message.startsWith("Missing ") ? 400 : 500;
+      return NextResponse.json({ error: message }, { status });
     }
 
     return NextResponse.json(result);
