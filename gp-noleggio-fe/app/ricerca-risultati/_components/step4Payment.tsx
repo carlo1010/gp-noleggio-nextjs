@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Info, Lock } from "lucide-react";
 
 import { useCheckoutStore } from "@/store/checkout.store";
@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { PaymentProvider } from "@/lib/payments/types";
-import NexiBuildFlow from "@/app/ricerca-risultati/_components/nexiBuildFlow";
 
 export default function Step4Payment() {
   const tariffa = useCheckoutStore((s) => s.tariffa);
@@ -19,24 +18,13 @@ export default function Step4Payment() {
   const total = useCheckoutStore((s) => s.getTotale());
   const paymentProvider = useCheckoutStore((s) => s.pagamento.provider);
   const termsAccepted = useCheckoutStore((s) => s.pagamento.terminiAccettati);
-  const cardholderEmail = useCheckoutStore((s) => s.conducente.email);
-  const cardholderName = useCheckoutStore((s) =>
-    [s.conducente.nome, s.conducente.cognome].filter(Boolean).join(" ").trim(),
-  );
   const setTermini = useCheckoutStore((s) => s.setTermini);
   const setPaymentProvider = useCheckoutStore((s) => s.setPaymentProvider);
 
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showNexiFlow, setShowNexiFlow] = useState(false);
   const bookingReference = useMemo(() => `NOLEGGIO-${Date.now()}`, []);
-
-  useEffect(() => {
-    if (paymentProvider !== "nexi_build_v3") {
-      setShowNexiFlow(false);
-    }
-  }, [paymentProvider]);
 
   const handlePayment = async () => {
     if (!isWeb) return;
@@ -47,11 +35,6 @@ export default function Step4Payment() {
     }
 
     setError(null);
-
-    if (paymentProvider === "nexi_build_v3") {
-      setShowNexiFlow(true);
-      return;
-    }
 
     setIsLoading(true);
 
@@ -64,6 +47,7 @@ export default function Step4Payment() {
           amount: total,
           currency: "EUR",
           bookingReference,
+          returnUrl: `${window.location.origin}/paymentOK`,
         }),
       });
 
@@ -115,9 +99,9 @@ export default function Step4Payment() {
                 </span>
               </label>
               <label className="flex items-center gap-3 border rounded-md p-3 cursor-pointer">
-                <RadioGroupItem value="nexi_build_v3" id="provider-nexi" />
+                <RadioGroupItem value="nexi_hpp" id="provider-nexi" />
                 <span className="text-sm font-medium text-gray-800">
-                  Nexi Build v3
+                  Nexi Checkout (HPP)
                 </span>
               </label>
             </RadioGroup>
@@ -214,14 +198,11 @@ export default function Step4Payment() {
             </div>
             </div>
           ) : (
-            <NexiBuildFlow
-              enabled={showNexiFlow}
-              amount={total}
-              currency="EUR"
-              bookingReference={bookingReference}
-              cardholderEmail={cardholderEmail}
-              cardholderName={cardholderName}
-            />
+            <div className="border border-gray-200 rounded-xl p-5 mb-6 bg-white">
+              <p className="text-sm text-gray-700">
+                Verrai reindirizzato alla pagina sicura Nexi per inserire i dati carta e completare il pagamento.
+              </p>
+            </div>
           )}
         </>
       )}
@@ -268,8 +249,8 @@ export default function Step4Payment() {
           {isLoading
             ? "Attendere..."
             : isWeb
-              ? paymentProvider === "nexi_build_v3"
-                ? "Avvia Nexi"
+              ? paymentProvider === "nexi_hpp"
+                ? "Vai a Nexi"
                 : "Paga Online"
               : "Paga al ritiro"}
         </Button>

@@ -123,6 +123,7 @@ export default function FleetSection() {
                                     width={fleetItems[currentIndex].width}
                                     height={fleetItems[currentIndex].height}
                                     className="object-contain cursor-pointer"
+                                    style={{ width: "auto", height: "auto" }}
                                     onClick={() => setIsAutoPlaying(false)}
                                 />
                             </div>
@@ -182,6 +183,7 @@ export default function FleetSection() {
                                 width={item.width}
                                 height={item.height}
                                 className="object-contain"
+                                style={{ width: "auto", height: "auto" }}
                             />
                         </div>
                     ))}

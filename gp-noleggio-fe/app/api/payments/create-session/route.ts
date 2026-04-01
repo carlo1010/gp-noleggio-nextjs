@@ -4,10 +4,11 @@ import { z } from "zod";
 import { createPaymentSession } from "@/lib/payments/providers";
 
 const createSessionSchema = z.object({
-  provider: z.enum(["stripe", "nexi_build_v3"]),
+  provider: z.enum(["stripe", "nexi_hpp"]),
   amount: z.number().positive(),
   currency: z.literal("EUR"),
   bookingReference: z.string().min(1),
+  returnUrl: z.string().url().optional(),
 });
 
 export async function POST(req: Request) {
@@ -24,7 +25,8 @@ export async function POST(req: Request) {
 
     const result = await createPaymentSession(parsed.data);
     if ("error" in result) {
-      return NextResponse.json({ error: result.error }, { status: 500 });
+      const status = result.error.startsWith("Missing ") ? 400 : 502;
+      return NextResponse.json({ error: result.error }, { status });
     }
 
     return NextResponse.json(result);

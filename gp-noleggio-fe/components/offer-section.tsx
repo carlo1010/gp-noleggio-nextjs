@@ -17,6 +17,7 @@ export default function OffersSection() {
                             src="/vacanza.jpg"
                             alt="Noleggio Vacanza"
                             fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
                             className="object-cover"
                         />
                         <BadgePromo topText="Fino al" bottomText="30%" />
@@ -33,6 +34,7 @@ export default function OffersSection() {
                             src="/furgoni.jpg"
                             alt="Noleggio Furgoni"
                             fill
+                            sizes="(max-width: 768px) 100vw, 25vw"
                             className="object-cover"
                         />
                         <BadgePromo topText="Fino al" bottomText="10%" />
@@ -49,6 +51,7 @@ export default function OffersSection() {
                             src="/business.jpg"
                             alt="Noleggio Business"
                             fill
+                            sizes="(max-width: 768px) 100vw, 25vw"
                             className="object-cover"
                         />
                         <BadgePromo topText="Fino al" bottomText="20%" />
@@ -79,6 +82,7 @@ export default function OffersSection() {
                             src="/vacanza.jpg"
                             alt="Vantaggi"
                             fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
                             className="object-cover"
                         />
                         <div className="absolute inset-0 bg-black/50"></div>

@@ -63,6 +63,7 @@ export default function RentalFeatures() {
                                     alt=""
 
                                     fill
+                                    sizes="96px"
                                     className="object-contain"
                                 />
 
