@@ -65,24 +65,24 @@ export const createPaymentSession = async (
       "Correlation-Id": correlationId,
     },
     body: JSON.stringify({
-      version: "3",
       merchantUrl: nexiMerchantUrl,
       order: {
         orderId,
         amount: String(amountInCents),
         currency: input.currency,
-        description: `Prenotazione ${orderId}`,
       },
       paymentSession: {
         actionType: "PAY",
         amount: String(amountInCents),
+        captureType: "IMPLICIT",
+        paymentService: "CARDS",
+        language: nexiLanguage,
+        resultUrl: nexiResultUrl.includes("{orderId}")
+          ? nexiResultUrl.replace("{orderId}", orderId)
+          : nexiResultUrl,
+        cancelUrl: nexiCancelUrl,
+        ...(nexiNotificationUrl ? { notificationUrl: nexiNotificationUrl } : {}),
       },
-      language: nexiLanguage,
-      resultUrl: nexiResultUrl.includes("{orderId}")
-        ? nexiResultUrl.replace("{orderId}", orderId)
-        : nexiResultUrl,
-      cancelUrl: nexiCancelUrl,
-      ...(nexiNotificationUrl ? { notificationUrl: nexiNotificationUrl } : {}),
     }),
     cache: "no-store",
   });

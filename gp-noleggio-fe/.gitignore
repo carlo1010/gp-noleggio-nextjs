@@ -12,6 +12,8 @@
 
 # production
 /build
+!/app/api/payments/nexi/build/
+!/app/api/payments/nexi/build/**
 
 # misc
 .DS_Store

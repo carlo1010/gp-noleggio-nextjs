@@ -27,6 +27,8 @@ type InitNexiBuildInput = {
   amount: number;
   currency: "EUR";
   bookingReference: string;
+  cardholderEmail?: string;
+  cardholderName?: string;
 };
 
 const normalizeBaseUrl = (raw?: string | null): string | undefined => {
@@ -116,18 +118,31 @@ export async function initNexiBuildSession(input: InitNexiBuildInput) {
         orderId,
         amount: String(amountInCents),
         currency: input.currency,
-        description: `Prenotazione ${orderId}`,
+        ...(input.cardholderEmail || input.cardholderName
+          ? {
+              customerInfo: {
+                ...(input.cardholderEmail
+                  ? { cardHolderEmail: input.cardholderEmail }
+                  : {}),
+                ...(input.cardholderName
+                  ? { cardHolderName: input.cardholderName }
+                  : {}),
+              },
+            }
+          : {}),
       },
       paymentSession: {
         actionType: "PAY",
         amount: String(amountInCents),
+        captureType: "IMPLICIT",
+        paymentService: "CARDS",
+        language: cfg.language,
+        resultUrl: cfg.resultUrl.includes("{orderId}")
+          ? cfg.resultUrl.replace("{orderId}", orderId)
+          : cfg.resultUrl,
+        cancelUrl: cfg.cancelUrl,
+        ...(cfg.notificationUrl ? { notificationUrl: cfg.notificationUrl } : {}),
       },
-      language: cfg.language,
-      resultUrl: cfg.resultUrl.includes("{orderId}")
-        ? cfg.resultUrl.replace("{orderId}", orderId)
-        : cfg.resultUrl,
-      cancelUrl: cfg.cancelUrl,
-      ...(cfg.notificationUrl ? { notificationUrl: cfg.notificationUrl } : {}),
     }),
     cache: "no-store",
   });
@@ -196,6 +211,25 @@ export async function getNexiBuildState(sessionId: string) {
   };
 }
 
+const extractNexiError = (json: NexiBuildResponse | null, fallback: string) => {
+  if (!json) return fallback;
+
+  const directMessage =
+    (json.message as string | undefined) ??
+    (json.error as string | undefined) ??
+    (json.detail as string | undefined) ??
+    (json.title as string | undefined);
+
+  if (directMessage) return directMessage;
+
+  const errors = json.errors as Array<Record<string, unknown>> | undefined;
+  if (Array.isArray(errors) && errors.length > 0) {
+    return JSON.stringify(errors[0]);
+  }
+
+  return fallback;
+};
+
 export async function finalizeNexiBuildPayment(sessionId: string) {
   const cfg = getNexiConfig();
   if (!cfg.apiKey) return { error: "Missing NEXI_BUILD_V3_API_KEY configuration." };
@@ -210,11 +244,10 @@ export async function finalizeNexiBuildPayment(sessionId: string) {
 
   const json = (await res.json().catch(() => null)) as NexiBuildResponse | null;
   if (!res.ok || !json) {
-    const providerError =
-      (json?.message as string | undefined) ??
-      (json?.error as string | undefined) ??
-      "Nexi /build/finalize_payment failed.";
-    return { error: `${providerError} (Correlation-Id: ${correlationId})` };
+    const providerError = extractNexiError(json, "Nexi /build/finalize_payment failed.");
+    return {
+      error: `${providerError} (HTTP ${res.status}, Correlation-Id: ${correlationId})`,
+    };
   }
 
   return {
@@ -224,6 +257,108 @@ export async function finalizeNexiBuildPayment(sessionId: string) {
     url: json.url,
     fields: resolveCheckoutFields(json),
     operation: json.operation,
+    raw: json,
+  };
+}
+
+export async function confirmNexiBuildPayment(sessionId: string) {
+  const cfg = getNexiConfig();
+  if (!cfg.apiKey) return { error: "Missing NEXI_BUILD_V3_API_KEY configuration." };
+
+  const correlationId = crypto.randomUUID();
+  const res = await fetch(`${cfg.baseBuildEndpoint}/confirm_payment`, {
+    method: "POST",
+    headers: nexiHeaders(cfg.apiKey, correlationId),
+    body: JSON.stringify({ sessionId }),
+    cache: "no-store",
+  });
+
+  const json = (await res.json().catch(() => null)) as NexiBuildResponse | null;
+  if (!res.ok || !json) {
+    const providerError = extractNexiError(json, "Nexi /build/confirm_payment failed.");
+    return {
+      error: `${providerError} (HTTP ${res.status}, Correlation-Id: ${correlationId})`,
+    };
+  }
+
+  return {
+    correlationId,
+    sessionId,
+    state: json.state ?? "UNKNOWN",
+    url: json.url,
+    fields: resolveCheckoutFields(json),
+    operation: json.operation,
+    raw: json,
+  };
+}
+
+export async function getNexiBuildIntegrity() {
+  const cfg = getNexiConfig();
+  if (!cfg.apiKey) return { error: "Missing NEXI_BUILD_V3_API_KEY configuration." };
+
+  const correlationId = crypto.randomUUID();
+  const res = await fetch(`${cfg.baseBuildEndpoint}/integrity`, {
+    method: "GET",
+    headers: {
+      "X-Api-Key": cfg.apiKey,
+      "Correlation-Id": correlationId,
+    },
+    cache: "no-store",
+  });
+
+  const json = (await res.json().catch(() => null)) as
+    | { integrity?: string; crossOrigin?: string; [key: string]: unknown }
+    | null;
+
+  if (!res.ok || !json) {
+    const providerError = extractNexiError(
+      json as NexiBuildResponse | null,
+      "Nexi /build/integrity failed.",
+    );
+    return {
+      error: `${providerError} (HTTP ${res.status}, Correlation-Id: ${correlationId})`,
+    };
+  }
+
+  return {
+    correlationId,
+    integrity: json.integrity,
+    crossOrigin: json.crossOrigin,
+    raw: json,
+  };
+}
+
+export async function getNexiBuildCardData(sessionId: string) {
+  const cfg = getNexiConfig();
+  if (!cfg.apiKey) return { error: "Missing NEXI_BUILD_V3_API_KEY configuration." };
+
+  const correlationId = crypto.randomUUID();
+  const url = new URL(`${cfg.baseBuildEndpoint}/cardData`);
+  url.searchParams.set("sessionId", sessionId);
+
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    headers: {
+      "X-Api-Key": cfg.apiKey,
+      "Correlation-Id": correlationId,
+    },
+    cache: "no-store",
+  });
+
+  const json = (await res.json().catch(() => null)) as Record<string, unknown> | null;
+  if (!res.ok || !json) {
+    const providerError = extractNexiError(
+      json as NexiBuildResponse | null,
+      "Nexi /build/cardData failed.",
+    );
+    return {
+      error: `${providerError} (HTTP ${res.status}, Correlation-Id: ${correlationId})`,
+    };
+  }
+
+  return {
+    correlationId,
+    sessionId,
     raw: json,
   };
 }

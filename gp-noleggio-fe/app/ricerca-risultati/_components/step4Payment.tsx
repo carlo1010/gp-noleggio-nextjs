@@ -19,6 +19,10 @@ export default function Step4Payment() {
   const total = useCheckoutStore((s) => s.getTotale());
   const paymentProvider = useCheckoutStore((s) => s.pagamento.provider);
   const termsAccepted = useCheckoutStore((s) => s.pagamento.terminiAccettati);
+  const cardholderEmail = useCheckoutStore((s) => s.conducente.email);
+  const cardholderName = useCheckoutStore((s) =>
+    [s.conducente.nome, s.conducente.cognome].filter(Boolean).join(" ").trim(),
+  );
   const setTermini = useCheckoutStore((s) => s.setTermini);
   const setPaymentProvider = useCheckoutStore((s) => s.setPaymentProvider);
 
@@ -215,6 +219,8 @@ export default function Step4Payment() {
               amount={total}
               currency="EUR"
               bookingReference={bookingReference}
+              cardholderEmail={cardholderEmail}
+              cardholderName={cardholderName}
             />
           )}
         </>
