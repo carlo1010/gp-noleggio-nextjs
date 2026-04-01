@@ -643,6 +643,7 @@ export default function SearchCard() {
                             </div>
                         )}
                     </div>
+                    */}
                 </div>
 
                 <div className="w-full md:w-auto min-w-[150px]">
