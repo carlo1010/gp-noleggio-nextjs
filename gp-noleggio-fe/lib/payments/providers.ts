@@ -126,6 +126,31 @@ export const createPaymentSession = async (
   const orderId = input.bookingReference.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 18);
   const nexiUrls = buildNexiUrls(input, orderId);
 
+  const customerId = input.customerInfo?.taxCode || "Test";
+  
+  const descriptionParts = ["Prenotazione noleggio con GP Rental"];
+  const pickupDt = input.pickupDateTime?.trim();
+  const dropoffDt = input.dropoffDateTime?.trim();
+  
+  if (pickupDt) {
+    descriptionParts.push(pickupDt);
+  }
+  if (dropoffDt) {
+    if (pickupDt) {
+      descriptionParts.push("-");
+    }
+    descriptionParts.push(dropoffDt);
+  }
+  
+  const description = descriptionParts.join(" ");
+
+  console.log("Payment description details:", {
+    pickupDateTime: input.pickupDateTime,
+    dropoffDateTime: input.dropoffDateTime,
+    description,
+    allParts: descriptionParts,
+  });
+
   const nexiRes = await fetch(nexiOrdersEndpoint, {
     method: "POST",
     headers: {
@@ -136,11 +161,32 @@ export const createPaymentSession = async (
     body: JSON.stringify({
       order: {
         orderId,
+        customerId,
+        description,
         amount: amountInCents,
         currency: input.currency,
+        ...(input.customerInfo
+          ? {
+              customerInfo: {
+                ...(input.customerInfo.cardHolderName
+                  ? { cardHolderName: input.customerInfo.cardHolderName }
+                  : {}),
+                ...(input.customerInfo.cardHolderEmail
+                  ? { cardHolderEmail: input.customerInfo.cardHolderEmail }
+                  : {}),
+                ...(input.customerInfo.mobilePhone
+                  ? { mobilePhone: input.customerInfo.mobilePhone }
+                  : {}),
+                ...(input.customerInfo.taxCode
+                  ? { taxCode: input.customerInfo.taxCode }
+                  : {}),
+              },
+            }
+          : {}),
       },
       paymentSession: {
         actionType: "PAY",
+        paymentService: "CARDS",
         amount: amountInCents,
         resultUrl: nexiUrls.resultUrl,
         cancelUrl: nexiUrls.cancelUrl,

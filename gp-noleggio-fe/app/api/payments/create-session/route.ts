@@ -2,13 +2,31 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createPaymentSession } from "@/lib/payments/providers";
+import { getEnabledProviders } from "@/lib/payments/config";
+
+const enabledProviders = getEnabledProviders();
 
 const createSessionSchema = z.object({
-  provider: z.enum(["stripe", "nexi_hpp"]),
+  provider: z.enum(["stripe", "nexi_hpp"]).refine(
+    (provider) => enabledProviders.includes(provider),
+    (provider) => ({
+      message: `Payment provider "${provider}" is not enabled. Enabled providers: ${enabledProviders.join(", ")}`,
+    })
+  ),
   amount: z.number().positive(),
   currency: z.literal("EUR"),
   bookingReference: z.string().min(1),
   returnUrl: z.string().url().optional(),
+  pickupDateTime: z.string().optional(),
+  dropoffDateTime: z.string().optional(),
+  customerInfo: z
+    .object({
+      cardHolderName: z.string().min(1).optional(),
+      cardHolderEmail: z.string().email().optional(),
+      mobilePhone: z.string().min(1).optional(),
+      taxCode: z.string().min(1).optional(),
+    })
+    .optional(),
 });
 
 export async function POST(req: Request) {
