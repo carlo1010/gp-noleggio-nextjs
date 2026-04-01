@@ -19,6 +19,14 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
+/** Applica la maschera GG/MM/AAAA mentre l'utente digita */
+function maskDate(raw: string): string {
+    const digits = raw.replace(/\D/g, "").slice(0, 8);
+    if (digits.length <= 2) return digits;
+    if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
 const driverSchema = z.object({
     nome: z.string().min(2, "Minimo 2 caratteri").regex(/^[A-Za-zÀ-ÿ\s']+$/, "Solo lettere, spazi e apostrofi ammessi"),
     cognome: z.string().min(2, "Minimo 2 caratteri").regex(/^[A-Za-zÀ-ÿ\s']+$/, "Solo lettere, spazi e apostrofi ammessi"),
@@ -43,6 +51,7 @@ export default function Step4DriverForm() {
     const setCodicePromo = useCheckoutStore((s) => s.setCodicePromo);
 
     const setTermini = useCheckoutStore((s) => s.setTermini);
+    const setTriggerDriverValidation = useCheckoutStore((s) => s.setTriggerDriverValidation);
 
     const form = useForm<DriverFormValues>({
         resolver: zodResolver(driverSchema),
@@ -62,7 +71,13 @@ export default function Step4DriverForm() {
         mode: "onBlur",
     });
 
-    const { control, handleSubmit, watch } = form;
+    const { control, handleSubmit, watch, trigger } = form;
+
+    // Registra la funzione di trigger nello store così step4Payment può attivarla
+    useEffect(() => {
+        setTriggerDriverValidation(trigger);
+        return () => setTriggerDriverValidation(undefined);
+    }, [trigger, setTriggerDriverValidation]);
 
     // ⬇️ stati per i “dropdown”
     const [openFedelta, setOpenFedelta] = useState(false);
@@ -92,7 +107,7 @@ export default function Step4DriverForm() {
     const onSubmit = handleSubmit(() => { });
 
     return (
-        <div className="bg-[#F7F7F7] p-6 w-full rounded-tl-3xl rounded-br-3xl shadow-sm">
+        <div id="driver-form-section" className="bg-[#F7F7F7] p-6 w-full rounded-tl-3xl rounded-br-3xl shadow-sm">
             <Form {...form}>
                 <form onSubmit={onSubmit}>
                     {/* Titolo */}
@@ -153,8 +168,13 @@ export default function Step4DriverForm() {
                                     <FormControl>
                                         <Input
                                             className="h-9 bg-white"
-                                            placeholder="GG/MM/AA"
+                                            placeholder="GG/MM/AAAA"
+                                            inputMode="numeric"
+                                            maxLength={10}
                                             {...field}
+                                            onChange={(e) =>
+                                                field.onChange(maskDate(e.target.value))
+                                            }
                                         />
                                     </FormControl>
                                     <FormMessage className="text-xs text-red-600" />

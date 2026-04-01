@@ -5,7 +5,6 @@ import { Info, Lock } from "lucide-react";
 
 import { useCheckoutStore } from "@/store/checkout.store";
 import { formatPrice } from "@/lib/formatPrice";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -282,4 +281,14 @@ export default function Step4Payment() {
       </div>
     </div>
   );
+}
+
+// ─── Export: avvolge PaymentForm con il provider Elements ────────────────────
+
+export default function Step4Payment() {
+    return (
+        <Elements stripe={stripePromise} options={{ locale: "it" }}>
+            <PaymentForm />
+        </Elements>
+    );
 }

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import HeroBanner from "@/components/hero-banner";
 import Footer from "@/components/footer";
 import ComeFunziona from "@/components/come-funziona";
@@ -5,12 +6,41 @@ import IntroFurgoni from "@/components/intro-furgoni";
 import PromoSplit from "@/components/PromoSplit";
 import WideImageBanner from "@/components/wide-image-banner";
 
+export const metadata: Metadata = {
+    title: "Noleggio Furgoni – Piccirillo Rent per Privati e Aziende",
+    description:
+        "Noleggia furgoni per traslochi, consegne e uso aziendale con Piccirillo Rent. Flotta vasta e flessibile. Ritiro e riconsegna anche in sedi diverse.",
+    openGraph: {
+        title: "Noleggio Furgoni | Piccirillo Rent",
+        description: "Furgoni per traslochi e lavoro. Flotta vasta, massima flessibilità.",
+        url: "/tipo-noleggio/noleggio-furgoni",
+    },
+    alternates: { canonical: "/tipo-noleggio/noleggio-furgoni" },
+};
+
+const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: "Noleggio Furgoni",
+    provider: {
+        "@type": "Organization",
+        name: "Piccirillo Rent",
+        url: "https://www.piccirillorent.it",
+    },
+    description:
+        "Noleggio furgoni per privati e aziende in Campania. Flessibile, conveniente e senza pensieri.",
+    areaServed: { "@type": "State", name: "Campania" },
+};
+
 
 export default function noleggioFurgoni() {
     return (
         <>
-
-            <HeroBanner imageUrl={'/flotta-furgoni.png'}/>
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            <HeroBanner imageUrl={"/flotta-furgoni.png"} />
 
             <IntroFurgoni
                 title="Noleggio furgoni - Scopri la flotta furgoni di Piccirillo Rent, adatta per ogni esigenza"
