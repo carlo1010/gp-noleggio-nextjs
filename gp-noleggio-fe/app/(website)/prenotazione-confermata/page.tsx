@@ -40,7 +40,7 @@ export default function PrenotazioneConfermataPage() {
                     <CheckCircle className="w-16 h-16 text-green-500 mb-4" strokeWidth={1.5} />
                     <h1 className="text-2xl font-bold text-gray-900">Prenotazione confermata!</h1>
                     <p className="text-gray-500 text-sm mt-2">
-                        Riceverai una email di conferma all'indirizzo{" "}
+                        Riceverai una email di conferma {"all'indirizzo"}{" "}
                         <span className="font-semibold text-gray-700">{conducente.email}</span>
                     </p>
                 </div>

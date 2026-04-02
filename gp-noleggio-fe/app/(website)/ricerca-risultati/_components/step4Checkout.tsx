@@ -1,9 +1,9 @@
 "use client";
 
-import Step4Header from "@/app/ricerca-risultati/_components/step4Header";
-import Step4DriverForm from "@/app/ricerca-risultati/_components/step4DriverForm";
-import Step4Payment from "@/app/ricerca-risultati/_components/step4Payment";
-import Step4SidebarSummary from "@/app/ricerca-risultati/_components/step4SidebarSummary";
+import Step4Header from "@/app/(website)/ricerca-risultati/_components/step4Header";
+import Step4DriverForm from "@/app/(website)/ricerca-risultati/_components/step4DriverForm";
+import Step4Payment from "@/app/(website)/ricerca-risultati/_components/step4Payment";
+import Step4SidebarSummary from "@/app/(website)/ricerca-risultati/_components/step4SidebarSummary";
 
 export default function Step4Checkout() {
     return (

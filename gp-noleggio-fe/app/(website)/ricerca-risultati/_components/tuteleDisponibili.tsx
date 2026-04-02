@@ -38,7 +38,7 @@ export function TuteleDisponibili({
         () => calcDays(ritiro?.data, riconsegna?.data),
         [ritiro?.data, riconsegna?.data]
     );
-    const icons = [<MartelloIcon />, <FuocoIcon />, <CamioncinoRifiuti />];
+    const icons = [<MartelloIcon key="martello" />, <FuocoIcon key="fuoco" />, <CamioncinoRifiuti key="camion" />];
 
     return (
         <div className="w-full">

@@ -103,7 +103,7 @@ export default function FiltroAuto() {
 
             return same ? prev : nextState;
         });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [searchParams]);
 
     // ✅ helper per aggiornare 1 filtro

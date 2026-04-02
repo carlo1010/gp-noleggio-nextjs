@@ -3,18 +3,18 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMemo, useEffect } from "react";
 
-import SceltaVeicolo from "@/app/ricerca-risultati/_components/sceltaVeicolo";
+import SceltaVeicolo from "@/app/(website)/ricerca-risultati/_components/sceltaVeicolo";
 
 import { TuteleDisponibili } from "./tuteleDisponibili";
-import PacchettiProtection from "@/app/ricerca-risultati/_components/extra";
-import ExtraDisponibili from "@/app/ricerca-risultati/_components/extraDisponibili";
-import CheckoutTopBar from "@/app/ricerca-risultati/_components/topBarExtra";
+import PacchettiProtection from "@/app/(website)/ricerca-risultati/_components/extra";
+import ExtraDisponibili from "@/app/(website)/ricerca-risultati/_components/extraDisponibili";
+import CheckoutTopBar from "@/app/(website)/ricerca-risultati/_components/topBarExtra";
 import { useCheckoutStore } from "@/store/checkout.store";
-import Step4Checkout from "@/app/ricerca-risultati/_components/step4Checkout";
-import { listaProtezioni, listaServizi } from "@/hook/useService";
+import Step4Checkout from "@/app/(website)/ricerca-risultati/_components/step4Checkout";
+import { useListaProtezioni, useListaServizi } from "@/hook/useService";
 import { useListaVeicoli } from "@/hook/useVeicoli";
 import { parsePrice } from "@/lib/price";
-import { listaAgenzia } from "@/hook/useAgenzia";
+import { useListaAgenzia } from "@/hook/useAgenzia";
 
 export default function RicercaRisultatiClient() {
     const sp = useSearchParams();
@@ -58,11 +58,11 @@ export default function RicercaRisultatiClient() {
     });
 
     const codiceTariffa = checkout.veicolo?.codiceTariffa;
-    const { data: servizi } = listaServizi(codiceTariffa);
-    const { data: protezioni } = listaProtezioni(codiceTariffa);
+    const { data: servizi } = useListaServizi(codiceTariffa);
+    const { data: protezioni } = useListaProtezioni(codiceTariffa);
 
 
-    const { data: agenzie } = listaAgenzia();
+    const { data: agenzie } = useListaAgenzia();
 
     // 🔁 DATA PERSISTENCE & SYNC
     useEffect(() => {

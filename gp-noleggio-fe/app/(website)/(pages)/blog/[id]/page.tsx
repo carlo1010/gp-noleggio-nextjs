@@ -1,24 +1,22 @@
 import type { Metadata } from "next";
-import { promises as fs } from "fs";
-import path from "path";
+import { getPayload } from "@/lib/payload";
 import HeroBanner from "@/components/hero-banner";
 import WhyRent from "@/components/why-rent";
 import BlogArticle from "@/components/blog-article";
+import { notFound } from "next/navigation";
 
-interface BlogItem {
-    id: string;
-    kicker: string;
-    title: string;
-    desc: string;
-    img: string;
-    imgAlt: string;
-}
-
-async function getBlogPost(id: string): Promise<BlogItem | null> {
-    const filePath = path.join(process.cwd(), "data", "blog.json");
-    const fileContents = await fs.readFile(filePath, "utf8");
-    const items: BlogItem[] = JSON.parse(fileContents);
-    return items.find((item) => item.id === id) ?? null;
+async function getBlogPost(slug: string) {
+    const payload = await getPayload();
+    const { docs } = await payload.find({
+        collection: 'posts',
+        where: {
+            slug: {
+                equals: slug,
+            }
+        },
+        limit: 1,
+    });
+    return docs[0] ?? null;
 }
 
 export async function generateMetadata({
@@ -33,6 +31,8 @@ export async function generateMetadata({
         return { title: "Articolo non trovato" };
     }
 
+    const imageUrl = typeof post.img === 'object' && post.img?.url ? post.img.url : '/placeholder.png';
+
     return {
         title: post.title,
         description: post.desc,
@@ -40,7 +40,7 @@ export async function generateMetadata({
             title: post.title,
             description: post.desc,
             url: `/blog/${id}`,
-            images: [{ url: post.img, alt: post.imgAlt }],
+            images: [{ url: imageUrl, alt: post.imgAlt }],
         },
         alternates: { canonical: `/blog/${id}` },
     };
@@ -54,11 +54,16 @@ export default async function BlogArticlePage({
     params: Promise<{ id: string }>;
 }) {
     const { id } = await params;
+    const post = await getBlogPost(id);
+
+    if (!post) {
+        notFound();
+    }
 
     return (
         <>
             <HeroBanner imageUrl={bannerImageUrl} />
-            <BlogArticle id={id} />
+            <BlogArticle post={post} />
             <WhyRent />
         </>
     );

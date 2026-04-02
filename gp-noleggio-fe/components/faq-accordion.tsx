@@ -39,7 +39,7 @@ export default function FaqAccordion({ faqs }: FaqAccordionProps) {
                     <h1 className="text-3xl md:text-4xl font-extrabold mb-3 uppercase text-black">FAQ - Aiuto</h1>
                     <p className="text-gray-700 text-sm md:text-base leading-relaxed">
                         In questa sezione trovi le risposte alle domande più frequenti organizzate per categoria. 
-                        Esplora le sezioni qui sotto per trovare rapidamente l'informazione che cerchi.
+                        Esplora le sezioni qui sotto per trovare rapidamente {"l'informazione"} che cerchi.
                     </p>
                 </div>
 
