@@ -16,10 +16,11 @@ export async function getFAQs(): Promise<Faq[]> {
             },
         },
         sort: 'order',
-        limit: 100,
+        limit: 200, // Aumentato il limite per sicurezza
+        depth: 1, // Per includere Categoria
     })
 
-    return result.docs as Faq[]
+    return result.docs
 }
 
 /**
@@ -33,7 +34,50 @@ export async function getFAQById(id: string): Promise<Faq | null> {
             collection: 'faqs',
             id,
         })
-        return faq as Faq
+        return faq
+    } catch {
+        return null
+    }
+}
+
+/**
+ * Recupera una singola FAQ per slug o per ID (fallback per FAQ senza slug generato).
+ */
+export async function getFaqBySlug(slug: string): Promise<Faq | null> {
+    const payload = await getPayload()
+
+    try {
+        // Prima prova a cercare per slug
+        const result = await payload.find({
+            collection: 'faqs',
+            where: {
+                slug: {
+                    equals: slug,
+                },
+                isActive: {
+                    equals: true,
+                },
+            },
+            depth: 1,
+            limit: 1,
+        })
+
+        if (result.docs.length > 0) return result.docs[0]
+
+        // Fallback: cerca per ID (per FAQ create prima della generazione automatica dello slug)
+        try {
+            const faq = await payload.findByID({
+                collection: 'faqs',
+                id: slug,
+                depth: 1,
+            })
+            // Verifica che la FAQ sia attiva
+            if (faq && faq.isActive) return faq
+        } catch {
+            // ID non valido o non trovato, ignora
+        }
+
+        return null
     } catch {
         return null
     }
