@@ -36,6 +36,7 @@ export default function CardNoleggio(props: CardNoleggioProps,) {
                     alt={props.nome || "Veicolo"}
                     width={300}
                     height={219}
+                    style={{ height: "auto" }}
                 />
             </div>
 

@@ -2,12 +2,31 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createPaymentSession } from "@/lib/payments/providers";
+import { getEnabledProviders } from "@/lib/payments/config";
+
+const enabledProviders = getEnabledProviders();
 
 const createSessionSchema = z.object({
-  provider: z.enum(["stripe", "nexi_build_v3"]),
+  provider: z.enum(["stripe", "nexi_hpp"]).refine(
+    (provider) => enabledProviders.includes(provider),
+    (provider) => ({
+      message: `Payment provider "${provider}" is not enabled. Enabled providers: ${enabledProviders.join(", ")}`,
+    })
+  ),
   amount: z.number().positive(),
   currency: z.literal("EUR"),
   bookingReference: z.string().min(1),
+  returnUrl: z.string().url().optional(),
+  pickupDateTime: z.string().optional(),
+  dropoffDateTime: z.string().optional(),
+  customerInfo: z
+    .object({
+      cardHolderName: z.string().min(1).optional(),
+      cardHolderEmail: z.string().email().optional(),
+      mobilePhone: z.string().min(1).optional(),
+      taxCode: z.string().min(1).optional(),
+    })
+    .optional(),
 });
 
 export async function POST(req: Request) {
@@ -24,7 +43,8 @@ export async function POST(req: Request) {
 
     const result = await createPaymentSession(parsed.data);
     if ("error" in result) {
-      return NextResponse.json({ error: result.error }, { status: 500 });
+      const status = result.error.startsWith("Missing ") ? 400 : 502;
+      return NextResponse.json({ error: result.error }, { status });
     }
 
     return NextResponse.json(result);

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
@@ -131,6 +132,9 @@ export default function FiltroAuto() {
                                 <DialogTitle>Filtri</DialogTitle>
                             </DialogHeader>
                             <DialogContent className="w-[90%] rounded-lg max-h-[80vh] overflow-y-auto">
+                                <DialogDescription className="sr-only">
+                                    Filtra i veicoli per cambio, posti, tipologia e prezzo.
+                                </DialogDescription>
                                 <h2 className="font-bold text-lg mb-4">Filtra veicoli</h2>
                                 <div className="flex flex-col gap-4">
                                     {/* Cambio */}

@@ -18,6 +18,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import CountryCodeSelect, { type CountryCode } from "@/components/CountryCodeSelect";
 
 /** Applica la maschera GG/MM/AAAA mentre l'utente digita */
 function maskDate(raw: string): string {
@@ -30,7 +31,24 @@ function maskDate(raw: string): string {
 const driverSchema = z.object({
     nome: z.string().min(2, "Minimo 2 caratteri").regex(/^[A-Za-zÀ-ÿ\s']+$/, "Solo lettere, spazi e apostrofi ammessi"),
     cognome: z.string().min(2, "Minimo 2 caratteri").regex(/^[A-Za-zÀ-ÿ\s']+$/, "Solo lettere, spazi e apostrofi ammessi"),
-    dataNascita: z.string().regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/\d{4}$/, "Formato non valido (GG/MM/AAAA)"),
+    dataNascita: z.string()
+        .regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/\d{4}$/, "Formato non valido (GG/MM/AAAA)")
+        .refine((dateStr) => {
+            const [day, month, year] = dateStr.split('/').map(Number);
+            const birthDate = new Date(year, month - 1, day);
+            const today = new Date();
+
+            // Calculate age
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            const dayDiff = today.getDate() - birthDate.getDate();
+
+            if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+                age--;
+            }
+
+            return age >= 18;
+        }, "Devi avere almeno 18 anni"),
     email: z.string().email("Email non valida"),
     telefono: z.string().min(9, "Numero troppo corto").regex(/^[0-9]+$/, "Solo numeri ammessi"),
     codiceFiscale: z.string().regex(/^[A-Z]{6}[0-9LMNPQRSTUV]{2}[ABCDEHLMPRST][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]$/i, "Codice fiscale non valido"),
@@ -52,6 +70,13 @@ export default function Step4DriverForm() {
 
     const setTermini = useCheckoutStore((s) => s.setTermini);
     const setTriggerDriverValidation = useCheckoutStore((s) => s.setTriggerDriverValidation);
+    
+    const [selectedCountry, setSelectedCountry] = useState<CountryCode>({
+        code: "IT",
+        flag: "🇮🇹",
+        name: "Italia",
+        phone: "+39",
+    });
 
     const form = useForm<DriverFormValues>({
         resolver: zodResolver(driverSchema),
@@ -127,7 +152,7 @@ export default function Step4DriverForm() {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            className="h-9 bg-white"
+                                            className="h-9 bg-white uppercase"
                                             placeholder="Es. Luigi"
                                             {...field}
                                         />
@@ -147,7 +172,7 @@ export default function Step4DriverForm() {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            className="h-9 bg-white"
+                                            className="h-9 bg-white uppercase"
                                             placeholder="Es. Rossi"
                                             {...field}
                                         />
@@ -254,10 +279,10 @@ export default function Step4DriverForm() {
                                     </FormLabel>
                                     <FormControl>
                                         <div className="flex gap-2">
-                                            <div className="h-9 px-2 bg-white border rounded-md flex items-center gap-2 text-xs">
-                                                <span>🇮🇹</span>
-                                                <span>+39</span>
-                                            </div>
+                                            <CountryCodeSelect
+                                                value={selectedCountry.code}
+                                                onChange={setSelectedCountry}
+                                            />
                                             <Input
                                                 className="h-9 bg-white"
                                                 placeholder="Numero di telefono"
@@ -280,7 +305,7 @@ export default function Step4DriverForm() {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            className="h-9 bg-white"
+                                            className="h-9 bg-white uppercase"
                                             placeholder="Es. RSSL..."
                                             {...field}
                                         />

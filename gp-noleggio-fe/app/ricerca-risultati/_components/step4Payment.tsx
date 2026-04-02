@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Info, Lock } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Lock } from "lucide-react";
 
 import { useCheckoutStore } from "@/store/checkout.store";
 import { formatPrice } from "@/lib/formatPrice";
@@ -11,35 +11,53 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { PaymentProvider } from "@/lib/payments/types";
-import NexiBuildFlow from "@/app/ricerca-risultati/_components/nexiBuildFlow";
+import { getEnabledProviders, PAYMENT_PROVIDERS_CONFIG } from "@/lib/payments/config";
+
+const nameRegex = /^[A-Za-z\u00C0-\u00FF\s']+$/;
+const birthDateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/\d{4}$/;
+const phoneRegex = /^[0-9]+$/;
+const codiceFiscaleRegex =
+  /^[A-Z]{6}[0-9LMNPQRSTUV]{2}[ABCDEHLMPRST][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]$/i;
 
 export default function Step4Payment() {
   const tariffa = useCheckoutStore((s) => s.tariffa);
   const isWeb = tariffa?.tipo === "web";
   const total = useCheckoutStore((s) => s.getTotale());
+  const conducente = useCheckoutStore((s) => s.conducente);
+  const triggerDriverValidation = useCheckoutStore((s) => s.triggerDriverValidation);
   const paymentProvider = useCheckoutStore((s) => s.pagamento.provider);
   const termsAccepted = useCheckoutStore((s) => s.pagamento.terminiAccettati);
-  const cardholderEmail = useCheckoutStore((s) => s.conducente.email);
-  const cardholderName = useCheckoutStore((s) =>
-    [s.conducente.nome, s.conducente.cognome].filter(Boolean).join(" ").trim(),
-  );
   const setTermini = useCheckoutStore((s) => s.setTermini);
   const setPaymentProvider = useCheckoutStore((s) => s.setPaymentProvider);
 
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showNexiFlow, setShowNexiFlow] = useState(false);
   const bookingReference = useMemo(() => `NOLEGGIO-${Date.now()}`, []);
-
-  useEffect(() => {
-    if (paymentProvider !== "nexi_build_v3") {
-      setShowNexiFlow(false);
-    }
-  }, [paymentProvider]);
+  const isDriverFormValid =
+    conducente.nome.trim().length >= 2 &&
+    nameRegex.test(conducente.nome.trim()) &&
+    conducente.cognome.trim().length >= 2 &&
+    nameRegex.test(conducente.cognome.trim()) &&
+    birthDateRegex.test(conducente.dataNascita.trim()) &&
+    /^\S+@\S+\.\S+$/.test(conducente.email.trim()) &&
+    conducente.telefono.trim().length >= 9 &&
+    phoneRegex.test(conducente.telefono.trim()) &&
+    codiceFiscaleRegex.test(conducente.codiceFiscale.trim());
 
   const handlePayment = async () => {
     if (!isWeb) return;
+
+    const formValidated = triggerDriverValidation
+      ? await triggerDriverValidation()
+      : isDriverFormValid;
+    if (!formValidated) {
+      setError("Compila correttamente i dettagli del conducente per procedere.");
+      document
+        .getElementById("driver-form-section")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
 
     if (!privacyAccepted || !termsAccepted) {
       setError("Devi accettare informativa privacy e termini per procedere.");
@@ -48,23 +66,35 @@ export default function Step4Payment() {
 
     setError(null);
 
-    if (paymentProvider === "nexi_build_v3") {
-      setShowNexiFlow(true);
-      return;
-    }
-
     setIsLoading(true);
 
     try {
+      const store = useCheckoutStore.getState();
+      const pickupDateTime = `${store.search.ritiro.data} ${store.search.ritiro.ora}`.trim();
+      const dropoffDateTime = `${store.search.riconsegna.data} ${store.search.riconsegna.ora}`.trim();
+
+      const payload = {
+        provider: paymentProvider,
+        amount: total,
+        currency: "EUR" as const,
+        customerInfo: {
+          cardHolderName: `${conducente.nome} ${conducente.cognome}`.trim(),
+          cardHolderEmail: conducente.email,
+          mobilePhone: conducente.telefono,
+          taxCode: conducente.codiceFiscale,
+        },
+        bookingReference,
+        returnUrl: `${window.location.origin}/paymentOK`,
+        ...(pickupDateTime && pickupDateTime.length > 0 ? { pickupDateTime } : {}),
+        ...(dropoffDateTime && dropoffDateTime.length > 0 ? { dropoffDateTime } : {}),
+      };
+
+      console.log("Payment payload:", payload);
+
       const response = await fetch("/api/payments/create-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          provider: paymentProvider,
-          amount: total,
-          currency: "EUR",
-          bookingReference,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -91,39 +121,48 @@ export default function Step4Payment() {
 
   return (
     <div className="w-full mt-6">
-      <h2 className="font-bold text-xl text-gray-900 mb-6">
+{/*      <h2 className="font-bold text-xl text-gray-900 mb-6">
         Garantisci la tua prenotazione
-      </h2>
+      </h2>*/}
 
       {isWeb && (
         <>
-          <div className="mb-6">
-            <Label className="text-xs font-bold text-gray-700 mb-2 block">
-              Metodo di pagamento online
-            </Label>
-            <RadioGroup
-              value={paymentProvider}
-              onValueChange={(value) =>
-                setPaymentProvider(value as PaymentProvider)
-              }
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-            >
-              <label className="flex items-center gap-3 border rounded-md p-3 cursor-pointer">
-                <RadioGroupItem value="stripe" id="provider-stripe" />
-                <span className="text-sm font-medium text-gray-800">
-                  Stripe
-                </span>
-              </label>
-              <label className="flex items-center gap-3 border rounded-md p-3 cursor-pointer">
-                <RadioGroupItem value="nexi_build_v3" id="provider-nexi" />
-                <span className="text-sm font-medium text-gray-800">
-                  Nexi Build v3
-                </span>
-              </label>
-            </RadioGroup>
-          </div>
+          {getEnabledProviders().length > 1 && (
+            <div className="mb-6">
+              <Label className="text-xs font-bold text-gray-700 mb-2 block">
+                Metodo di pagamento online
+              </Label>
+              <RadioGroup
+                value={paymentProvider}
+                onValueChange={(value) =>
+                  setPaymentProvider(value as PaymentProvider)
+                }
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+              >
+                {getEnabledProviders().map((provider) => {
+                  const config = PAYMENT_PROVIDERS_CONFIG[provider];
+                  return (
+                    <label
+                      key={provider}
+                      className="flex items-center gap-3 border rounded-md p-3 cursor-pointer"
+                    >
+                      <RadioGroupItem value={provider} id={`provider-${provider}`} />
+                      <div className="flex-1">
+                        <span className="text-sm font-medium text-gray-800 block">
+                          {config.label}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {config.description}
+                        </span>
+                      </div>
+                    </label>
+                  );
+                })}
+              </RadioGroup>
+            </div>
+          )}
 
-          <div className="bg-gray-50 rounded-lg p-4 flex gap-3 text-xs text-gray-600 mb-6">
+          {/*<div className="bg-gray-50 rounded-lg p-4 flex gap-3 text-xs text-gray-600 mb-6">
             <Info className="w-5 h-5 text-[#0700DE] shrink-0 fill-current" />
             <p>
               Inserendo ora i dati della tua carta di credito accedi al
@@ -136,7 +175,7 @@ export default function Step4Payment() {
               del veicolo presso l&apos;ufficio di noleggio.{" "}
               <span className="underline cursor-pointer">Maggiori dettagli</span>
             </p>
-          </div>
+          </div>*/}
 
           {paymentProvider === "stripe" ? (
             <div className="border-2 border-[#0700DE] rounded-xl p-6 mb-6 relative">
@@ -214,14 +253,11 @@ export default function Step4Payment() {
             </div>
             </div>
           ) : (
-            <NexiBuildFlow
-              enabled={showNexiFlow}
-              amount={total}
-              currency="EUR"
-              bookingReference={bookingReference}
-              cardholderEmail={cardholderEmail}
-              cardholderName={cardholderName}
-            />
+            <div className="border border-gray-200 rounded-xl p-5 mb-6 bg-white">
+              <p className="text-sm text-gray-700">
+                Verrai reindirizzato alla pagina sicura Nexi per inserire i dati carta e completare il pagamento.
+              </p>
+            </div>
           )}
         </>
       )}
@@ -263,13 +299,13 @@ export default function Step4Payment() {
         <Button
           className="bg-[#0700DE] hover:bg-[#0600b3] text-white font-bold h-12 px-8 rounded-none rounded-tl-sm rounded-br-sm text-base"
           onClick={handlePayment}
-          disabled={isLoading}
+          disabled={isLoading || !isDriverFormValid}
         >
           {isLoading
             ? "Attendere..."
             : isWeb
-              ? paymentProvider === "nexi_build_v3"
-                ? "Avvia Nexi"
+              ? paymentProvider === "nexi_hpp"
+                ? "Paga Online"
                 : "Paga Online"
               : "Paga al ritiro"}
         </Button>

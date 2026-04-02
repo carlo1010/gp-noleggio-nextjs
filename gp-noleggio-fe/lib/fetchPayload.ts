@@ -19,7 +19,7 @@ export async function getFAQs(): Promise<Faq[]> {
         limit: 100,
     })
 
-    return result.docs
+    return result.docs as Faq[]
 }
 
 /**
@@ -33,7 +33,7 @@ export async function getFAQById(id: string): Promise<Faq | null> {
             collection: 'faqs',
             id,
         })
-        return faq
+        return faq as Faq
     } catch {
         return null
     }

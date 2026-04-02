@@ -38,6 +38,7 @@ export default function BenefitsSection() {
                                     src="/rectangle.png"
                                     alt=""
                                     fill
+                                    sizes="96px"
                                     className="object-contain"
                                 />
 

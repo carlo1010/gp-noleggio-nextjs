@@ -3,6 +3,7 @@ import { create } from "zustand";
 import type { ListaVeicolo } from "@/types/veicolo";
 import type { PaymentProvider } from "@/lib/payments/types";
 import { calcDays } from "@/lib/date";
+import { getDefaultProvider } from "@/lib/payments/config";
 
 export type ClienteTipo = "privato" | "azienda";
 export type VeicoloTipo = "auto" | "furgone";
@@ -199,7 +200,7 @@ const initialCheckoutState: CheckoutState = {
     },
 
     pagamento: {
-        provider: "stripe",
+        provider: (getDefaultProvider() || "stripe") as PaymentProvider,
         tokenCarta: undefined,
         terminiAccettati: false,
     },

@@ -225,7 +225,7 @@ export default function SearchCard() {
                             className={`transition-colors border-r flex justify-center ${tipoCliente === "privato" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
                             <RadioGroupItem className="sr-only" value="privato" id="r-privato" />
                             <Label htmlFor="r-privato"
-                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoCliente === "privato" ? "text-white" : "text-gray-700"}`}>
+                                   className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoCliente === "privato" ? "text-white" : "text-gray-700"}`}>
                                 <User className="w-4 h-4" /> Privato
                             </Label>
                         </div>
@@ -234,7 +234,7 @@ export default function SearchCard() {
                             className={`transition-colors flex justify-center ${tipoCliente === "azienda" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
                             <RadioGroupItem className="sr-only" value="azienda" id="r-azienda" />
                             <Label htmlFor="r-azienda"
-                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
+                                   className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoCliente === "azienda" ? "text-white" : "text-gray-700"}`}>
                                 <Building className="w-4 h-4" /> Azienda
                             </Label>
                         </div>
@@ -255,7 +255,7 @@ export default function SearchCard() {
                             className={`transition-colors border-r flex justify-center ${tipoVeicolo === "auto" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
                             <RadioGroupItem className="sr-only" value="auto" id="r-auto" />
                             <Label htmlFor="r-auto"
-                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoVeicolo === "auto" ? "text-white" : "text-gray-700"}`}>
+                                   className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoVeicolo === "auto" ? "text-white" : "text-gray-700"}`}>
                                 <Car className="w-4 h-4" /> Auto
                             </Label>
                         </div>
@@ -264,7 +264,7 @@ export default function SearchCard() {
                             className={`transition-colors flex justify-center ${tipoVeicolo === "furgone" ? "bg-[#0700DE]" : "bg-white hover:bg-gray-50"}`}>
                             <RadioGroupItem className="sr-only" value="furgone" id="r-furgone" />
                             <Label htmlFor="r-furgone"
-                                className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoVeicolo === "furgone" ? "text-white" : "text-gray-700"}`}>
+                                   className={`flex items-center justify-center w-full gap-2 px-2 py-2.5 cursor-pointer text-sm font-bold ${tipoVeicolo === "furgone" ? "text-white" : "text-gray-700"}`}>
                                 <Truck className="w-4 h-4" /> Furgoni
                             </Label>
                         </div>
@@ -356,9 +356,11 @@ export default function SearchCard() {
                         </Select>
                     </div>
 
-                    {errors.pickupOffice && (
-                        <p className="text-xs text-red-600">Seleziona una sede di ritiro.</p>
-                    )}
+                    <div className="h-5">
+                        {errors.pickupOffice && (
+                            <p className="text-xs text-red-600 animate-in slide-in-from-bottom-2 duration-300">Seleziona una sede di ritiro.</p>
+                        )}
+                    </div>
                 </div>
 
                 {/* DATA/ORA RITIRO */}
@@ -434,9 +436,11 @@ export default function SearchCard() {
                         </div>
                     </div>
 
-                    {errors.pickupTime && (
-                        <p className="text-xs text-red-600">Seleziona l’ora di ritiro.</p>
-                    )}
+                    <div className="h-5">
+                        {errors.pickupTime && (
+                            <p className="text-xs text-red-600">Seleziona l’ora di ritiro.</p>
+                        )}
+                    </div>
                 </div>
 
                 {/* DATA/ORA CONSEGNA: SEMPRE (sia stesso ufficio che non) */}
@@ -510,9 +514,11 @@ export default function SearchCard() {
                         </div>
                     </div>
 
-                    {errors.dropoffTime && (
-                        <p className="text-xs text-red-600">Seleziona l’ora di consegna.</p>
-                    )}
+                    <div className="h-5">
+                        {errors.dropoffTime && (
+                            <p className="text-xs text-red-600">Seleziona l’ora di consegna.</p>
+                        )}
+                    </div>
                 </div>
 
                 {/* SE dropoff diverso ufficio: mostra selettore sede riconsegna */}
@@ -570,9 +576,11 @@ export default function SearchCard() {
                             </Select>
                         </div>
 
-                        {errors.dropoffOffice && (
-                            <p className="text-xs text-red-600">Seleziona una sede di riconsegna.</p>
-                        )}
+                        <div className="h-5">
+                            {errors.dropoffOffice && (
+                                <p className="text-xs text-red-600">Seleziona una sede di riconsegna.</p>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
@@ -643,18 +651,14 @@ export default function SearchCard() {
                             </div>
                         )}
                     </div>
-                    */}
                 </div>
 
-                <div className="w-full md:w-auto min-w-[150px]">
-                    <Button
-                        onClick={handleSearch}
-                        type="button"
-                        className="w-full h-12 bg-[#0700DE] hover:bg-[#0500b0] rounded-tl-sm rounded-br-sm text-lg font-bold transition-all"
-                    >
-                        Cerca
-                    </Button>
-                </div>
+                <Button
+                    onClick={handleSearch}
+                    className="w-full md:w-auto px-12 h-12 bg-[#0700DE] hover:bg-blue-800 text-white font-bold rounded-tl-xl rounded-br-xl transition-all"
+                >
+                    CERCA VEICOLO
+                </Button>
             </div>
         </div>
     );

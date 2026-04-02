@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogTitle,
 } from "@/components/ui/dialog";
 
@@ -89,6 +90,9 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
         <Dialog open={props.open} onOpenChange={props.onOpenChange}>
             <DialogContent showCloseButton={true} className="w-[95vw] mobile:max-w-[95vw] md:max-w-[85vw] lg:max-w-7xl p-6 pt-12 md:p-10 md:pt-14 max-h-[90vh] overflow-y-auto rounded-none rounded-tl-xl rounded-br-xl lg:rounded-tl-3xl lg:rounded-br-3xl">
                 <DialogTitle className="sr-only">Scelta Tariffa</DialogTitle>
+                <DialogDescription className="sr-only">
+                    Seleziona la tariffa per il veicolo scelto.
+                </DialogDescription>
 
                 <div className="flex flex-col lg:flex-row gap-6 lg:gap-x-10">
                     <div className="flex flex-col w-full lg:w-[40%] gap-y-4">
