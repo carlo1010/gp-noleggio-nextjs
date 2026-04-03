@@ -67,6 +67,11 @@ export type CheckoutState = {
         email: string;
         telefono: string;
         codiceFiscale: string;
+        localita: string;
+        indirizzo?: string;
+        cap?: string;
+        provincia?: string;
+        nazione?: string;
         numeroVolo?: string;
 
         privacyInfo: boolean;   // ricevere info/offerte + trattamento dati
@@ -191,6 +196,11 @@ const initialCheckoutState: CheckoutState = {
         email: "",
         telefono: "",
         codiceFiscale: "",
+        localita: "",
+        indirizzo: "",
+        cap: "",
+        provincia: "",
+        nazione: "IT",
         numeroVolo: undefined,
 
 

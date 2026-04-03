@@ -104,6 +104,10 @@ export default function Step4DriverForm() {
         return () => setTriggerDriverValidation(undefined);
     }, [trigger, setTriggerDriverValidation]);
 
+    useEffect(() => {
+        setConducente({ nazione: selectedCountry.code });
+    }, [selectedCountry.code, setConducente]);
+
     // ⬇️ stati per i “dropdown”
     const [openFedelta, setOpenFedelta] = useState(false);
     const [openCoupon, setOpenCoupon] = useState(false);
@@ -314,6 +318,7 @@ export default function Step4DriverForm() {
                                 </FormItem>
                             )}
                         />
+
                     </div>
 
                     {/* Divider */}

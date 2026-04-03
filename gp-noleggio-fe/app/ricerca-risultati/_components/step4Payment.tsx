@@ -19,6 +19,16 @@ const phoneRegex = /^[0-9]+$/;
 const codiceFiscaleRegex =
   /^[A-Z]{6}[0-9LMNPQRSTUV]{2}[ABCDEHLMPRST][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]$/i;
 
+const shiftYmdByDays = (ymd: string, days: number): string => {
+  const [year, month, day] = ymd.split("-").map(Number);
+  const next = new Date(year, month - 1, day);
+  next.setDate(next.getDate() + days);
+  const y = next.getFullYear();
+  const m = String(next.getMonth() + 1).padStart(2, "0");
+  const d = String(next.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
 export default function Step4Payment() {
   const tariffa = useCheckoutStore((s) => s.tariffa);
   const isWeb = tariffa?.tipo === "web";
@@ -72,6 +82,85 @@ export default function Step4Payment() {
       const store = useCheckoutStore.getState();
       const pickupDateTime = `${store.search.ritiro.data} ${store.search.ritiro.ora}`.trim();
       const dropoffDateTime = `${store.search.riconsegna.data} ${store.search.riconsegna.ora}`.trim();
+      const isSameDay = store.search.ritiro.data === store.search.riconsegna.data;
+      const isSameDayTimeInvalid =
+        isSameDay &&
+        Boolean(store.search.ritiro.ora) &&
+        Boolean(store.search.riconsegna.ora) &&
+        store.search.ritiro.ora >= store.search.riconsegna.ora;
+
+      if (isSameDayTimeInvalid) {
+        throw new Error(
+          "Per noleggio in giornata, l'orario di riconsegna deve essere successivo a quello di ritiro.",
+        );
+      }
+
+      const normalizedDropoffDate =
+        isSameDay &&
+        store.search.ritiro.ora &&
+        store.search.riconsegna.ora &&
+        store.search.ritiro.ora < store.search.riconsegna.ora
+          ? shiftYmdByDays(store.search.riconsegna.data, 1)
+          : store.search.riconsegna.data;
+
+      const servizi = Object.values(store.servizi ?? {})
+        .filter((item) => Number(item.quantita) > 0)
+        .map((item) => ({
+          codice: item.codice,
+          quantita: item.quantita,
+          flagQtaServizio: item.flagQtaServizio,
+        }));
+
+      const prenotaPayload = {
+        paymentProvider: paymentProvider === "nexi_hpp" ? "nexi" : "stripe",
+        tipoCliente: store.search.tipoCliente,
+        tipoVeicolo: store.search.tipoVeicolo,
+        ritiro: {
+          luogo: store.search.ritiro.luogo,
+          data: store.search.ritiro.data,
+          ora: store.search.ritiro.ora,
+        },
+        riconsegna: {
+          luogo: store.search.riconsegna.luogo,
+          data: normalizedDropoffDate,
+          ora: store.search.riconsegna.ora,
+          stessoUfficio: store.search.riconsegna.stessoUfficio,
+        },
+        eta: store.search.eta,
+        veicolo: {
+          codiceAgenzia: store.veicolo?.codiceAgenzia || store.search.ritiro.luogo,
+          codiceClasse: store.veicolo?.codiceClasse || "",
+          codiceTariffa: store.veicolo?.codiceTariffa || "",
+        },
+        tariffa: {
+          tipo: store.tariffa.tipo,
+        },
+        protezioni: {
+          pacchetto: store.protezioni.pacchetto,
+          opzioni: store.protezioni.opzioni,
+        },
+        servizi,
+        conducente: {
+          nome: store.conducente.nome,
+          cognome: store.conducente.cognome,
+          dataNascita: store.conducente.dataNascita,
+          email: store.conducente.email,
+          telefono: store.conducente.telefono,
+          codiceFiscale: store.conducente.codiceFiscale,
+          localita: store.search.ritiro.luogoLabel || store.search.ritiro.luogo,
+          Localita: store.search.ritiro.luogoLabel || store.search.ritiro.luogo,
+          localitaRitiro: store.search.ritiro.luogoLabel || store.search.ritiro.luogo,
+          localitaRiconsegna:
+            store.search.riconsegna.luogoLabel || store.search.riconsegna.luogo,
+          indirizzo: store.conducente.indirizzo,
+          cap: store.conducente.cap,
+          provincia: store.conducente.provincia,
+          nazione: store.conducente.nazione,
+          privacyInfo: store.conducente.privacyInfo,
+          marketing: store.conducente.marketing,
+        },
+        totale: total,
+      };
 
       const payload = {
         provider: paymentProvider,
@@ -84,6 +173,7 @@ export default function Step4Payment() {
           taxCode: conducente.codiceFiscale,
         },
         bookingReference,
+        prenotaPayload,
         returnUrl: `${window.location.origin}/paymentOK`,
         ...(pickupDateTime && pickupDateTime.length > 0 ? { pickupDateTime } : {}),
         ...(dropoffDateTime && dropoffDateTime.length > 0 ? { dropoffDateTime } : {}),

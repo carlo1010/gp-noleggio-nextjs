@@ -96,6 +96,7 @@ export default function SearchCard() {
         dropoffOffice?: boolean;
         pickupTime?: boolean;
         dropoffTime?: boolean;
+        rentalDuration?: boolean;
     }>({});
 
     const { isPending: isLoadingAgenzie, data: agenzie } = listaAgenzia();
@@ -137,6 +138,14 @@ export default function SearchCard() {
 
         if (!pickupTime) nextErrors.pickupTime = true;
         if (!dropoffTime) nextErrors.dropoffTime = true;
+        if (
+            pickupDateStr === dropoffDateStr &&
+            pickupTime &&
+            dropoffTime &&
+            pickupTime >= dropoffTime
+        ) {
+            nextErrors.rentalDuration = true;
+        }
 
         setErrors(nextErrors);
         return Object.keys(nextErrors).length === 0;
@@ -517,6 +526,11 @@ export default function SearchCard() {
                     <div className="h-5">
                         {errors.dropoffTime && (
                             <p className="text-xs text-red-600">Seleziona l’ora di consegna.</p>
+                        )}
+                        {errors.rentalDuration && (
+                            <p className="text-xs text-red-600">
+                                Per noleggio in giornata, l&apos;ora di consegna deve essere successiva all&apos;ora di ritiro.
+                            </p>
                         )}
                     </div>
                 </div>
