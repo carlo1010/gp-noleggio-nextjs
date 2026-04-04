@@ -56,6 +56,8 @@ export const createPaymentSession = async (
     amount: input.amount,
     currency: input.currency,
     bookingReference: input.bookingReference,
+    ...(input.pickupDateTime ? { pickupDateTime: input.pickupDateTime } : {}),
+    ...(input.dropoffDateTime ? { dropoffDateTime: input.dropoffDateTime } : {}),
     ...(input.customerInfo ? { customerInfo: input.customerInfo } : {}),
     ...(input.prenotaPayload ? { prenotaPayload: input.prenotaPayload } : {}),
   };

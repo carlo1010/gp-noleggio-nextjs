@@ -32,13 +32,13 @@ export default function StepStatus() {
 
     // ---- Calcoli UI
     const extraTotale = useMemo(() => {
-        const giorni = calcDays(ritiro?.data, riconsegna?.data);
+        const giorni = calcDays(ritiro?.data, ritiro?.ora, riconsegna?.data, riconsegna?.ora);
         return Object.values(servizi ?? {}).reduce((acc, item) => {
             const prezzo = Number(item.prezzo) || 0;
             const qta = Number(item.quantita) || 0;
             return acc + prezzo * qta * giorni;
         }, 0);
-    }, [servizi, ritiro?.data, riconsegna?.data]);
+    }, [servizi, ritiro?.data, ritiro?.ora, riconsegna?.data, riconsegna?.ora]);
 
     const extraCount = useMemo(() => {
         return Object.values(servizi ?? {}).filter((x) => (x?.quantita ?? 0) > 0).length;

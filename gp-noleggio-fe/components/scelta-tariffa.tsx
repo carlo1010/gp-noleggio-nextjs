@@ -32,10 +32,10 @@ interface SceltaTariffaProps {
     porte: number;
     alimentazione: string;
 
-    prezzoGiornalieroRitiro: string;
-    prezzoGiornalieroOnline: string;
-    prezzoTotaleOnline: string;
-    prezzoTotaleRitiro: string;
+    prezzoGiornalieroRitiro: string | number;
+    prezzoGiornalieroOnline: string | number;
+    prezzoTotaleOnline: string | number;
+    prezzoTotaleRitiro: string | number;
 
     open: boolean;
     onOpenChange: (event: boolean) => void;
@@ -53,8 +53,8 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
     // Se i prezzi arrivano con virgola, questo evita NaN
     function NextStep(
         tipopagamento: "web" | "ritiro",
-        prezzogiornaliero: string,
-        prezzototale: string
+        prezzogiornaliero: string | number,
+        prezzototale: string | number
     ) {
         const etaMin = Number.parseInt(props.eta, 10);
         // 1) salvo veicolo nello store

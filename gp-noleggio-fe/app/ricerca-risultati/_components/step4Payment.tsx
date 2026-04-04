@@ -12,22 +12,13 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { PaymentProvider } from "@/lib/payments/types";
 import { getEnabledProviders, PAYMENT_PROVIDERS_CONFIG } from "@/lib/payments/config";
+import { saveCheckoutConfirmationSnapshot } from "@/lib/checkout-confirmation";
 
 const nameRegex = /^[A-Za-z\u00C0-\u00FF\s']+$/;
 const birthDateRegex = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/\d{4}$/;
 const phoneRegex = /^[0-9]+$/;
 const codiceFiscaleRegex =
   /^[A-Z]{6}[0-9LMNPQRSTUV]{2}[ABCDEHLMPRST][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]$/i;
-
-const shiftYmdByDays = (ymd: string, days: number): string => {
-  const [year, month, day] = ymd.split("-").map(Number);
-  const next = new Date(year, month - 1, day);
-  next.setDate(next.getDate() + days);
-  const y = next.getFullYear();
-  const m = String(next.getMonth() + 1).padStart(2, "0");
-  const d = String(next.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-};
 
 export default function Step4Payment() {
   const tariffa = useCheckoutStore((s) => s.tariffa);
@@ -95,14 +86,6 @@ export default function Step4Payment() {
         );
       }
 
-      const normalizedDropoffDate =
-        isSameDay &&
-        store.search.ritiro.ora &&
-        store.search.riconsegna.ora &&
-        store.search.ritiro.ora < store.search.riconsegna.ora
-          ? shiftYmdByDays(store.search.riconsegna.data, 1)
-          : store.search.riconsegna.data;
-
       const servizi = Object.values(store.servizi ?? {})
         .filter((item) => Number(item.quantita) > 0)
         .map((item) => ({
@@ -122,7 +105,7 @@ export default function Step4Payment() {
         },
         riconsegna: {
           luogo: store.search.riconsegna.luogo,
-          data: normalizedDropoffDate,
+          data: store.search.riconsegna.data,
           ora: store.search.riconsegna.ora,
           stessoUfficio: store.search.riconsegna.stessoUfficio,
         },
@@ -193,6 +176,17 @@ export default function Step4Payment() {
       }
 
       if (data.checkoutUrl) {
+        saveCheckoutConfirmationSnapshot({
+          search: store.search,
+          veicolo: store.veicolo,
+          tariffa: store.tariffa,
+          protezioni: store.protezioni,
+          servizi: store.servizi,
+          conducente: store.conducente,
+          totale: total,
+          bookingReference,
+          savedAt: new Date().toISOString(),
+        });
         window.location.href = data.checkoutUrl;
         return;
       }

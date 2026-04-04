@@ -114,8 +114,8 @@ export default function PacchettiProtection({
     const riconsegna = useCheckoutStore((s) => s.search.riconsegna);
 
     const giorni = useMemo(
-        () => calcDays(ritiro?.data, riconsegna?.data),
-        [ritiro?.data, riconsegna?.data]
+        () => calcDays(ritiro?.data, ritiro?.ora, riconsegna?.data, riconsegna?.ora),
+        [ritiro?.data, ritiro?.ora, riconsegna?.data, riconsegna?.ora]
     );
 
 

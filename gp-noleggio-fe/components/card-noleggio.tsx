@@ -18,8 +18,9 @@ interface CardNoleggioProps {
     eta: string;
     porte: number;
     alimentazione: string;
-    prezzoTotale: string;
-    prezzoGiornaliero: string;
+    prezzoTotale: string | number;
+    prezzoGiornaliero: string | number;
+    eagerImage?: boolean;
     openDialog: (event: boolean, codiceClasse: string) => void;
 }
 
@@ -30,14 +31,16 @@ export default function CardNoleggio(props: CardNoleggioProps,) {
 
 
             <div className='w-full md:col-span-2 flex items-center justify-center p-4 md:p-0'>
-                <Image
-                    className=""
-                    src={props.imageUrl || "/fiat-500.png"}
-                    alt={props.nome || "Veicolo"}
-                    width={300}
-                    height={219}
-                    style={{ height: "auto" }}
-                />
+                <div className="relative w-full max-w-[300px] aspect-[300/219]">
+                    <Image
+                        src={props.imageUrl || "/fiat-500.png"}
+                        alt={props.nome || "Veicolo"}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 300px"
+                        loading={props.eagerImage ? "eager" : "lazy"}
+                        className="object-contain"
+                    />
+                </div>
             </div>
 
             <div className={"flex flex-col gap-y-2 w-full md:col-span-3 px-4 md:px-0"}>

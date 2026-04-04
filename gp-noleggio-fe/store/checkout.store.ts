@@ -219,8 +219,12 @@ const initialCheckoutState: CheckoutState = {
 };
 
 
-const calcGiorniNoleggio = (dataInizio?: string, dataFine?: string) =>
-    calcDays(dataInizio, dataFine);
+const calcGiorniNoleggio = (
+    dataInizio?: string,
+    oraInizio?: string,
+    dataFine?: string,
+    oraFine?: string,
+) => calcDays(dataInizio, oraInizio, dataFine, oraFine);
 
 export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, get) => ({
     ...initialCheckoutState,
@@ -388,7 +392,12 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
         const base = s.tariffa?.prezzoTotale ?? 0;
         const protezioniTot = s.protezioni?.prezzoTotale ?? 0;
 
-        const giorni = calcGiorniNoleggio(s.search.ritiro?.data, s.search.riconsegna?.data);
+        const giorni = calcGiorniNoleggio(
+            s.search.ritiro?.data,
+            s.search.ritiro?.ora,
+            s.search.riconsegna?.data,
+            s.search.riconsegna?.ora,
+        );
 
         const serviziTot = Object.values(s.servizi ?? {}).reduce((acc, item) => {
             const prezzo = Number(item.prezzo) || 0;
@@ -408,7 +417,12 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
                 ...s.protezioni,
                 pacchetto,
                 prezzoGiorno,
-                prezzoTotale: prezzoGiorno * calcGiorniNoleggio(s.search.ritiro?.data, s.search.riconsegna?.data),
+                prezzoTotale: prezzoGiorno * calcGiorniNoleggio(
+                    s.search.ritiro?.data,
+                    s.search.ritiro?.ora,
+                    s.search.riconsegna?.data,
+                    s.search.riconsegna?.ora,
+                ),
                 selezionata,
             },
         })),

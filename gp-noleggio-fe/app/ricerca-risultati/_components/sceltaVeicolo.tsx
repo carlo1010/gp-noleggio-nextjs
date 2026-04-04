@@ -8,6 +8,7 @@ import CardNoleggio from "@/components/card-noleggio";
 import FiltroAuto from "@/components/filtro-auto";
 import { SceltaTariffa } from "@/components/scelta-tariffa";
 import { useListaVeicoli } from "@/hook/useVeicoli";
+import { getNormalizedVehiclePricing } from "@/lib/vehicle-pricing";
 
 export default function SceltaVeicolo() {
     const [open, setOpen] = useState(false);
@@ -17,6 +18,8 @@ export default function SceltaVeicolo() {
 
     const pickupDate = sp.get("pickupDate");
     const dropoffDate = sp.get("dropoffDate");
+    const pickupTime = sp.get("pickupTime");
+    const dropoffTime = sp.get("dropoffTime");
 
     const cambio = sp.get("cambio") ?? "all";
     const posti = sp.get("posti") ?? "all";
@@ -27,6 +30,8 @@ export default function SceltaVeicolo() {
     const { isPending: isLoadingVeicoli, data: veicoli } = useListaVeicoli({
         datainizio: pickupDate,
         datafine: dropoffDate,
+        oraInizio: pickupTime,
+        oraFine: dropoffTime,
         cambio,
         posti,
         tipologia,
@@ -42,6 +47,12 @@ export default function SceltaVeicolo() {
                 console.log(veicolo);
 
                 if (!veicolo) return null;
+                const pricing = getNormalizedVehiclePricing(veicolo, {
+                    pickupDate,
+                    pickupTime,
+                    dropoffDate,
+                    dropoffTime,
+                });
 
                 const cambio = veicolo.cambio ?? "Automatico";
                 const posti = veicolo.posti ?? 4;
@@ -60,10 +71,10 @@ export default function SceltaVeicolo() {
                         eta={String(etaMin)}
                         porte={porte}
                         alimentazione={"Benzina"}
-                        prezzoGiornalieroRitiro={veicolo.tariffaBanco}
-                        prezzoGiornalieroOnline={veicolo.tariffaWeb}
-                        prezzoTotaleRitiro={veicolo.totalTariffaBanco}
-                        prezzoTotaleOnline={veicolo.totalTariffaWeb}
+                        prezzoGiornalieroRitiro={pricing.prezzoGiornalieroBanco}
+                        prezzoGiornalieroOnline={pricing.prezzoGiornalieroWeb}
+                        prezzoTotaleRitiro={pricing.prezzoTotaleBanco}
+                        prezzoTotaleOnline={pricing.prezzoTotaleWeb}
                         open={open}
                         onOpenChange={() => setOpen(false)}
                     />
@@ -89,6 +100,12 @@ export default function SceltaVeicolo() {
 
                 <div className={`space-y-10 transition-opacity duration-300 ${isLoadingVeicoli ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
                     {veicoli?.map((veicolo, idx: number) => {
+                        const pricing = getNormalizedVehiclePricing(veicolo, {
+                            pickupDate,
+                            pickupTime,
+                            dropoffDate,
+                            dropoffTime,
+                        });
                         const cambio = veicolo.cambio ?? "Automatico";
                         const posti = veicolo.posti ?? 4;
                         const porte = veicolo.porte ?? 3;
@@ -111,8 +128,9 @@ export default function SceltaVeicolo() {
                                     setOpen(true);
                                 }}
                                 alimentazione={"diesel"}
-                                prezzoTotale={veicolo.totalTariffaWeb}
-                                prezzoGiornaliero={veicolo.tariffaWeb}
+                                prezzoTotale={pricing.prezzoTotaleWeb}
+                                prezzoGiornaliero={pricing.prezzoGiornalieroWeb}
+                                eagerImage={idx === 0}
                             />
                         );
                     })}

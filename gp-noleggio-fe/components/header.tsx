@@ -50,6 +50,8 @@ export default function Header({ dark = false }: HeaderProps) {
                                 width={isScrolled ? 160 : 200}
                                 height={isScrolled ? 26 : 33}
                                 alt="logo gruppo piccirillo rent"
+                                priority
+                                loading="eager"
                                 className="transition-all duration-300 md:w-[266px] md:h-auto"
                             />
                         </Link>

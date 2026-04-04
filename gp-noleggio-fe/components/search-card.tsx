@@ -69,11 +69,11 @@ export default function SearchCard() {
     const dropoffDate = riconsegna.data ? parseYMDToLocalDate(riconsegna.data) : new Date();
 
 
-    const pickupTime = ritiro.ora || undefined;
-    const dropoffTime = riconsegna.ora || undefined;
+    const pickupTime = ritiro.ora || "";
+    const dropoffTime = riconsegna.ora || "";
 
-    const pickupOfficeId = ritiro.luogo || undefined;
-    const dropoffOfficeId = riconsegna.luogo || undefined;
+    const pickupOfficeId = ritiro.luogo || "";
+    const dropoffOfficeId = riconsegna.luogo || "";
     const pickupOfficeLabel = ritiro.luogoLabel;
     const dropoffOfficeLabel = riconsegna.luogoLabel;
 
