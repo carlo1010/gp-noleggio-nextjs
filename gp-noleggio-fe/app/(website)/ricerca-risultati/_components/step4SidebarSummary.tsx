@@ -62,7 +62,7 @@ function SummaryCard() {
     const riconsegna = useCheckoutStore((s) => s.search.riconsegna);
 
     // CALCULATIONS
-    const giorni = calcDays(ritiro?.data, riconsegna?.data);
+    const giorni = calcDays(ritiro?.data, ritiro?.ora, riconsegna?.data, riconsegna?.ora);
     const extraTotale = Object.values(servizi ?? {}).reduce((acc, item) => {
         const prezzo = Number(item.prezzo) || 0;
         const qta = Number(item.quantita) || 0;

@@ -8,6 +8,7 @@ export type CreatePaymentSessionInput = {
   returnUrl?: string;
   pickupDateTime?: string;
   dropoffDateTime?: string;
+  prenotaPayload?: Record<string, unknown>;
   customerInfo?: {
     cardHolderName?: string;
     cardHolderEmail?: string;

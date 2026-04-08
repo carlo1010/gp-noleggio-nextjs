@@ -62,12 +62,12 @@ const getNexiConfig = () => {
   const resultUrl =
     explicitResultUrl ||
     (siteBaseUrl
-      ? `${siteBaseUrl}/ricerca-risultati?step=4&payment=nexi&status=result&orderId={orderId}`
+      ? `${siteBaseUrl}/prenotazione-confermata?payment=nexi&status=result&orderId={orderId}`
       : undefined);
   const cancelUrl =
     explicitCancelUrl ||
     (siteBaseUrl
-      ? `${siteBaseUrl}/ricerca-risultati?step=4&payment=nexi&status=cancel`
+      ? `${siteBaseUrl}/prenotazione-confermata?payment=nexi&status=cancel`
       : undefined);
   const notificationUrl =
     explicitNotificationUrl ||

@@ -26,7 +26,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-import { useListaAgenzia } from "@/hook/useAgenzia";
+import { listaAgenzia } from "@/hook/useAgenzia";
 import { useEffect, useMemo, useState } from "react";
 import { format, startOfDay, isBefore } from "date-fns";
 import { useRouter } from "next/navigation";
@@ -69,11 +69,11 @@ export default function SearchCard() {
     const dropoffDate = riconsegna.data ? parseYMDToLocalDate(riconsegna.data) : new Date();
 
 
-    const pickupTime = ritiro.ora || undefined;
-    const dropoffTime = riconsegna.ora || undefined;
+    const pickupTime = ritiro.ora || "";
+    const dropoffTime = riconsegna.ora || "";
 
-    const pickupOfficeId = ritiro.luogo || undefined;
-    const dropoffOfficeId = riconsegna.luogo || undefined;
+    const pickupOfficeId = ritiro.luogo || "";
+    const dropoffOfficeId = riconsegna.luogo || "";
     const pickupOfficeLabel = ritiro.luogoLabel;
     const dropoffOfficeLabel = riconsegna.luogoLabel;
 
@@ -96,9 +96,10 @@ export default function SearchCard() {
         dropoffOffice?: boolean;
         pickupTime?: boolean;
         dropoffTime?: boolean;
+        rentalDuration?: boolean;
     }>({});
 
-    const { isPending: isLoadingAgenzie, data: agenzie } = useListaAgenzia();
+    const { isPending: isLoadingAgenzie, data: agenzie } = listaAgenzia();
 
     // oggi "pulito" a mezzanotte
     const today = useMemo(() => startOfDay(new Date()), []);
@@ -137,6 +138,14 @@ export default function SearchCard() {
 
         if (!pickupTime) nextErrors.pickupTime = true;
         if (!dropoffTime) nextErrors.dropoffTime = true;
+        if (
+            pickupDateStr === dropoffDateStr &&
+            pickupTime &&
+            dropoffTime &&
+            pickupTime >= dropoffTime
+        ) {
+            nextErrors.rentalDuration = true;
+        }
 
         setErrors(nextErrors);
         return Object.keys(nextErrors).length === 0;
@@ -383,7 +392,7 @@ export default function SearchCard() {
                                     >
                                         <CalendarArrowUp className="w-4 h-4 text-[#0700DE] mr-2 shrink-0" />
                                         <span className="truncate text-sm">
-                                            {pickupDate ? format(pickupDate, "dd/MM/yyyy") : ""}
+                                            {pickupDate ? pickupDate.toLocaleDateString() : ""}
                                         </span>
                                     </Button>
                                 </PopoverTrigger>
@@ -463,7 +472,7 @@ export default function SearchCard() {
                                     >
                                         <CalendarArrowDown className="w-4 h-4 text-[#0700DE] mr-2 shrink-0" />
                                         <span className="truncate text-sm">
-                                            {dropoffDate ? format(dropoffDate, "dd/MM/yyyy") : ""}
+                                            {dropoffDate ? dropoffDate.toLocaleDateString() : ""}
                                         </span>
                                     </Button>
                                 </PopoverTrigger>
@@ -517,6 +526,11 @@ export default function SearchCard() {
                     <div className="h-5">
                         {errors.dropoffTime && (
                             <p className="text-xs text-red-600">Seleziona l’ora di consegna.</p>
+                        )}
+                        {errors.rentalDuration && (
+                            <p className="text-xs text-red-600">
+                                Per noleggio in giornata, l&apos;ora di consegna deve essere successiva all&apos;ora di ritiro.
+                            </p>
                         )}
                     </div>
                 </div>

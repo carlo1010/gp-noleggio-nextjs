@@ -3,24 +3,27 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMemo, useEffect } from "react";
 
-import SceltaVeicolo from "@/app/(website)/ricerca-risultati/_components/sceltaVeicolo";
+import SceltaVeicolo from "@/app/ricerca-risultati/_components/sceltaVeicolo";
 
 import { TuteleDisponibili } from "./tuteleDisponibili";
-import PacchettiProtection from "@/app/(website)/ricerca-risultati/_components/extra";
-import ExtraDisponibili from "@/app/(website)/ricerca-risultati/_components/extraDisponibili";
-import CheckoutTopBar from "@/app/(website)/ricerca-risultati/_components/topBarExtra";
+import PacchettiProtection from "@/app/ricerca-risultati/_components/extra";
+import ExtraDisponibili from "@/app/ricerca-risultati/_components/extraDisponibili";
+import CheckoutTopBar from "@/app/ricerca-risultati/_components/topBarExtra";
 import { useCheckoutStore } from "@/store/checkout.store";
-import Step4Checkout from "@/app/(website)/ricerca-risultati/_components/step4Checkout";
-import { useListaProtezioni, useListaServizi } from "@/hook/useService";
+import Step4Checkout from "@/app/ricerca-risultati/_components/step4Checkout";
+import { listaProtezioni, listaServizi } from "@/hook/useService";
 import { useListaVeicoli } from "@/hook/useVeicoli";
 import { parsePrice } from "@/lib/price";
-import { useListaAgenzia } from "@/hook/useAgenzia";
+import { listaAgenzia } from "@/hook/useAgenzia";
+import { getNormalizedVehiclePricing } from "@/lib/vehicle-pricing";
 
 export default function RicercaRisultatiClient() {
     const sp = useSearchParams();
     const step = sp.get("step") ?? "2";
     const classe = sp.get("classe");
     const pay = sp.get("pay");
+    const payment = sp.get("payment");
+    const paymentStatus = sp.get("status");
 
     // ===== STORE =====
     const checkout = useCheckoutStore((s) => s);
@@ -38,6 +41,8 @@ export default function RicercaRisultatiClient() {
 
     const pickupDate = sp.get("pickupDate");
     const dropoffDate = sp.get("dropoffDate");
+    const pickupTime = sp.get("pickupTime");
+    const dropoffTime = sp.get("dropoffTime");
     const cambio = sp.get("cambio") ?? "all";
     const posti = sp.get("posti") ?? "all";
     const tipologia = sp.get("tipologia") ?? "all";
@@ -50,6 +55,8 @@ export default function RicercaRisultatiClient() {
     const { data: veicoliRehydrate } = useListaVeicoli({
         datainizio: needRehydrate ? pickupDate : null,
         datafine: needRehydrate ? dropoffDate : null,
+        oraInizio: needRehydrate ? pickupTime : null,
+        oraFine: needRehydrate ? dropoffTime : null,
         cambio,
         posti,
         tipologia,
@@ -58,11 +65,11 @@ export default function RicercaRisultatiClient() {
     });
 
     const codiceTariffa = checkout.veicolo?.codiceTariffa;
-    const { data: servizi } = useListaServizi(codiceTariffa);
-    const { data: protezioni } = useListaProtezioni(codiceTariffa);
+    const { data: servizi } = listaServizi(codiceTariffa);
+    const { data: protezioni } = listaProtezioni(codiceTariffa);
 
 
-    const { data: agenzie } = useListaAgenzia();
+    const { data: agenzie } = listaAgenzia();
 
     // 🔁 DATA PERSISTENCE & SYNC
     useEffect(() => {
@@ -119,28 +126,51 @@ export default function RicercaRisultatiClient() {
 
         const veicolo = veicoliRehydrate.find((item) => item.codiceClasse === classe);
         if (!veicolo) return;
+        const pricing = getNormalizedVehiclePricing(veicolo, {
+            pickupDate,
+            pickupTime,
+            dropoffDate,
+            dropoffTime,
+        });
 
         setVeicolo(veicolo);
         if (pay === "web") {
             setTariffa({
                 tipo: "web",
-                prezzoGiorno: parsePrice(veicolo.tariffaWeb),
-                prezzoTotale: parsePrice(veicolo.totalTariffaWeb),
+                prezzoGiorno: pricing.prezzoGiornalieroWeb,
+                prezzoTotale: pricing.prezzoTotaleWeb,
             });
         }
         if (pay === "ritiro") {
             setTariffa({
                 tipo: "ritiro",
-                prezzoGiorno: parsePrice(veicolo.tariffaBanco),
-                prezzoTotale: parsePrice(veicolo.totalTariffaBanco),
+                prezzoGiorno: pricing.prezzoGiornalieroBanco,
+                prezzoTotale: pricing.prezzoTotaleBanco,
             });
         }
-    }, [needRehydrate, veicoliRehydrate, classe, pay, setVeicolo, setTariffa]);
+    }, [
+        needRehydrate,
+        veicoliRehydrate,
+        classe,
+        pay,
+        setVeicolo,
+        setTariffa,
+        pickupDate,
+        pickupTime,
+        dropoffDate,
+        dropoffTime,
+    ]);
 
     // ===== NAVIGATION GUARDS =====
     const router = useRouter();
 
     useEffect(() => {
+        if (payment === "nexi" && paymentStatus) {
+            const params = new URLSearchParams(sp.toString());
+            router.replace(`/prenotazione-confermata?${params.toString()}`);
+            return;
+        }
+
         const currentStep = Number(step);
 
         // 1. Check Step 1 Data (search params in store)
@@ -176,7 +206,7 @@ export default function RicercaRisultatiClient() {
         // useCheckoutStore is external, so it might be fine, but useEffect is safer.
         addVisitedStep(currentStep);
 
-    }, [step, searchData, checkout.veicolo, visitedSteps, router, sp, addVisitedStep]);
+    }, [step, searchData, checkout.veicolo, visitedSteps, router, sp, addVisitedStep, payment, paymentStatus]);
 
     // DEBUG: Log Store
     useEffect(() => {

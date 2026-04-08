@@ -26,13 +26,49 @@ export function formatDate(date: Date, format: string = "DD/MM/YYYY") {
         .replace("YYYY", year);
 }
 
-export function calcDays(start?: string, end?: string) {
-    const startDate = parseDateString(start);
-    const endDate = parseDateString(end);
+function parseTimeToMinutes(value?: string) {
+    if (!value) return 0;
+
+    const match = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
+    if (!match) return 0;
+
+    const hours = Number(match[1]);
+    const minutes = Number(match[2]);
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) return 0;
+
+    return hours * 60 + minutes;
+}
+
+function diffCalendarDays(startDate: Date, endDate: Date) {
+    const utcStart = Date.UTC(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate(),
+    );
+    const utcEnd = Date.UTC(
+        endDate.getFullYear(),
+        endDate.getMonth(),
+        endDate.getDate(),
+    );
+
+    return Math.round((utcEnd - utcStart) / (1000 * 60 * 60 * 24));
+}
+
+export function calcDays(
+    startDateValue?: string,
+    startTimeValue?: string,
+    endDateValue?: string,
+    endTimeValue?: string,
+) {
+    const startDate = parseDateString(startDateValue);
+    const endDate = parseDateString(endDateValue);
     if (!startDate || !endDate) return 1;
 
-    const ms = endDate.getTime() - startDate.getTime();
-    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-    // Aggiungo +1 per contare il giorno di ritiro come richiesto
-    return Math.max(1, days + 1);
+    const calendarDays = diffCalendarDays(startDate, endDate);
+    if (calendarDays <= 0) return 1;
+
+    const startMinutes = parseTimeToMinutes(startTimeValue);
+    const endMinutes = parseTimeToMinutes(endTimeValue);
+
+    return Math.max(1, calendarDays + (endMinutes > startMinutes ? 1 : 0));
 }

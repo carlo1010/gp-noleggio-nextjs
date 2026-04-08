@@ -20,7 +20,7 @@ export async function getFAQs(): Promise<Faq[]> {
         depth: 1, // Per includere Categoria
     })
 
-    return result.docs
+    return result.docs as Faq[]
 }
 
 /**
@@ -34,7 +34,7 @@ export async function getFAQById(id: string): Promise<Faq | null> {
             collection: 'faqs',
             id,
         })
-        return faq
+        return faq as Faq
     } catch {
         return null
     }

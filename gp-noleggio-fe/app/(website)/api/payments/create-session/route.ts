@@ -19,6 +19,7 @@ const createSessionSchema = z.object({
   returnUrl: z.string().url().optional(),
   pickupDateTime: z.string().optional(),
   dropoffDateTime: z.string().optional(),
+  prenotaPayload: z.record(z.string(), z.unknown()).optional(),
   customerInfo: z
     .object({
       cardHolderName: z.string().min(1).optional(),
