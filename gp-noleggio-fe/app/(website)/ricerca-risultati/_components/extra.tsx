@@ -123,6 +123,8 @@ export default function PacchettiProtection({
     const [open, setOpen] = useState(false);
     const [detailsKey, setDetailsKey] = useState<ProtectionKey>("");
 
+    const activeDetailsKey = detailsKey || (options.length > 0 ? options[0].key : "");
+
     const select = (key: ProtectionKey) => {
         const option = options.find((o) => o.key === key);
         const prezzoGiorno = option?.importo ?? 0;
@@ -144,7 +146,7 @@ export default function PacchettiProtection({
 
     // contenuti fissi del dialog (puoi riscriverli come vuoi)
     const details = useMemo(() => {
-        const option = options.find((o) => o.key === detailsKey);
+        const option = options.find((o) => o.key === activeDetailsKey);
         const items = parseItems(option?.note);
 
         if (option) {
@@ -162,13 +164,7 @@ export default function PacchettiProtection({
             items: [],
             price: 0,
         };
-    }, [detailsKey, options]);
-
-    useEffect(() => {
-        if (options.length === 0) return;
-        if (detailsKey && options.some((o) => o.key === detailsKey)) return;
-        setDetailsKey(options[0].key);
-    }, [options, detailsKey]);
+    }, [activeDetailsKey, options]);
 
     useEffect(() => {
         if (!options.length) return;

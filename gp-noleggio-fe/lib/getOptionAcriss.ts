@@ -1,4 +1,4 @@
- const ACRISS_CATEGORY_MAP: any = {
+ const ACRISS_CATEGORY_MAP: Record<string, string> = {
     M: "Mini",
     E: "Economica",
     H: "Economica Elite",
@@ -17,7 +17,7 @@
     X: "Straordinaria",
 } as const;
 
- const ACRISS_CARROZZERIA_MAP: any = {
+ const ACRISS_CARROZZERIA_MAP: Record<string, string> = {
     B: "Berlina 2 porte",
     L: "Gran Coupé 4 porte",
     W: "Station Wagon",
@@ -29,7 +29,7 @@
     Z: "Veicolo a Sorpresa",
 } as const;
 
- const ACRISS_CAMBIO_MAP: any = {
+ const ACRISS_CAMBIO_MAP: Record<string, string> = {
     M: "Manuale",
     A: "Automatico",
     D: "Trazione Integrale (Automatico)",
@@ -37,7 +37,7 @@
     "S*": "Auto Speciali (Automatico)",
 } as const;
 
- const ACRISS_CARBURANTE_AC_MAP: any = {
+ const ACRISS_CARBURANTE_AC_MAP: Record<string, string> = {
     R: "Veicolo a Combustione",
     H: "Veicolo Ibrido Plug-in",
     E: "Veicolo Elettrico (Autonomia Ridotta)",
@@ -49,13 +49,13 @@
 
 
 
- function GetAcriss(acriss: string) {
+export function GetAcriss(acriss: string) {
 
     const codiceacriss = acriss.slice(-4);
     console.log(acriss);
     // codici 1-2-3-4
     const lettera4 = codiceacriss.substring(0,1);
-    const lettera3: any = codiceacriss.substring(1,2);
+    const lettera3 = codiceacriss.substring(1,2);
     const lettera2 = codiceacriss.substring(2,3);
     const lettera1 = codiceacriss.substring(3,4);
 
@@ -71,13 +71,5 @@
          carburante: ACRISS_CARBURANTE_AC_MAP[lettera1],
          carrozzeria: ACRISS_CARROZZERIA_MAP[lettera3],
          categoria: ACRISS_CATEGORY_MAP[lettera4],
-
-
-
-
      }
-
-
-
-
 }

@@ -18,22 +18,40 @@ export const Faqs: CollectionConfig = {
             label: 'Domanda',
         },
         {
+            name: 'slug',
+            type: 'text',
+            unique: true,
+            admin: {
+                position: 'sidebar',
+                description: 'Identificativo univoco per la URL (generato automaticamente)',
+            },
+            hooks: {
+                beforeValidate: [
+                    ({ value, data }) => {
+                        if (value) return value
+                        return data?.question
+                            ?.toLowerCase()
+                            .replace(/ /g, '-')
+                            .replace(/[^\w-]+/g, '')
+                    },
+                ],
+            },
+        },
+        {
             name: 'answer',
-            type: 'richText',
+            type: 'textarea',
             required: true,
             label: 'Risposta',
         },
         {
             name: 'category',
-            type: 'select',
+            type: 'relationship',
+            relationTo: 'faqcategories',
             label: 'Categoria',
-            options: [
-                { label: 'Prenotazione', value: 'prenotazione' },
-                { label: 'Pagamento', value: 'pagamento' },
-                { label: 'Veicoli', value: 'veicoli' },
-                { label: 'Ritiro e Riconsegna', value: 'ritiro-riconsegna' },
-                { label: 'Altro', value: 'altro' },
-            ],
+            required: false,
+            admin: {
+                description: 'Associa questa FAQ a una categoria',
+            },
         },
         {
             name: 'order',

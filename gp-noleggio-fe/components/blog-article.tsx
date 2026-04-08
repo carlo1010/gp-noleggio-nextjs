@@ -1,36 +1,20 @@
-import { promises as fs } from "fs";
-import path from "path";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 import NextBreadcrumb from "@/components/blog-breadcrumbs";
 
-interface BlogItem {
-    id: string;
+interface BlogPost {
     kicker: string;
     title: string;
     desc: string;
-    img: string;
+    img: string | any;
     imgAlt: string;
 }
 
 interface BlogArticleProps {
-    id: string;
+    post: BlogPost;
 }
 
-async function getBlogPost(id: string): Promise<BlogItem | null> {
-    const filePath = path.join(process.cwd(), "data", "blog.json");
-    const fileContents = await fs.readFile(filePath, "utf8");
-    const items: BlogItem[] = JSON.parse(fileContents);
-
-    return items.find(item => item.id === id) ?? null;
-}
-
-export default async function BlogArticle({ id }: BlogArticleProps) {
-    const post = await getBlogPost(id);
-
-    if (!post) {
-        notFound();
-    }
+export default function BlogArticle({ post }: BlogArticleProps) {
+    const imageUrl = typeof post.img === 'object' && post.img?.url ? post.img.url : '/placeholder.png';
 
     return (
         <article className="container mx-auto px-4 py-20 max-w-[1240px]">
@@ -54,8 +38,8 @@ export default async function BlogArticle({ id }: BlogArticleProps) {
 
             <div className="relative w-full aspect-16/7 mt-14 rounded-tl-3xl rounded-br-3xl overflow-hidden">
                 <Image
-                    src={post.img}
-                    alt={post.imgAlt}
+                    src={imageUrl}
+                    alt={post.imgAlt || "Immagine articolo"}
                     fill
                     className="object-cover"
                     priority
@@ -66,6 +50,5 @@ export default async function BlogArticle({ id }: BlogArticleProps) {
                 {post.desc}
             </div>
         </article>
-
     );
 }

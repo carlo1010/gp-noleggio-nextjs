@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Servizi } from "@/types/servizi";
 import { Protezioni } from "@/types/protezioni";
 
-export function listaServizi(codiceTariffa?: string) {
+export function useListaServizi(codiceTariffa?: string) {
     return useQuery<Servizi[]>({
         queryKey: ['lista-servizi', codiceTariffa],
         queryFn: async () => {
@@ -22,14 +22,14 @@ export function listaServizi(codiceTariffa?: string) {
         },
         enabled: Boolean(codiceTariffa),
         // Optional: prevent retrying 404 errors multiple times
-        retry: (failureCount, error: any) => {
+        retry: (failureCount, error: Error) => {
             if (error.message.includes('404')) return false;
             return failureCount < 3;
         }
     });
 }
 
-export function listaProtezioni(codiceTariffa?: string) {
+export function useListaProtezioni(codiceTariffa?: string) {
     return useQuery<Protezioni[]>({
         queryKey: ['lista-protezioni', codiceTariffa],
         queryFn: async () => {

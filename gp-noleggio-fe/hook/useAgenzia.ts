@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Agenzia } from "@/types/agenzia";
 
 
-export function listaAgenzia() {
+export function useListaAgenzia() {
     return useQuery<Agenzia[]>({
         queryKey: ['lista-agenzia'], // chiave univoca della fetch
         queryFn: async () => {

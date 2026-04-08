@@ -69,7 +69,7 @@ export default function OffersSection() {
                         <span className="text-xs font-semibold text-gray-500 uppercase">IL MEGLIO</span>
                         <h3 className="text-2xl font-bold mt-2 mb-4">Viaggia in tranquillità, scegli il meglio</h3>
                         <p className="text-gray-600 mb-6">
-                            Prenota il tuo noleggio direttamente dal nostro sito: scegli l'auto che fa per te,
+                            Prenota il tuo noleggio direttamente dal nostro sito: scegli {"l'auto"} che fa per te,
                             aggiungi gli extra che desideri e approfitta delle tariffe vantaggiose.
                         </p>
                         <button className="bg-[#0700DE] text-white px-6 py-2 rounded-md hover:bg-[#0500b0] transition">

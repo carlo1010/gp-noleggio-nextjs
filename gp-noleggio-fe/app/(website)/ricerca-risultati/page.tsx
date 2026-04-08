@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import RicercaRisultatiClient from "@/app/ricerca-risultati/_components/ricercaRisultatiClient";
+import RicercaRisultatiClient from "@/app/(website)/ricerca-risultati/_components/ricercaRisultatiClient";
 
 export const metadata: Metadata = {
     title: "Risultati Ricerca Veicoli",
