@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { getFAQs } from "@/lib/fetchPayload";
 
+export const dynamic = "force-dynamic";
+
 export default async function AiutoPage() {
     const faqs = await getFAQs();
     return (

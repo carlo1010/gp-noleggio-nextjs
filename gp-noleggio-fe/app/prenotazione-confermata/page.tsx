@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import {
     Calendar,
     Car,
@@ -25,6 +25,14 @@ import { formatPrice } from "@/lib/formatPrice";
 import { useCheckoutStore } from "@/store/checkout.store";
 
 export default function PrenotazioneConfermataPage() {
+    return (
+        <Suspense fallback={<ConfirmationPageSkeleton />}>
+            <PrenotazioneConfermataContent />
+        </Suspense>
+    );
+}
+
+function PrenotazioneConfermataContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [snapshot, setSnapshot] = useState<CheckoutConfirmationSnapshot | null>(null);
@@ -341,6 +349,16 @@ export default function PrenotazioneConfermataPage() {
                         <Link href="/">Nuova ricerca</Link>
                     </Button>
                 </div>
+            </div>
+        </div>
+    );
+}
+
+function ConfirmationPageSkeleton() {
+    return (
+        <div className="min-h-screen bg-gray-50 flex items-start justify-center pt-16 px-4">
+            <div className="w-full max-w-xl">
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 h-64 animate-pulse" />
             </div>
         </div>
     );

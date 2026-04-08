@@ -157,7 +157,7 @@ export default function Step4Payment() {
         },
         bookingReference,
         prenotaPayload,
-        returnUrl: `${window.location.origin}/paymentOK`,
+        returnUrl: `${window.location.origin}/prenotazione-confermata`,
         ...(pickupDateTime && pickupDateTime.length > 0 ? { pickupDateTime } : {}),
         ...(dropoffDateTime && dropoffDateTime.length > 0 ? { dropoffDateTime } : {}),
       };
