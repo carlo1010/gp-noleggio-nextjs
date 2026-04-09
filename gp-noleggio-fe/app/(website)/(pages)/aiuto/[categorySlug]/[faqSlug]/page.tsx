@@ -47,7 +47,7 @@ export default async function SingleFaqPage({ params }: Props) {
     }
 
     // Risolviamo i titoli per il breadcrumb usando la relazione se possibile
-    const category = typeof faq.category === 'object' ? faq.category : null;
+    const category = typeof faq.category === 'object' && faq.category !== null ? faq.category : null;
     let categoryTitle = resolvedParams.categorySlug;
 
     if (category) {

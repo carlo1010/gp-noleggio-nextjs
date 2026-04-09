@@ -62,7 +62,7 @@ export async function getFaqBySlug(slug: string): Promise<Faq | null> {
             limit: 1,
         })
 
-        if (result.docs.length > 0) return result.docs[0]
+        if (result.docs.length > 0) return result.docs[0] as Faq
 
         // Fallback: cerca per ID (per FAQ create prima della generazione automatica dello slug)
         try {
@@ -72,7 +72,7 @@ export async function getFaqBySlug(slug: string): Promise<Faq | null> {
                 depth: 1,
             })
             // Verifica che la FAQ sia attiva
-            if (faq && faq.isActive) return faq
+            if (faq && faq.isActive) return faq as Faq
         } catch {
             // ID non valido o non trovato, ignora
         }

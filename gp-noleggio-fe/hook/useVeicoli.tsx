@@ -41,7 +41,7 @@ export function useListaVeicoli(filters: VeicoliFilters) {
             posti ?? "all",
             tipologia ?? "all",
             prezzo ?? "all",
-            sort ?? "price_desc",
+            sort ?? "price_asc",
         ],
         queryFn: async () => {
             const params = new URLSearchParams();
@@ -58,9 +58,9 @@ export function useListaVeicoli(filters: VeicoliFilters) {
             if (posti && posti !== "all") params.set("posti", posti);
             if (tipologia && tipologia !== "all") params.set("tipologia", tipologia);
             if (prezzo && prezzo !== "all") params.set("prezzo", prezzo);
-            if (sort && sort !== "price_desc") params.set("sort", sort);
+            if (sort && sort !== "price_asc") params.set("sort", sort);
 
-            const url = `${process.env.NEXT_PUBLIC_API_URL}/nbt/veicoli/?${params.toString()}`;
+            const url = `/api/veicoli?${params.toString()}`;
             const res = await fetch(url);
 
             if (!res.ok) throw new Error("Errore fetch veicoli");

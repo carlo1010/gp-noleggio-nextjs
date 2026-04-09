@@ -3,18 +3,18 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMemo, useEffect } from "react";
 
-import SceltaVeicolo from "@/app/ricerca-risultati/_components/sceltaVeicolo";
+import SceltaVeicolo from "./sceltaVeicolo";
 
 import { TuteleDisponibili } from "./tuteleDisponibili";
-import PacchettiProtection from "@/app/ricerca-risultati/_components/extra";
-import ExtraDisponibili from "@/app/ricerca-risultati/_components/extraDisponibili";
-import CheckoutTopBar from "@/app/ricerca-risultati/_components/topBarExtra";
+import PacchettiProtection from "./extra";
+import ExtraDisponibili from "./extraDisponibili";
+import CheckoutTopBar from "./topBarExtra";
 import { useCheckoutStore } from "@/store/checkout.store";
-import Step4Checkout from "@/app/ricerca-risultati/_components/step4Checkout";
-import { listaProtezioni, listaServizi } from "@/hook/useService";
+import Step4Checkout from "./step4Checkout";
+import { useListaProtezioni, useListaServizi } from "@/hook/useService";
 import { useListaVeicoli } from "@/hook/useVeicoli";
 import { parsePrice } from "@/lib/price";
-import { listaAgenzia } from "@/hook/useAgenzia";
+import { useListaAgenzia } from "@/hook/useAgenzia";
 import { getNormalizedVehiclePricing } from "@/lib/vehicle-pricing";
 
 export default function RicercaRisultatiClient() {
@@ -47,7 +47,7 @@ export default function RicercaRisultatiClient() {
     const posti = sp.get("posti") ?? "all";
     const tipologia = sp.get("tipologia") ?? "all";
     const prezzo = sp.get("prezzo") ?? "all";
-    const sort = sp.get("sort") ?? "price_desc";
+    const sort = sp.get("sort") ?? "price_asc";
 
     const needRehydrate =
         (step === "3" || step === "4") && !checkout.veicolo && Boolean(classe);
@@ -65,11 +65,11 @@ export default function RicercaRisultatiClient() {
     });
 
     const codiceTariffa = checkout.veicolo?.codiceTariffa;
-    const { data: servizi } = listaServizi(codiceTariffa);
-    const { data: protezioni } = listaProtezioni(codiceTariffa);
+    const { data: servizi } = useListaServizi(codiceTariffa);
+    const { data: protezioni } = useListaProtezioni(codiceTariffa);
 
 
-    const { data: agenzie } = listaAgenzia();
+    const { data: agenzie } = useListaAgenzia();
 
     // 🔁 DATA PERSISTENCE & SYNC
     useEffect(() => {
