@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Check } from "lucide-react";
 import BadgePromo from "@/components/badge-promo";
 
@@ -12,7 +13,7 @@ export default function OffersSection() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
 
                     {/* CARD GRANDE (OCCUPA 2 COLONNE) */}
-                    <div className="relative md:col-span-2 aspect-4/3 md:aspect-auto min-h-[250px] md:min-h-[300px] overflow-hidden rounded-tl-3xl rounded-br-3xl shadow-md cursor-pointer hover:scale-[1.01] transition">
+                    <Link href="/tipo-noleggio/noleggio-auto" className="relative md:col-span-2 aspect-4/3 md:aspect-auto min-h-[250px] md:min-h-[300px] overflow-hidden rounded-tl-3xl rounded-br-3xl shadow-md cursor-pointer hover:scale-[1.01] transition block">
                         <Image
                             src="/vacanza.jpg"
                             alt="Noleggio Vacanza"
@@ -25,10 +26,10 @@ export default function OffersSection() {
                                 <div className="text-2xl font-medium">Noleggio Vacanza</div>
                             </div>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* CARD PICCOLA 1 */}
-                    <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
+                    <Link href="/tipo-noleggio/noleggio-furgoni" className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition block">
                         <Image
                             src="/furgoni.jpg"
                             alt="Noleggio Furgoni"
@@ -41,23 +42,23 @@ export default function OffersSection() {
                                 <div className="text-2xl font-medium">Noleggio Furgoni</div>
                             </div>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* CARD PICCOLA 2 */}
-                    <div className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition">
+                    <Link href="/tipo-noleggio/noleggio-premium" className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition block">
                         <Image
                             src="/business.jpg"
-                            alt="Noleggio Business"
+                            alt="Noleggio Premium"
                             fill
                             className="object-cover"
                         />
                         <BadgePromo topText="Fino al" bottomText="20%" />
                         <div className="absolute bottom-5 left-5 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
                             <div className="text-white text-left leading-tight">
-                                <div className="text-2xl font-medium">Noleggio Business</div>
+                                <div className="text-2xl font-medium">Noleggio Premium</div>
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* SECONDA RIGA: TESTO + IMMAGINE VANTAGGI */}

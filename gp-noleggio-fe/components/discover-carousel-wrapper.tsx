@@ -1,7 +1,8 @@
 "use client"
 import Image from "next/image";
 import Link from "next/link";
-import {useState, useEffect} from "react";
+import { useState, useEffect, useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface DiscoverItem {
     id: string;
@@ -14,88 +15,119 @@ interface DiscoverItem {
     imgAlt: string;
 }
 
-export default function DiscoverCarouselWrapper({items}: { items: DiscoverItem[] }) {
+export default function DiscoverCarouselWrapper({ items }: { items: DiscoverItem[] }) {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-    const [touchStart, setTouchStart] = useState<number | null>(null);
-    const [touchEnd, setTouchEnd] = useState<number | null>(null);
+    const [visibleItems, setVisibleItems] = useState(1);
+    const containerRef = useRef<HTMLDivElement>(null);
 
-    const minSwipeDistance = 50;
-
+    // Gestione reattività per numero di elementi visibili
     useEffect(() => {
-        if (!isAutoPlaying || items.length === 0) return;
-        const interval = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % items.length);
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [isAutoPlaying, items.length]);
-
-    const onTouchStart = (e: React.TouchEvent) => {
-        setTouchEnd(null);
-        setTouchStart(e.targetTouches[0].clientX);
-    };
-
-    const onTouchMove = (e: React.TouchEvent) => {
-        setTouchEnd(e.targetTouches[0].clientX);
-    };
-
-    const onTouchEnd = () => {
-        if (!touchStart || !touchEnd) return;
-        const distance = touchStart - touchEnd;
-        if (Math.abs(distance) > minSwipeDistance) {
-            setIsAutoPlaying(false);
-            if (distance > 0) {
-                setCurrentIndex((prev) => (prev + 1) % items.length);
+        const updateVisibleItems = () => {
+            if (window.innerWidth >= 1024) {
+                setVisibleItems(3);
+            } else if (window.innerWidth >= 768) {
+                setVisibleItems(2);
             } else {
-                setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+                setVisibleItems(1);
             }
-        }
+        };
+
+        updateVisibleItems();
+        window.addEventListener('resize', updateVisibleItems);
+        return () => window.removeEventListener('resize', updateVisibleItems);
+    }, []);
+
+    const maxIndex = Math.max(0, items.length - visibleItems);
+
+    const nextSlide = () => {
+        setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
     };
 
-    const currentItem = items[currentIndex];
+    const prevSlide = () => {
+        setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    };
 
     return (
-        <div
-            className="md:hidden flex flex-col items-center overflow-hidden"
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-        >
-            <article
-                key={currentIndex}
-                className="flex flex-col w-full animate-in fade-in slide-in-from-right-5 duration-700"
-            >
-                <div className="relative w-full aspect-video overflow-hidden rounded-tl-2xl rounded-br-2xl">
-                    <Image
-                        src={currentItem.img}
-                        alt={currentItem.imgAlt}
-                        fill
-                        className="object-cover"
-                        onClick={() => setIsAutoPlaying(false)}
-                    />
-                </div>
-                <div className="mt-6 text-center">
-                    <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase">
-                        {currentItem.kicker}
-                    </p>
-                    <h3 className="mt-2 text-3xl font-bold text-black">{currentItem.title}</h3>
-                    <p className="mt-3 text-gray-600 leading-relaxed line-clamp-3">{currentItem.desc}</p>
-                    <Link href={currentItem.href} className="mt-6 inline-block text-[#0700DE] font-semibold">
-                        {currentItem.cta}
-                    </Link>
-                </div>
-            </article>
+        <div className="relative group">
+            {/* Pulsanti di Navigazione (visibili su Desktop) */}
+            <div className="hidden md:flex absolute -left-4 -right-4 top-1/2 -translate-y-1/2 justify-between z-10 pointer-events-none">
+                <button
+                    onClick={prevSlide}
+                    className="p-3 rounded-full bg-white shadow-xl pointer-events-auto hover:bg-gray-50 transition-all border border-gray-100 -translate-x-1/2 group-hover:translate-x-0"
+                    aria-label="Previous slide"
+                >
+                    <ChevronLeft className="w-6 h-6 text-[#0700DE]" />
+                </button>
+                <button
+                    onClick={nextSlide}
+                    className="p-3 rounded-full bg-white shadow-xl pointer-events-auto hover:bg-gray-50 transition-all border border-gray-100 translate-x-1/2 group-hover:translate-x-0"
+                    aria-label="Next slide"
+                >
+                    <ChevronRight className="w-6 h-6 text-[#0700DE]" />
+                </button>
+            </div>
 
-            <div className="flex items-center gap-2 mt-8">
-                {items.map((_, index) => (
+            {/* Container dello Slider */}
+            <div className="overflow-hidden">
+                <div
+                    ref={containerRef}
+                    className="flex transition-transform duration-500 ease-out gap-6"
+                    style={{
+                        transform: `translateX(-${currentIndex * (100 / visibleItems)}%)`,
+                    }}
+                >
+                    {items.map((item) => (
+                        <article
+                            key={item.id}
+                            className={`flex flex-col flex-shrink-0 group/card`}
+                            style={{ width: `calc((100% - ${(visibleItems - 1) * 24}px) / ${visibleItems})` }}
+                        >
+                            {/* Immagine con Hover Effect */}
+                            <div className="relative w-full aspect-video overflow-hidden rounded-tl-2xl rounded-br-2xl">
+                                <Image
+                                    src={item.img}
+                                    alt={item.imgAlt}
+                                    fill
+                                    className="object-cover transition-transform duration-500 group-hover/card:scale-110"
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                />
+                            </div>
+
+                            {/* Testi */}
+                            <div className="mt-6">
+                                <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase">
+                                    {item.kicker}
+                                </p>
+
+                                <h3 className="mt-2 text-2xl font-bold text-black group-hover/card:text-[#0700DE] transition-colors">
+                                    {item.title}
+                                </h3>
+
+                                <p className="mt-3 text-gray-600 leading-relaxed line-clamp-2 text-sm">
+                                    {item.desc}
+                                </p>
+
+                                <Link
+                                    href={item.href}
+                                    className="mt-6 inline-flex items-center gap-2 text-[#0700DE] font-semibold group/link"
+                                >
+                                    {item.cta}
+                                    <ChevronRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
+                                </Link>
+                            </div>
+                        </article>
+                    ))}
+                </div>
+            </div>
+
+            {/* Indicatori (Puntini) */}
+            <div className="flex items-center justify-center gap-2 mt-12">
+                {Array.from({ length: items.length - visibleItems + 1 }).map((_, index) => (
                     <button
                         key={index}
-                        onClick={() => {
-                            setCurrentIndex(index);
-                            setIsAutoPlaying(false);
-                        }}
-                        className={`h-2 transition-all duration-300 rounded-full ${
-                            currentIndex === index ? "w-8 bg-[#0700DE]" : "w-2 bg-gray-300"
+                        onClick={() => setCurrentIndex(index)}
+                        className={`transition-all duration-300 rounded-full h-2 ${
+                            currentIndex === index ? "w-8 bg-[#0700DE]" : "w-2 bg-gray-300 hover:bg-gray-400"
                         }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />

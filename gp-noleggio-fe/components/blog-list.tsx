@@ -1,28 +1,33 @@
 import Image from "next/image";
 import Link from "next/link";
-import { promises as fs } from 'fs';
-import path from 'path';
 import NextBreadcrumb from "@/components/blog-breadcrumbs";
+import { getPayload } from "@/lib/payload";
 
-interface BlogItem {
-    id: string;
-    kicker: string;
-    title: string;
-    desc: string;
-    cta: string;
-    img: string;
-    imgAlt: string;
-}
-
-async function getBlogData(): Promise<BlogItem[]> {
+async function getBlogData() {
     try {
-        const filePath = path.join(process.cwd(), 'data', 'blog.json');
-        const fileContents = await fs.readFile(filePath, 'utf8');
-        return JSON.parse(fileContents);
+        const payload = await getPayload();
+        const { docs } = await payload.find({
+            collection: 'blog-posts',
+            where: {
+                status: {
+                    equals: 'published',
+                },
+            },
+            sort: '-publishedAt',
+        });
+        
+        return docs.map(doc => ({
+            id: doc.slug,
+            kicker: doc.kicker,
+            title: doc.title,
+            desc: doc.excerpt,
+            cta: doc.ctaLabel,
+            img: typeof doc.cardImage === 'object' ? doc.cardImage?.url : '',
+            imgAlt: typeof doc.cardImage === 'object' ? doc.cardImage?.alt : doc.title,
+        }));
     } catch (error) {
-        // Log the error for debugging, but don't crash the app
-        console.error("Errore caricamento feed Blog:", error);
-        return []; // Return an empty array so the component can still render
+        console.error("Errore caricamento feed Blog da CMS:", error);
+        return [];
     }
 }
 

@@ -1,11 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
-import { promises as fs } from 'fs';
-import path from 'path';
+import { getPayload } from 'payload';
+import config from '@/payload/payload.config';
 import DiscoverCarouselWrapper from "./discover-carousel-wrapper";
 
 // 1. Define the Interface for Type Safety
-interface DiscoverItem {
+export interface DiscoverItem {
     id: string;
     kicker: string;
     title: string;
@@ -16,66 +14,47 @@ interface DiscoverItem {
     imgAlt: string;
 }
 
-// 2. Data Fetching Function (Server-Side)
-async function getDiscoverData(): Promise<DiscoverItem[]> {
-    const filePath = path.join(process.cwd(), 'data', 'scopri.json');
-    const fileContents = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(fileContents);
-}
-
-// 3. The Server Component
+// 2. The Server Component
 export default async function DiscoverSection() {
-    const items = await getDiscoverData();
+    const payload = await getPayload({ config });
+    
+    // Fetch the 6 most recent published blog posts
+    const { docs: posts } = await payload.find({
+        collection: 'blog-posts',
+        limit: 6,
+        sort: '-publishedAt',
+        where: {
+            status: {
+                equals: 'published',
+            },
+        },
+    });
+
+    // Map Payload data to the DiscoverItem format
+    const items: DiscoverItem[] = posts.map((post: any) => ({
+        id: post.id,
+        kicker: post.kicker || 'BLOG',
+        title: post.title,
+        desc: post.excerpt || '',
+        href: `/blog/${post.slug}`,
+        cta: post.ctaLabel || 'Leggi di più',
+        img: typeof post.cardImage === 'object' ? post.cardImage?.url : '',
+        imgAlt: post.title,
+    }));
+
+    if (items.length === 0) return null;
 
     return (
-        <section className="w-full bg-white">
+        <section className="w-full bg-white overflow-hidden">
             <div className="container mx-auto px-4 py-14 max-w-[1240px]">
-                <h2 className="text-3xl md:text-4xl font-bold mb-10">
-                    Scopri il mondo Piccirillo Rent
-                </h2>
-
-                {/* MOBILE CAROUSEL WRAPPER (Client Component) */}
-                <DiscoverCarouselWrapper items={items} />
-
-                {/* DESKTOP GRID (Server-Side Rendered) */}
-                <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {items.map((item) => (
-                        <article key={item.id} className="flex flex-col group">
-                            {/* Immagine con Hover Effect */}
-                            <div className="relative w-full aspect-video overflow-hidden rounded-tl-2xl rounded-br-2xl">
-                                <Image
-                                    src={item.img}
-                                    alt={item.imgAlt}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                    sizes="(max-width: 1024px) 100vw, 33vw"
-                                />
-                            </div>
-
-                            {/* Testi */}
-                            <div className="mt-6">
-                                <p className="text-xs font-semibold tracking-widest text-gray-500 uppercase">
-                                    {item.kicker}
-                                </p>
-
-                                <h3 className="mt-2 text-3xl font-bold text-black">
-                                    {item.title}
-                                </h3>
-
-                                <p className="mt-3 text-gray-600 leading-relaxed line-clamp-3">
-                                    {item.desc}
-                                </p>
-
-                                <Link
-                                    href={item.href}
-                                    className="mt-6 inline-block text-[#0700DE] font-semibold hover:text-blue-800 transition-colors"
-                                >
-                                    {item.cta}
-                                </Link>
-                            </div>
-                        </article>
-                    ))}
+                <div className="flex items-center justify-between mb-10">
+                    <h2 className="text-3xl md:text-4xl font-bold">
+                        Scopri il mondo Piccirillo Rent
+                    </h2>
                 </div>
+
+                {/* CAROUSEL WRAPPER - Now responsive for all sizes */}
+                <DiscoverCarouselWrapper items={items} />
             </div>
         </section>
     );
