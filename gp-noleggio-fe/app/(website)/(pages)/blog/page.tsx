@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     alternates: { canonical: "/blog" },
 };
 
+export const dynamic = "force-dynamic";
+
 const bannerImageUrl = "/hero/sfondo-hero-blog.jpg";
 export default function Blog() {
     return (

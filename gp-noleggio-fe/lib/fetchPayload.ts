@@ -6,30 +6,33 @@ import type { Faq } from '@/payload-types'
  * Usabile solo nei Server Components.
  */
 export async function getFAQs(): Promise<Faq[]> {
-    const payload = await getPayload()
+    try {
+        const payload = await getPayload()
 
-    const result = await payload.find({
-        collection: 'faqs',
-        where: {
-            isActive: {
-                equals: true,
+        const result = await payload.find({
+            collection: 'faqs',
+            where: {
+                isActive: {
+                    equals: true,
+                },
             },
-        },
-        sort: 'order',
-        limit: 200, // Aumentato il limite per sicurezza
-        depth: 1, // Per includere Categoria
-    })
+            sort: 'order',
+            limit: 200, // Aumentato il limite per sicurezza
+            depth: 1, // Per includere Categoria
+        })
 
-    return result.docs as Faq[]
+        return result.docs as Faq[]
+    } catch {
+        return []
+    }
 }
 
 /**
  * Recupera una singola FAQ per ID.
  */
 export async function getFAQById(id: string): Promise<Faq | null> {
-    const payload = await getPayload()
-
     try {
+        const payload = await getPayload()
         const faq = await payload.findByID({
             collection: 'faqs',
             id,
@@ -44,9 +47,8 @@ export async function getFAQById(id: string): Promise<Faq | null> {
  * Recupera una singola FAQ per slug o per ID (fallback per FAQ senza slug generato).
  */
 export async function getFaqBySlug(slug: string): Promise<Faq | null> {
-    const payload = await getPayload()
-
     try {
+        const payload = await getPayload()
         // Prima prova a cercare per slug
         const result = await payload.find({
             collection: 'faqs',

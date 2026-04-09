@@ -4,12 +4,19 @@ import NextBreadcrumb from "@/components/blog-breadcrumbs";
 import { getPayload } from "@/lib/payload";
 
 export default async function BlogSection() {
-    const payload = await getPayload();
-    const { docs: items } = await payload.find({
-        collection: 'posts',
-        limit: 10,
-        sort: '-createdAt'
-    });
+    let items: Array<any> = [];
+
+    try {
+        const payload = await getPayload();
+        const result = await payload.find({
+            collection: 'posts',
+            limit: 10,
+            sort: '-createdAt'
+        });
+        items = result.docs;
+    } catch {
+        items = [];
+    }
 
     // Handle the "No items" state
     if (!items || items.length === 0) {

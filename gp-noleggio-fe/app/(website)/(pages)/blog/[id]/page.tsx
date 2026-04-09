@@ -7,17 +7,21 @@ import BlogArticle from "@/components/blog-article";
 import { notFound } from "next/navigation";
 
 async function getBlogPost(slug: string): Promise<Post | null> {
-    const payload = await getPayload();
-    const { docs } = await payload.find({
-        collection: 'posts',
-        where: {
-            slug: {
-                equals: slug,
-            }
-        },
-        limit: 1,
-    });
-    return (docs[0] as Post | undefined) ?? null;
+    try {
+        const payload = await getPayload();
+        const { docs } = await payload.find({
+            collection: 'posts',
+            where: {
+                slug: {
+                    equals: slug,
+                }
+            },
+            limit: 1,
+        });
+        return (docs[0] as Post | undefined) ?? null;
+    } catch {
+        return null;
+    }
 }
 
 export async function generateMetadata({
