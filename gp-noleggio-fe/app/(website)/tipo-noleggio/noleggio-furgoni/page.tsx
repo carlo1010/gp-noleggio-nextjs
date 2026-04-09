@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import HeroBanner from "@/components/hero-banner";
-import Footer from "@/components/footer";
 import ComeFunziona from "@/components/come-funziona";
 import IntroFurgoni from "@/components/intro-furgoni";
 import PromoSplit from "@/components/PromoSplit";
@@ -87,8 +86,6 @@ Per questo, proponiamo soluzioni su misura: ritiro e riconsegna in sedi differen
                         ctaLabel={"Prenota Ora"} ctaHref={"/noleggio-furgoni/business2"} imageSrc={"/furgoni-neri.png"}
                         imageAlt={"furgoni neri iveco"} imageSide="left"/>
 
-
-            <Footer/>
             <ComeFunziona/>
 
 

@@ -31,22 +31,27 @@ type FiltersState = {
     sort: string;
 };
 
+type FiltroAutoProps = {
+    availableCount?: number;
+};
+
 const defaultState: FiltersState = {
     cambio: "all",
     posti: "all",
     tipologia: "all",
     prezzo: "all",
-    sort: "price_desc",
+    sort: "price_asc",
 };
 
 function coerceParam(value: string | null, fallback: string) {
     return value && value.length ? value : fallback;
 }
 
-export default function FiltroAuto() {
+export default function FiltroAuto({ availableCount = 0 }: FiltroAutoProps) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const availableLabel = `${availableCount} disponibil${availableCount === 1 ? "e" : "i"}`;
 
     // ✅ inizializza lo stato leggendo dall'URL
     const [filters, setFilters] = React.useState<FiltersState>(() => ({
@@ -121,7 +126,7 @@ export default function FiltroAuto() {
 
                     {/* MOBILE BAR */}
                     <div className="flex items-center justify-between md:hidden">
-                        <div className="text-sm text-muted-foreground">15 disponibili</div>
+                        <div className="text-sm text-muted-foreground">{availableLabel}</div>
                         <Dialog>
                             <DialogTrigger asChild>
                                 <Button variant="outline" className="gap-2">
@@ -221,7 +226,7 @@ export default function FiltroAuto() {
                         </Dialog>
                     </div>
 
-                    <div className="hidden md:block text-sm text-muted-foreground">15 disponibili</div>
+                    <div className="hidden md:block text-sm text-muted-foreground">{availableLabel}</div>
 
                     <div className="hidden md:flex flex-wrap items-center gap-6">
                         {/* Cambio */}

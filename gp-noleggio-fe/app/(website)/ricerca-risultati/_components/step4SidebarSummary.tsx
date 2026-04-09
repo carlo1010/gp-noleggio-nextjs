@@ -21,6 +21,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { resolveVehicleImageSrc } from "@/lib/vehicle-image";
+import { getSimilarVehicleLabel } from "@/lib/vehicle-label";
 
 export default function Step4SidebarSummary() {
     return (
@@ -79,7 +81,7 @@ function SummaryCard() {
     // VEICOLO DATA
     const brand = veicolo?.descrizioneAgenzia ?? "—";
     const nome = veicolo?.descrizioneClasse ?? "—";
-    const { src: img, unoptimized } = normalizeVehicleImageSrc(veicolo?.urlImmagine);
+    const { src: img, unoptimized } = resolveVehicleImageSrc(veicolo);
     const prezzoVeicolo = Number(tariffa?.prezzoTotale ?? 0);
 
     // SPECS
@@ -124,7 +126,7 @@ function SummaryCard() {
                             <div className="mt-2 text-left">
                                 <p className="font-bold text-base uppercase mb-2">{nome}</p>
                                 <span className="inline-block bg-gray-400 text-white text-[10px] font-bold px-2 py-1 uppercase rounded-sm">
-                                    O MINI SIMILARE
+                                    {getSimilarVehicleLabel(veicolo?.descrizioneGruppo)}
                                 </span>
                             </div>
                             <div className="relative w-32 h-20 shrink-0">
@@ -141,11 +143,11 @@ function SummaryCard() {
 
                         {/* ICONE */}
                         <div className="flex flex-wrap items-center gap-x-5 gap-y-3 mb-6">
-                            <SpecItem icon={<CambioIcon />} text={cambio} />
-                            <SpecItem icon={<PostiIcon />} text={posti ? String(posti) : "4"} />
-                            <SpecItem icon={<AriaIcon />} text={aria ? "A/C" : "No A/C"} />
-                            <SpecItem icon={<PatenteIcon />} text={etaMin ? String(etaMin) : "18"} />
-                            <SpecItem icon={<PorteIcon />} text={porte ? String(porte) : "3"} />
+                            {cambio ? <SpecItem icon={<CambioIcon />} text={cambio} /> : null}
+                            {posti != null ? <SpecItem icon={<PostiIcon />} text={String(posti)} /> : null}
+                            {aria != null ? <SpecItem icon={<AriaIcon />} text={aria ? "A/C" : "No A/C"} /> : null}
+                            {etaMin != null ? <SpecItem icon={<PatenteIcon />} text={String(etaMin)} /> : null}
+                            {porte != null ? <SpecItem icon={<PorteIcon />} text={String(porte)} /> : null}
                         </div>
 
                         {/* DETTAGLI TARIFFA */}
@@ -299,20 +301,3 @@ function SpecItem({ icon, text }: { icon: React.ReactNode; text: string }) {
     );
 }
 
-function normalizeVehicleImageSrc(url?: string | null): { src: string; unoptimized: boolean } {
-    const fallback = "/fiat-500.png";
-    if (!url) return { src: fallback, unoptimized: false };
-
-    const trimmed = url.trim();
-    if (!trimmed) return { src: fallback, unoptimized: false };
-
-    if (trimmed.startsWith("/")) {
-        return { src: trimmed, unoptimized: false };
-    }
-
-    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-        return { src: trimmed, unoptimized: true };
-    }
-
-    return { src: fallback, unoptimized: false };
-}

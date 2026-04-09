@@ -20,17 +20,18 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCheckoutStore } from "@/store/checkout.store";
 import type { ListaVeicolo } from "@/types/veicolo";
 import { parsePrice } from "@/lib/price";
+import { getSimilarVehicleLabel } from "@/lib/vehicle-label";
 
 interface SceltaTariffaProps {
     veicolo: ListaVeicolo;
     imageUrl: string;
     nome: string;
-    cambio: string;
-    posti: number;
-    ariaCondizionata: boolean;
-    eta: string;
-    porte: number;
-    alimentazione: string;
+    cambio?: string;
+    posti?: number;
+    ariaCondizionata?: boolean;
+    eta?: string;
+    porte?: number;
+    alimentazione?: string;
 
     prezzoGiornalieroRitiro: string | number;
     prezzoGiornalieroOnline: string | number;
@@ -56,7 +57,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
         prezzogiornaliero: string | number,
         prezzototale: string | number
     ) {
-        const etaMin = Number.parseInt(props.eta, 10);
+        const etaMin = props.eta ? Number.parseInt(props.eta, 10) : Number.NaN;
         // 1) salvo veicolo nello store
         setVeicolo({
             ...props.veicolo,
@@ -104,7 +105,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
                             <div className="flex flex-col gap-2">
                                 <div className="font-bold uppercase text-2xl lg:text-xl">{props.nome}</div>
                                 <div className="w-max p-1.5 rounded-sm bg-[#999999] text-white uppercase text-xs font-bold">
-                                    O MINI SIMILARE
+                                    {getSimilarVehicleLabel(props.veicolo.descrizioneGruppo)}
                                 </div>
                             </div>
 
@@ -121,26 +122,36 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
 
                         {/* Car Features Grid */}
                         <div className="grid grid-cols-3 gap-2 lg:flex lg:flex-row lg:flex-nowrap lg:justify-between font-bold text-sm lg:text-base mt-2 lg:mt-0">
-                            <div className="flex flex-row gap-x-1 items-center">
-                                <CambioIcon />
-                                <span className="truncate">{props.cambio}</span>
-                            </div>
-                            <div className="flex flex-row gap-x-1 items-center">
-                                <PostiIcon />
-                                <span>{props.posti}</span>
-                            </div>
-                            <div className="flex flex-row gap-x-1 items-center">
-                                <AriaIcon />
-                                <span className="truncate">{props.ariaCondizionata === true ? "A/C" : "NO A/C"}</span>
-                            </div>
-                            <div className="flex flex-row gap-x-1 items-center">
-                                <PatenteIcon />
-                                <span>{props.eta}</span>
-                            </div>
-                            <div className="flex flex-row gap-x-1 items-center">
-                                <PorteIcon />
-                                <span>{props.porte}</span>
-                            </div>
+                            {props.cambio && (
+                                <div className="flex flex-row gap-x-1 items-center">
+                                    <CambioIcon />
+                                    <span className="truncate">{props.cambio}</span>
+                                </div>
+                            )}
+                            {props.posti != null && (
+                                <div className="flex flex-row gap-x-1 items-center">
+                                    <PostiIcon />
+                                    <span>{props.posti}</span>
+                                </div>
+                            )}
+                            {props.ariaCondizionata != null && (
+                                <div className="flex flex-row gap-x-1 items-center">
+                                    <AriaIcon />
+                                    <span className="truncate">{props.ariaCondizionata ? "A/C" : "NO A/C"}</span>
+                                </div>
+                            )}
+                            {props.eta && (
+                                <div className="flex flex-row gap-x-1 items-center">
+                                    <PatenteIcon />
+                                    <span>{props.eta}</span>
+                                </div>
+                            )}
+                            {props.porte != null && (
+                                <div className="flex flex-row gap-x-1 items-center">
+                                    <PorteIcon />
+                                    <span>{props.porte}</span>
+                                </div>
+                            )}
                         </div>
                     </div>
 

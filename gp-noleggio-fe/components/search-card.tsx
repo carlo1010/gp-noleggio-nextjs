@@ -26,7 +26,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-import { listaAgenzia } from "@/hook/useAgenzia";
+import { useListaAgenzia } from "@/hook/useAgenzia";
 import { useEffect, useMemo, useState } from "react";
 import { format, startOfDay, isBefore } from "date-fns";
 import { useRouter } from "next/navigation";
@@ -99,7 +99,7 @@ export default function SearchCard() {
         rentalDuration?: boolean;
     }>({});
 
-    const { isPending: isLoadingAgenzie, data: agenzie } = listaAgenzia();
+    const { isPending: isLoadingAgenzie, data: agenzie } = useListaAgenzia();
 
     // oggi "pulito" a mezzanotte
     const today = useMemo(() => startOfDay(new Date()), []);

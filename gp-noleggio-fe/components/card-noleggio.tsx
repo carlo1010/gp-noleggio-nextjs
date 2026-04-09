@@ -7,17 +7,19 @@ import PostiIcon from "@/components/svg/postiIcon";
 import { PatenteIcon } from "@/components/svg/patenteicon";
 import PorteIcon from "@/components/svg/porteicon";
 import AriaIcon from "@/components/svg/ariaicon";
+import { getSimilarVehicleLabel } from "@/lib/vehicle-label";
 
 interface CardNoleggioProps {
     imageUrl: string;
     nome: string;
-    cambio: string;
+    descrizioneGruppo?: string;
+    cambio?: string;
     codiceClasse: string
-    posti: number;
-    ariaCondizionata: boolean;
-    eta: string;
-    porte: number;
-    alimentazione: string;
+    posti?: number;
+    ariaCondizionata?: boolean;
+    eta?: string;
+    porte?: number;
+    alimentazione?: string;
     prezzoTotale: string | number;
     prezzoGiornaliero: string | number;
     eagerImage?: boolean;
@@ -26,6 +28,16 @@ interface CardNoleggioProps {
 
 
 export default function CardNoleggio(props: CardNoleggioProps,) {
+    const specs = [
+        props.cambio ? { key: "cambio", icon: <CambioIcon />, label: props.cambio } : null,
+        props.posti != null ? { key: "posti", icon: <PostiIcon />, label: String(props.posti) } : null,
+        props.ariaCondizionata != null
+            ? { key: "aria", icon: <AriaIcon />, label: props.ariaCondizionata ? "A/C" : "NO A/C" }
+            : null,
+        props.eta ? { key: "eta", icon: <PatenteIcon />, label: props.eta } : null,
+        props.porte != null ? { key: "porte", icon: <PorteIcon />, label: String(props.porte) } : null,
+    ].filter(Boolean) as Array<{ key: string; icon: React.ReactNode; label: string }>;
+
     return (
         <div className={"flex flex-col md:grid md:grid-cols-7 gap-x-4 border-b border-gray-200 pb-6 md:pb-0"}>
 
@@ -37,6 +49,7 @@ export default function CardNoleggio(props: CardNoleggioProps,) {
                         alt={props.nome || "Veicolo"}
                         fill
                         sizes="(max-width: 768px) 100vw, 300px"
+                        priority={props.eagerImage}
                         loading={props.eagerImage ? "eager" : "lazy"}
                         className="object-contain"
                     />
@@ -48,26 +61,19 @@ export default function CardNoleggio(props: CardNoleggioProps,) {
                     {props.nome}
                 </div>
                 <div className={"w-max p-2 rounded-tl-sm rounded-br-sm bg-[#999999] text-white uppercase"}>
-                    O MINI SIMILARE
+                    {getSimilarVehicleLabel(props.descrizioneGruppo)}
                 </div>
 
-                <div className={"flex flex-row flex-wrap gap-x-4 font-bold"}>
-                    <div className={"flex flew-row gap-x-2 items-center"}>
-                        <CambioIcon />{props.cambio}
+                {specs.length > 0 && (
+                    <div className={"flex flex-row flex-wrap gap-x-4 font-bold"}>
+                        {specs.map((spec) => (
+                            <div key={spec.key} className={"flex flew-row gap-x-2 items-center"}>
+                                {spec.icon}
+                                {spec.label}
+                            </div>
+                        ))}
                     </div>
-                    <div className={"flex flew-row gap-x-2 items-center"}>
-                        <PostiIcon />{props.posti}
-                    </div>
-                    <div className={"flex flew-row gap-x-2 items-center"}>
-                        <AriaIcon />{props.ariaCondizionata == true ? 'A/C' : 'NO A/C'}
-                    </div>
-                    <div className={"flex flew-row gap-x-2 items-center"}>
-                        <PatenteIcon />{props.eta}
-                    </div>
-                    <div className={"flex flew-row gap-x-2 items-center"}>
-                        <PorteIcon />{props.porte}
-                    </div>
-                </div>
+                )}
                 <div className={" flex flex-col gap-y-2 "}>
                     <div className={" flex flex-row gap-x-2"}>
                         <Check strokeWidth={4} className={" w-6 h-6 text-primary"} />

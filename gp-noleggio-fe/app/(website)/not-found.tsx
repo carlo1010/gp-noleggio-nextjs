@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import Header from "@/components/header";
-import Footer from "@/components/footer";
 
 export default function NotFound() {
   return (
@@ -55,8 +54,6 @@ export default function NotFound() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </>
   );
 }
