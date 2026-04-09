@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { getPayload } from "@/lib/payload";
+import type { Post } from "@/payload-types";
 import HeroBanner from "@/components/hero-banner";
 import WhyRent from "@/components/why-rent";
 import BlogArticle from "@/components/blog-article";
 import { notFound } from "next/navigation";
 
-async function getBlogPost(slug: string) {
+async function getBlogPost(slug: string): Promise<Post | null> {
     const payload = await getPayload();
     const { docs } = await payload.find({
         collection: 'posts',
@@ -16,7 +17,7 @@ async function getBlogPost(slug: string) {
         },
         limit: 1,
     });
-    return docs[0] ?? null;
+    return (docs[0] as Post | undefined) ?? null;
 }
 
 export async function generateMetadata({
