@@ -17,11 +17,20 @@ export const metadata: Metadata = {
 };
 
 const bannerImageUrl = "/hero/sfondo-hero-scopri.jpg";
-export default function Scopri() {
+export default async function Scopri({
+    searchParams,
+}: {
+    searchParams: Promise<{ agenzia?: string | string[] }>;
+}) {
+    const resolvedSearchParams = await searchParams;
+    const selectedAgencyId = Array.isArray(resolvedSearchParams.agenzia)
+        ? resolvedSearchParams.agenzia[0]
+        : resolvedSearchParams.agenzia ?? null;
+
     return (
         <>
             <HeroBanner imageUrl={bannerImageUrl} />
-            <DoveSiamo/>
+            <DoveSiamo selectedAgencyId={selectedAgencyId} />
             <DiscoverSection />
             <WhyRent />
         </>

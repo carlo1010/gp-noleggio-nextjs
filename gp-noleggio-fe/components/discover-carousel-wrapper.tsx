@@ -71,6 +71,7 @@ export default function DiscoverCarouselWrapper({items}: { items: DiscoverItem[]
                         alt={currentItem.imgAlt}
                         fill
                         className="object-cover"
+                        sizes="(max-width: 767px) calc(100vw - 2rem), 0px"
                         onClick={() => setIsAutoPlaying(false)}
                     />
                 </div>

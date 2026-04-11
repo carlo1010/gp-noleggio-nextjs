@@ -1,36 +1,58 @@
+"use client";
+
+import { useMemo } from "react";
 import MapClient from "@/components/mappa-cliente";
+import { useListaAgenzia } from "@/hook/useAgenzia";
+import {
+  getAgencyLocationLabel,
+  getAgencyMapPoints,
+  getUniqueAgencyLocations,
+} from "@/lib/agency-location";
 
-export default function DoveSiamo() {
-    return (
-        <section className="w-full bg-white">
-            <div className="container mx-auto px-4 py-14 max-w-[1240px]">
-                <h2 className="text-3xl md:text-4xl font-bold mb-10">
-                    Piccirillo Rent In Italia
-                </h2>
+export default function DoveSiamo({ selectedAgencyId = null }: { selectedAgencyId?: string | null }) {
+  const { data: agenzie = [] } = useListaAgenzia();
+  const mapPoints = useMemo(() => getAgencyMapPoints(agenzie), [agenzie]);
+  const locations = useMemo(() => getUniqueAgencyLocations(agenzie), [agenzie]);
+  const selectedAgency = useMemo(
+    () => agenzie.find((agency) => agency.codiceAgenzia === selectedAgencyId) ?? null,
+    [agenzie, selectedAgencyId],
+  );
 
-                <div className="grid grid-cols-2 md:grid-cols-2 gap-10">
-                    <div className="h-[400px]">
-                        <MapClient />
-                    </div>
+  return (
+    <section id="dove-siamo" className="w-full bg-white">
+      <div className="container mx-auto max-w-[1240px] px-4 py-14">
+        <h2 className="mb-10 text-3xl font-bold md:text-4xl">Piccirillo Rent In Italia</h2>
 
-                    <div className="content-center">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">
-                            DOVE SIAMO IN ITALIA
-                        </span>
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+          <div className="h-[400px]">
+            <MapClient points={mapPoints} selectedPointId={selectedAgencyId} />
+          </div>
 
-                        <h3 className="text-2xl font-bold mt-2 mb-4">
-                            Punti di ritiro e riconsegna in tutto il Paese
-                        </h3>
+          <div className="content-center">
+            <span className="text-xs font-semibold uppercase text-gray-500">DOVE SIAMO IN ITALIA</span>
 
-                        <p className="text-gray-600 mb-6">
-                            Trova la sede Piccirillo Rent più vicina a te! Grazie alla nostra rete capillare di
-                            punti di ritiro e riconsegna su tutto il territorio nazionale, puoi noleggiare l’auto
-                            dove preferisci e restituirla nella località che ti è più comoda. Scopri tutte le sedi
-                            disponibili sulla mappa e prenota direttamente online in pochi clic.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+            <h3 className="mb-4 mt-2 text-2xl font-bold">
+              Punti di ritiro e riconsegna in tutto il Paese
+            </h3>
+
+            <p className="mb-6 text-gray-600">
+              Trova la sede Piccirillo Rent piu vicina a te. La rete sedi e la mappa vengono
+              alimentate direttamente dall&apos;endpoint agenzie, cosi il contenuto resta allineato al
+              backend operativo.
+            </p>
+
+            {selectedAgency ? (
+              <p className="mb-4 text-sm font-semibold text-[#0700DE]">
+                Sede selezionata: {getAgencyLocationLabel(selectedAgency)}
+              </p>
+            ) : null}
+
+            <p className="text-sm text-gray-500">
+              {locations.length} localita disponibili, {agenzie.length} sedi disponibili.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
