@@ -37,7 +37,10 @@ export default function Footer() {
           <p className="text-gray-700">
             <span className="text-[#0700DE]">{agenzie.length}</span> sedi in Italia
           </p>
-          <Link href="/scopri#dove-siamo" className="w-fit font-semibold text-[#0700DE] transition-colors hover:text-blue-800">
+          <Link
+            href={{ pathname: "/scopri", hash: "dove-siamo" }}
+            className="w-fit font-semibold text-[#0700DE] transition-colors hover:text-blue-800"
+          >
             Visualizza tutte le sedi
           </Link>
         </div>
