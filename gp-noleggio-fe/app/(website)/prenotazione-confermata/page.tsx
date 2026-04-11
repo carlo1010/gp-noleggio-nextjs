@@ -23,6 +23,7 @@ import {
 import { calcDays } from "@/lib/date";
 import { formatPrice } from "@/lib/formatPrice";
 import { useCheckoutStore } from "@/store/checkout.store";
+import HeroBanner from "@/components/hero-banner";
 
 export default function PrenotazioneConfermataPage() {
     return (
@@ -118,113 +119,131 @@ function PrenotazioneConfermataContent() {
         router.push("/");
     };
 
+    const heroTitle = isCancel ? "Pagamento annullato" : "Prenotazione confermata";
+    const heroDescription = isCancel
+        ? "L'operazione e stata annullata. Puoi riprovare dal checkout o iniziare una nuova ricerca."
+        : reservation
+            ? `Riceverai una email di conferma all'indirizzo ${reservation.conducente.email}.`
+            : "Il pagamento e stato elaborato. Conserva i riferimenti della prenotazione.";
+
     return (
-        <div className="min-h-screen bg-gray-50 flex items-start justify-center pt-16 px-4">
-            <div className="w-full max-w-xl">
-                <div className="flex flex-col items-center text-center mb-8">
-                    {isCancel ? (
-                        <CircleX className="w-16 h-16 text-red-500 mb-4" strokeWidth={1.5} />
-                    ) : isResult ? (
-                        <CheckCircle className="w-16 h-16 text-green-500 mb-4" strokeWidth={1.5} />
-                    ) : (
-                        <Clock3 className="w-16 h-16 text-amber-500 mb-4" strokeWidth={1.5} />
+        <>
+            <HeroBanner
+                imageUrl="/hero/sfondo-hero-auto.png"
+                title={heroTitle}
+                description={heroDescription}
+                showSearch={false}
+                compact
+            />
+
+            <div className="min-h-screen bg-gray-50 px-4 py-10">
+                <div className="mx-auto w-full max-w-xl">
+                    <div className="flex flex-col items-center text-center mb-8">
+                        {isCancel ? (
+                            <CircleX className="w-16 h-16 text-red-500 mb-4" strokeWidth={1.5} />
+                        ) : isResult ? (
+                            <CheckCircle className="w-16 h-16 text-green-500 mb-4" strokeWidth={1.5} />
+                        ) : reservation ? (
+                            <Clock3 className="w-16 h-16 text-amber-500 mb-4" strokeWidth={1.5} />
+                        ) : (
+                            <Clock3 className="w-16 h-16 text-amber-500 mb-4" strokeWidth={1.5} />
+                        )}
+
+                        <h2 className="text-2xl font-bold text-gray-900">
+                            {heroTitle}
+                        </h2>
+
+                        <p className="text-gray-500 text-sm mt-2">
+                            {isCancel ? (
+                                "L'operazione e stata annullata. Puoi riprovare dal checkout o iniziare una nuova ricerca."
+                            ) : reservation ? (
+                                <>
+                                    Riceverai una email di conferma all'indirizzo{" "}
+                                    <span className="font-semibold text-gray-700">
+                                        {reservation.conducente.email}
+                                    </span>
+                                </>
+                            ) : (
+                                "Il pagamento e stato elaborato. Conserva i riferimenti della prenotazione."
+                            )}
+                        </p>
+                    </div>
+
+                    {(orderId || paymentId) && (
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                            <div className="divide-y divide-gray-100">
+                                {orderId ? (
+                                    <Row
+                                        icon={<CreditCard className="w-4 h-4 text-[#0700DE]" />}
+                                        label="Order ID"
+                                        value={orderId}
+                                    />
+                                ) : null}
+                                {paymentId ? (
+                                    <Row
+                                        icon={<CreditCard className="w-4 h-4 text-[#0700DE]" />}
+                                        label="Payment ID"
+                                        value={paymentId}
+                                    />
+                                ) : null}
+                            </div>
+                        </div>
                     )}
 
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        {isCancel ? "Pagamento annullato" : "Prenotazione confermata"}
-                    </h1>
+                    {reservation ? (
+                        <>
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                                <div className="px-6 py-4 border-b bg-gray-50">
+                                    <h2 className="text-sm font-bold uppercase tracking-wide text-gray-700">
+                                        Dati Cliente
+                                    </h2>
+                                </div>
 
-                    <p className="text-gray-500 text-sm mt-2">
-                        {isCancel ? (
-                            "L'operazione e stata annullata. Puoi riprovare dal checkout o iniziare una nuova ricerca."
-                        ) : reservation ? (
-                            <>
-                                Riceverai una email di conferma all'indirizzo{" "}
-                                <span className="font-semibold text-gray-700">
-                                    {reservation.conducente.email}
-                                </span>
-                            </>
-                        ) : (
-                            "Il pagamento e stato elaborato. Conserva i riferimenti della prenotazione."
-                        )}
-                    </p>
-                </div>
-
-                {(orderId || paymentId) && (
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-                        <div className="divide-y divide-gray-100">
-                            {orderId ? (
-                                <Row
-                                    icon={<CreditCard className="w-4 h-4 text-[#0700DE]" />}
-                                    label="Order ID"
-                                    value={orderId}
-                                />
-                            ) : null}
-                            {paymentId ? (
-                                <Row
-                                    icon={<CreditCard className="w-4 h-4 text-[#0700DE]" />}
-                                    label="Payment ID"
-                                    value={paymentId}
-                                />
-                            ) : null}
-                        </div>
-                    </div>
-                )}
-
-                {reservation ? (
-                    <>
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
-                            <div className="px-6 py-4 border-b bg-gray-50">
-                                <h2 className="text-sm font-bold uppercase tracking-wide text-gray-700">
-                                    Dati Cliente
-                                </h2>
+                                <div className="divide-y divide-gray-100">
+                                    <Row
+                                        icon={<User className="w-4 h-4 text-[#0700DE]" />}
+                                        label="Conducente"
+                                        value={`${reservation.conducente.nome} ${reservation.conducente.cognome}`.trim()}
+                                    />
+                                    {reservation.conducente.email ? (
+                                        <Row
+                                            icon={<User className="w-4 h-4 text-[#0700DE]" />}
+                                            label="Email"
+                                            value={reservation.conducente.email}
+                                        />
+                                    ) : null}
+                                    {reservation.conducente.telefono ? (
+                                        <Row
+                                            icon={<User className="w-4 h-4 text-[#0700DE]" />}
+                                            label="Telefono"
+                                            value={reservation.conducente.telefono}
+                                        />
+                                    ) : null}
+                                    {reservation.conducente.codiceFiscale ? (
+                                        <Row
+                                            icon={<User className="w-4 h-4 text-[#0700DE]" />}
+                                            label="Codice fiscale"
+                                            value={reservation.conducente.codiceFiscale}
+                                        />
+                                    ) : null}
+                                    {reservation.conducente.dataNascita ? (
+                                        <Row
+                                            icon={<User className="w-4 h-4 text-[#0700DE]" />}
+                                            label="Data di nascita"
+                                            value={reservation.conducente.dataNascita}
+                                        />
+                                    ) : null}
+                                    {customerAddress ? (
+                                        <Row
+                                            icon={<MapPin className="w-4 h-4 text-[#0700DE]" />}
+                                            label="Indirizzo"
+                                            value={customerAddress}
+                                        />
+                                    ) : null}
+                                </div>
                             </div>
 
-                            <div className="divide-y divide-gray-100">
-                                <Row
-                                    icon={<User className="w-4 h-4 text-[#0700DE]" />}
-                                    label="Conducente"
-                                    value={`${reservation.conducente.nome} ${reservation.conducente.cognome}`.trim()}
-                                />
-                                {reservation.conducente.email ? (
-                                    <Row
-                                        icon={<User className="w-4 h-4 text-[#0700DE]" />}
-                                        label="Email"
-                                        value={reservation.conducente.email}
-                                    />
-                                ) : null}
-                                {reservation.conducente.telefono ? (
-                                    <Row
-                                        icon={<User className="w-4 h-4 text-[#0700DE]" />}
-                                        label="Telefono"
-                                        value={reservation.conducente.telefono}
-                                    />
-                                ) : null}
-                                {reservation.conducente.codiceFiscale ? (
-                                    <Row
-                                        icon={<User className="w-4 h-4 text-[#0700DE]" />}
-                                        label="Codice fiscale"
-                                        value={reservation.conducente.codiceFiscale}
-                                    />
-                                ) : null}
-                                {reservation.conducente.dataNascita ? (
-                                    <Row
-                                        icon={<User className="w-4 h-4 text-[#0700DE]" />}
-                                        label="Data di nascita"
-                                        value={reservation.conducente.dataNascita}
-                                    />
-                                ) : null}
-                                {customerAddress ? (
-                                    <Row
-                                        icon={<MapPin className="w-4 h-4 text-[#0700DE]" />}
-                                        label="Indirizzo"
-                                        value={customerAddress}
-                                    />
-                                ) : null}
-                            </div>
-                        </div>
-
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
                             <div className="bg-[#0700DE] px-6 py-4 flex items-center gap-3">
                                 <Car className="w-5 h-5 text-white shrink-0" />
                                 <div>
@@ -320,37 +339,38 @@ function PrenotazioneConfermataContent() {
                                     {formatPrice(reservation.totale)}
                                 </span>
                             </div>
-                        </div>
-                    </>
-                ) : null}
+                            </div>
+                        </>
+                    ) : null}
 
-                <div className="flex flex-col gap-3">
-                    {reservation && !isCancel ? (
-                        <Button
-                            onClick={handleNuovaRicerca}
-                            className="bg-[#0700DE] hover:bg-[#0600b3] text-white font-bold h-12 rounded-none rounded-tl-sm rounded-br-sm"
-                        >
-                            Torna alla home
-                        </Button>
-                    ) : (
+                    <div className="flex flex-col gap-3">
+                        {reservation && !isCancel ? (
+                            <Button
+                                onClick={handleNuovaRicerca}
+                                className="bg-[#0700DE] hover:bg-[#0600b3] text-white font-bold h-12 rounded-none rounded-tl-sm rounded-br-sm"
+                            >
+                                Torna alla home
+                            </Button>
+                        ) : (
+                            <Button
+                                asChild
+                                className="bg-[#0700DE] hover:bg-[#0600b3] text-white font-bold h-12 rounded-none rounded-tl-sm rounded-br-sm"
+                            >
+                                <Link href="/">Torna alla home</Link>
+                            </Button>
+                        )}
+
                         <Button
                             asChild
-                            className="bg-[#0700DE] hover:bg-[#0600b3] text-white font-bold h-12 rounded-none rounded-tl-sm rounded-br-sm"
+                            variant="outline"
+                            className="h-12 rounded-none rounded-tl-sm rounded-br-sm"
                         >
-                            <Link href="/">Torna alla home</Link>
+                            <Link href="/">Nuova ricerca</Link>
                         </Button>
-                    )}
-
-                    <Button
-                        asChild
-                        variant="outline"
-                        className="h-12 rounded-none rounded-tl-sm rounded-br-sm"
-                    >
-                        <Link href="/">Nuova ricerca</Link>
-                    </Button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

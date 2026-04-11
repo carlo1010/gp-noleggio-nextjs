@@ -11,6 +11,8 @@ const FORWARDED_PARAMS = [
     "oraFine",
     "pickupTime",
     "dropoffTime",
+    "pickupOfficeId",
+    "dropoffOfficeId",
 ] as const;
 
 export async function GET(req: Request) {

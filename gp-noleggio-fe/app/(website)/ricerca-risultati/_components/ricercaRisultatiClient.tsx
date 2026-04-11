@@ -21,6 +21,7 @@ export default function RicercaRisultatiClient() {
     const sp = useSearchParams();
     const step = sp.get("step") ?? "2";
     const classe = sp.get("classe");
+    const codiceTariffaParam = sp.get("tariffa");
     const pay = sp.get("pay");
     const payment = sp.get("payment");
     const paymentStatus = sp.get("status");
@@ -43,11 +44,14 @@ export default function RicercaRisultatiClient() {
     const dropoffDate = sp.get("dropoffDate");
     const pickupTime = sp.get("pickupTime");
     const dropoffTime = sp.get("dropoffTime");
+    const pickupOfficeId = sp.get("pickupOfficeId");
+    const dropoffOfficeId = sp.get("dropoffOfficeId");
     const cambio = sp.get("cambio") ?? "all";
     const posti = sp.get("posti") ?? "all";
     const tipologia = sp.get("tipologia") ?? "all";
     const prezzo = sp.get("prezzo") ?? "all";
     const sort = sp.get("sort") ?? "price_asc";
+    const rehydrateVehicleKey = `${classe ?? ""}:${codiceTariffaParam ?? ""}`;
 
     const needRehydrate =
         (step === "3" || step === "4") && !checkout.veicolo && Boolean(classe);
@@ -57,6 +61,8 @@ export default function RicercaRisultatiClient() {
         datafine: needRehydrate ? dropoffDate : null,
         oraInizio: needRehydrate ? pickupTime : null,
         oraFine: needRehydrate ? dropoffTime : null,
+        pickupOfficeId: needRehydrate ? pickupOfficeId : null,
+        dropoffOfficeId: needRehydrate ? dropoffOfficeId : null,
         cambio,
         posti,
         tipologia,
@@ -124,7 +130,11 @@ export default function RicercaRisultatiClient() {
     useEffect(() => {
         if (!needRehydrate || !veicoliRehydrate?.length || !classe) return;
 
-        const veicolo = veicoliRehydrate.find((item) => item.codiceClasse === classe);
+        const veicolo = veicoliRehydrate.find((item) => {
+            if (item.codiceClasse !== classe) return false;
+            if (codiceTariffaParam && item.codiceTariffa !== codiceTariffaParam) return false;
+            return true;
+        });
         if (!veicolo) return;
         const pricing = getNormalizedVehiclePricing(veicolo, {
             pickupDate,
@@ -151,7 +161,7 @@ export default function RicercaRisultatiClient() {
     }, [
         needRehydrate,
         veicoliRehydrate,
-        classe,
+        rehydrateVehicleKey,
         pay,
         setVeicolo,
         setTariffa,

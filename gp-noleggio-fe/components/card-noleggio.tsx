@@ -23,7 +23,8 @@ interface CardNoleggioProps {
     prezzoTotale: string | number;
     prezzoGiornaliero: string | number;
     eagerImage?: boolean;
-    openDialog: (event: boolean, codiceClasse: string) => void;
+    codiceTariffa: string;
+    openDialog: (event: boolean, selection: { codiceClasse: string; codiceTariffa: string }) => void;
 }
 
 
@@ -103,7 +104,15 @@ export default function CardNoleggio(props: CardNoleggioProps,) {
                 <div className={""}>
                     Totale {formatPrice(props.prezzoTotale)}
                 </div>
-                <Button onClick={() => props.openDialog(true, props.codiceClasse)} className="w-full md:w-auto px-10 cursor-pointer text-lg bg-[#0700DE] hover:bg-[#0500b0] font-bold">
+                <Button
+                    onClick={() =>
+                        props.openDialog(true, {
+                            codiceClasse: props.codiceClasse,
+                            codiceTariffa: props.codiceTariffa,
+                        })
+                    }
+                    className="w-full md:w-auto px-10 cursor-pointer text-lg bg-[#0700DE] hover:bg-[#0500b0] font-bold"
+                >
                     Seleziona
                 </Button>
 
