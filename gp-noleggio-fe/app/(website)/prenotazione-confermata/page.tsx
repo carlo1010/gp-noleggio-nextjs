@@ -119,12 +119,8 @@ function PrenotazioneConfermataContent() {
         router.push("/");
     };
 
-    const heroTitle = isCancel ? "Pagamento annullato" : "Prenotazione confermata";
-    const heroDescription = isCancel
-        ? "L'operazione e stata annullata. Puoi riprovare dal checkout o iniziare una nuova ricerca."
-        : reservation
-            ? `Riceverai una email di conferma all'indirizzo ${reservation.conducente.email}.`
-            : "Il pagamento e stato elaborato. Conserva i riferimenti della prenotazione.";
+    const heroTitle = "Esito prenotazione";
+    const heroDescription = "Controlla i dettagli della prenotazione e i riferimenti del noleggio.";
 
     return (
         <>
@@ -133,7 +129,7 @@ function PrenotazioneConfermataContent() {
                 title={heroTitle}
                 description={heroDescription}
                 showSearch={false}
-                compact
+                medium
             />
 
             <div className="min-h-screen bg-gray-50 px-4 py-10">
@@ -150,7 +146,7 @@ function PrenotazioneConfermataContent() {
                         )}
 
                         <h2 className="text-2xl font-bold text-gray-900">
-                            {heroTitle}
+                            {isCancel ? "Pagamento annullato" : "Prenotazione confermata"}
                         </h2>
 
                         <p className="text-gray-500 text-sm mt-2">
