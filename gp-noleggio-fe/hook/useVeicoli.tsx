@@ -8,6 +8,8 @@ export type VeicoliFilters = {
     datafine: string | null;
     oraInizio?: string | null;
     oraFine?: string | null;
+    pickupOfficeId?: string | null;
+    dropoffOfficeId?: string | null;
 
     cambio?: string | null;
     posti?: string | null;
@@ -22,6 +24,8 @@ export function useListaVeicoli(filters: VeicoliFilters) {
         datafine,
         oraInizio,
         oraFine,
+        pickupOfficeId,
+        dropoffOfficeId,
         cambio,
         posti,
         tipologia,
@@ -37,6 +41,8 @@ export function useListaVeicoli(filters: VeicoliFilters) {
             datafine,
             oraInizio ?? "",
             oraFine ?? "",
+            pickupOfficeId ?? "",
+            dropoffOfficeId ?? "",
             cambio ?? "all",
             posti ?? "all",
             tipologia ?? "all",
@@ -52,6 +58,8 @@ export function useListaVeicoli(filters: VeicoliFilters) {
             if (oraFine) params.set("oraFine", oraFine);
             if (oraInizio) params.set("pickupTime", oraInizio);
             if (oraFine) params.set("dropoffTime", oraFine);
+            if (pickupOfficeId) params.set("pickupOfficeId", pickupOfficeId);
+            if (dropoffOfficeId) params.set("dropoffOfficeId", dropoffOfficeId);
 
             // manda i filtri solo se non "all"
             if (cambio && cambio !== "all") params.set("cambio", cambio);

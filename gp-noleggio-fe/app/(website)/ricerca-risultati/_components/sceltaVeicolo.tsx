@@ -10,10 +10,16 @@ import { SceltaTariffa } from "@/components/scelta-tariffa";
 import { useListaVeicoli } from "@/hook/useVeicoli";
 import { resolveVehicleImageSrc } from "@/lib/vehicle-image";
 import { getNormalizedVehiclePricing } from "@/lib/vehicle-pricing";
+import type { ListaVeicolo } from "@/types/veicolo";
+
+type SelectedVehicleRef = {
+    codiceClasse: string;
+    codiceTariffa: string;
+};
 
 export default function SceltaVeicolo() {
     const [open, setOpen] = useState(false);
-    const [selectedVeicolo, setSelectedVeicolo] = useState<any>(null);
+    const [selectedVeicolo, setSelectedVeicolo] = useState<SelectedVehicleRef | null>(null);
 
     const sp = useSearchParams();
 
@@ -21,6 +27,8 @@ export default function SceltaVeicolo() {
     const dropoffDate = sp.get("dropoffDate");
     const pickupTime = sp.get("pickupTime");
     const dropoffTime = sp.get("dropoffTime");
+    const pickupOfficeId = sp.get("pickupOfficeId");
+    const dropoffOfficeId = sp.get("dropoffOfficeId");
 
     const cambio = sp.get("cambio") ?? "all";
     const posti = sp.get("posti") ?? "all";
@@ -33,6 +41,8 @@ export default function SceltaVeicolo() {
         datafine: dropoffDate,
         oraInizio: pickupTime,
         oraFine: dropoffTime,
+        pickupOfficeId,
+        dropoffOfficeId,
         cambio,
         posti,
         tipologia,
@@ -48,9 +58,11 @@ export default function SceltaVeicolo() {
     return (
         <>
             {selectedVeicolo && veicoli && (() => {
-                const veicolo = veicoli.find((item) => item.codiceClasse === selectedVeicolo);
-
-                console.log(veicolo);
+                const veicolo = veicoli.find(
+                    (item) =>
+                        item.codiceClasse === selectedVeicolo.codiceClasse &&
+                        item.codiceTariffa === selectedVeicolo.codiceTariffa,
+                );
 
                 if (!veicolo) return null;
                 const pricing = getNormalizedVehiclePricing(veicolo, {
@@ -123,18 +135,19 @@ export default function SceltaVeicolo() {
 
                         return (
                             <CardNoleggio
-                                key={veicolo.codiceClasse}
+                                key={`${veicolo.codiceClasse}-${veicolo.codiceTariffa}`}
                                 imageUrl={imageSrc}
                                 nome={veicolo.descrizioneClasse}
                                 descrizioneGruppo={veicolo.descrizioneGruppo}
                                 codiceClasse={veicolo.codiceClasse}
+                                codiceTariffa={veicolo.codiceTariffa}
                                 cambio={cambio}
                                 posti={posti}
                                 ariaCondizionata={ariaCondizionata}
                                 eta={etaMin != null ? `${etaMin}+` : undefined}
                                 porte={porte}
-                                openDialog={(event, codiceClasse) => {
-                                    setSelectedVeicolo(codiceClasse);
+                                openDialog={(event, selection) => {
+                                    setSelectedVeicolo(selection);
                                     setOpen(true);
                                 }}
                                 alimentazione={veicolo.alimentazione}

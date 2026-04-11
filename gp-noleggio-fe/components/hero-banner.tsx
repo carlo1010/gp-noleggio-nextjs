@@ -16,13 +16,24 @@ interface HeroBannerProps {
     };
     showSearch?: boolean;
     compact?: boolean;
+    medium?: boolean;
 }
 
-export default function HeroBanner({ imageUrl, title, description, promo, showSearch = true, compact = false }: HeroBannerProps) {
+export default function HeroBanner({
+    imageUrl,
+    title,
+    description,
+    promo,
+    showSearch = true,
+    compact = false,
+    medium = false,
+}: HeroBannerProps) {
     const hasContent = title || promo;
 
     const heightClass = compact
         ? "min-h-[160px] md:min-h-[200px]"
+        : medium
+            ? "min-h-[160px] md:min-h-[190px] lg:min-h-[210px]"
         : hasContent
             ? "min-h-dvh md:min-h-[600px] lg:min-h-[750px]"
             : "min-h-[700px] md:min-h-[600px] lg:min-h-[750px]";

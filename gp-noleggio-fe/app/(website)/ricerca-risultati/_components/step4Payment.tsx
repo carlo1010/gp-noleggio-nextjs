@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Lock } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { useCheckoutStore } from "@/store/checkout.store";
 import { formatPrice } from "@/lib/formatPrice";
@@ -21,6 +22,7 @@ const codiceFiscaleRegex =
   /^[A-Z]{6}[0-9LMNPQRSTUV]{2}[ABCDEHLMPRST][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]$/i;
 
 export default function Step4Payment() {
+  const router = useRouter();
   const tariffa = useCheckoutStore((s) => s.tariffa);
   const isWeb = tariffa?.tipo === "web";
   const total = useCheckoutStore((s) => s.getTotale());
@@ -47,8 +49,6 @@ export default function Step4Payment() {
     codiceFiscaleRegex.test(conducente.codiceFiscale.trim());
 
   const handlePayment = async () => {
-    if (!isWeb) return;
-
     const formValidated = triggerDriverValidation
       ? await triggerDriverValidation()
       : isDriverFormValid;
@@ -145,6 +145,39 @@ export default function Step4Payment() {
         totale: total,
       };
 
+      const confirmationSnapshot = {
+        search: store.search,
+        veicolo: store.veicolo,
+        tariffa: store.tariffa,
+        protezioni: store.protezioni,
+        servizi: store.servizi,
+        conducente: store.conducente,
+        totale: total,
+        bookingReference,
+        savedAt: new Date().toISOString(),
+      };
+
+      if (!isWeb) {
+        const prenotaResponse = await fetch("/api/bookings/prenota", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(prenotaPayload),
+        });
+
+        const prenotaData = await prenotaResponse.json().catch(() => ({}));
+        if (!prenotaResponse.ok) {
+          throw new Error(
+            typeof prenotaData?.error === "string"
+              ? prenotaData.error
+              : "Impossibile completare la prenotazione.",
+          );
+        }
+
+        saveCheckoutConfirmationSnapshot(confirmationSnapshot);
+        router.push("/prenotazione-confermata");
+        return;
+      }
+
       const payload = {
         provider: paymentProvider,
         amount: total,
@@ -176,17 +209,7 @@ export default function Step4Payment() {
       }
 
       if (data.checkoutUrl) {
-        saveCheckoutConfirmationSnapshot({
-          search: store.search,
-          veicolo: store.veicolo,
-          tariffa: store.tariffa,
-          protezioni: store.protezioni,
-          servizi: store.servizi,
-          conducente: store.conducente,
-          totale: total,
-          bookingReference,
-          savedAt: new Date().toISOString(),
-        });
+        saveCheckoutConfirmationSnapshot(confirmationSnapshot);
         window.location.href = data.checkoutUrl;
         return;
       }

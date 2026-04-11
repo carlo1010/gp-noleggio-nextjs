@@ -82,6 +82,7 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
         const params = new URLSearchParams(sp.toString());
         params.set("step", "3");
         params.set("classe", props.veicolo.codiceClasse);
+        params.set("tariffa", props.veicolo.codiceTariffa);
         params.set("pay", tipopagamento);
         setStep(3);
         router.push(`/ricerca-risultati?${params.toString()}`);

@@ -95,7 +95,7 @@ export default function RightMenuDrawer({ open, onClose }: RightMenuDrawerProps)
                 <nav className="px-6 pb-10">
                     <ul className="space-y-6 text-sm">
                         <li>
-                            <Link href="#" onClick={onClose} className="font-semibold hover:underline">
+                            <Link href="/scopri" onClick={onClose} className="font-semibold hover:underline">
                                 Le nostre sedi
                             </Link>
                         </li>
