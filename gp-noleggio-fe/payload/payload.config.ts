@@ -19,6 +19,7 @@ import { Media } from './collections/Media'
 import { Faqs } from './collections/Faqs'
 import { FaqCategories } from './collections/FaqCategories'
 import { BlogPosts } from './collections/BlogPosts'
+import { PageConfigs } from './collections/PageConfigs'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -30,7 +31,7 @@ export default buildConfig({
             titleSuffix: '— GP Noleggio CMS',
         },
     },
-    collections: [Users, Media, FaqCategories, Faqs, BlogPosts],
+    collections: [Users, Media, FaqCategories, Faqs, BlogPosts, PageConfigs],
     secret: process.env.PAYLOAD_SECRET || '',
     typescript: {
         outputFile: path.resolve(dirname, '../payload-types.ts'),

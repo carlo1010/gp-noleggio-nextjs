@@ -1,50 +1,43 @@
-"use client"
-import Image from "next/image";
-import Link from "next/link";
-import React, { useState, useEffect } from "react";
+interface FleetSectionProps {
+    title?: string;
+    items?: {
+        title: string;
+        description: string;
+        image: string | any;
+        link: string;
+    }[];
+}
 
-const fleetItems = [
-    {
-        title: "Auto",
-        desc: "La nostra ampia flotta offre auto di piccole e grandi dimensioni, incluse soluzioni eco-friendly.",
-        href: "/tipo-noleggio/noleggio-auto",
-        img: "/auto.png",
-        imgAlt: "Auto",
-        width: 301,
-        height: 150,
+export default function FleetSection({ title = "La flotta", items }: FleetSectionProps) {
+    const defaultItems = [
+        {
+            title: "Auto",
+            description: "La nostra ampia flotta offre auto di piccole e grandi dimensioni, incluse soluzioni eco-friendly.",
+            link: "/tipo-noleggio/noleggio-auto",
+            image: "/auto.png",
+        },
+        {
+            title: "Elettriche",
+            description: "Scegli l’auto elettrica perfetta per te nella nostra esclusiva gamma di modelli",
+            link: "/tipo-noleggio/noleggio-elettriche",
+            image: "/elettriche.png",
+        },
+        {
+            title: "Premium",
+            description: "Prenota un’auto firmata da uno dei brand automobilistici più rinomati al mondo",
+            link: "/tipo-noleggio/noleggio-premium",
+            image: "/premium.png",
+        },
+        {
+            title: "Furgoni",
+            description: "Scopri la nostra ampia selezione di veicoli commerciali, dai più compatti agli “extra carico”",
+            link: "/flotta/furgoni",
+            image: "/furgoni2.png",
+        },
+    ];
 
-    },
-    {
-        title: "Elettriche",
-        desc: "Scegli l’auto elettrica perfetta per te nella nostra esclusiva gamma di modelli",
-        href: "/tipo-noleggio/noleggio-elettriche",
-        img: "/elettriche.png",
-        imgAlt: "Elettriche",
-        width: 236,
-        height: 157,
-    },
-    {
-        title: "Premium",
-        desc: "Prenota un’auto firmata da uno dei brand automobilistici più rinomati al mondo",
-        href: "/tipo-noleggio/noleggio-premium",
-        img: "/premium.png",
-        imgAlt: "Premium",
-        width: 306,
-        height: 159,
+    const displayItems = items || defaultItems;
 
-    },
-    {
-        title: "Furgoni",
-        desc: "Scopri la nostra ampia selezione di veicoli commerciali, dai più compatti agli “extra carico”",
-        href: "/flotta/furgoni",
-        img: "/furgoni2.png",
-        imgAlt: "Furgoni",
-        width: 237,
-        height: 215,
-    },
-];
-
-export default function FleetSection() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -71,9 +64,9 @@ export default function FleetSection() {
         if (isLeftSwipe || isRightSwipe) {
             setIsAutoPlaying(false);
             if (isLeftSwipe) {
-                setCurrentIndex((prev) => (prev + 1) % fleetItems.length);
+                setCurrentIndex((prev) => (prev + 1) % displayItems.length);
             } else {
-                setCurrentIndex((prev) => (prev - 1 + fleetItems.length) % fleetItems.length);
+                setCurrentIndex((prev) => (prev - 1 + displayItems.length) % displayItems.length);
             }
         }
     };
@@ -82,18 +75,23 @@ export default function FleetSection() {
         if (!isAutoPlaying) return;
 
         const interval = setInterval(() => {
-            setCurrentIndex((prevIndex) => (prevIndex + 1) % fleetItems.length);
+            setCurrentIndex((prevIndex) => (prevIndex + 1) % displayItems.length);
         }, 5000);
 
         return () => clearInterval(interval);
-    }, [isAutoPlaying]);
+    }, [isAutoPlaying, displayItems.length]);
+
+    const getImageUrl = (img: any) => {
+        if (typeof img === 'string') return img;
+        return img?.url;
+    };
 
     return (
         <section className="w-full relative bg-white pb-8 md:pb-0">
             {/* ===== FASCIA GRIGIA ===== */}
             <div className="bg-gray-50 h-auto md:h-[422px]">
                 <div className="container mx-auto px-4 pt-14 pb-10 md:pb-0 max-w-[1240px]">
-                    <h2 className="text-3xl font-bold mb-10 text-center md:text-left">La flotta</h2>
+                    <h2 className="text-3xl font-bold mb-10 text-center md:text-left">{title}</h2>
 
                     {/* MOBILE CAROUSEL */}
                     <div
@@ -106,22 +104,22 @@ export default function FleetSection() {
                             key={currentIndex}
                             className="w-full min-h-[350px] flex flex-col items-center text-center animate-in fade-in slide-in-from-right-5 duration-700"
                         >
-                            <h3 className="text-xl font-semibold">{fleetItems[currentIndex].title}</h3>
+                            <h3 className="text-xl font-semibold">{displayItems[currentIndex].title}</h3>
                             <p className="mt-3 text-sm text-gray-600 leading-relaxed">
-                                {fleetItems[currentIndex].desc}
+                                {displayItems[currentIndex].description}
                             </p>
                             <Link
-                                href={fleetItems[currentIndex].href}
+                                href={displayItems[currentIndex].link}
                                 className="mt-4 inline-block text-sm font-semibold text-[#0700DE]"
                             >
                                 Scopri di più
                             </Link>
                             <div className="mt-8 h-40 flex items-center justify-center">
                                 <Image
-                                    src={fleetItems[currentIndex].img}
-                                    alt={fleetItems[currentIndex].imgAlt}
-                                    width={fleetItems[currentIndex].width}
-                                    height={fleetItems[currentIndex].height}
+                                    src={getImageUrl(displayItems[currentIndex].image)}
+                                    alt={displayItems[currentIndex].title}
+                                    width={300}
+                                    height={200}
                                     className="object-contain cursor-pointer"
                                     onClick={() => setIsAutoPlaying(false)}
                                 />
@@ -131,7 +129,7 @@ export default function FleetSection() {
 
                         {/* CUSTOM INDICATORS */}
                         <div className="flex items-center gap-2 mt-6">
-                            {fleetItems.map((_, index) => (
+                            {displayItems.map((_, index) => (
                                 <button
                                     key={index}
                                     onClick={() => {
@@ -150,17 +148,17 @@ export default function FleetSection() {
 
                     {/* GRID PRINCIPALE (Desktop Only) */}
                     <div className="hidden md:grid md:grid-cols-4 gap-10">
-                        {fleetItems.map((item) => (
+                        {displayItems.map((item, idx) => (
                             <div
-                                key={item.title}
+                                key={idx}
                                 className="flex flex-col items-center text-center pb-8 md:pb-0"
                             >
                                 <h3 className="text-xl font-semibold">{item.title}</h3>
                                 <p className="mt-3 text-sm text-gray-600 leading-relaxed md:min-h-[60px]">
-                                    {item.desc}
+                                    {item.description}
                                 </p>
                                 <Link
-                                    href={item.href}
+                                    href={item.link}
                                     className="mt-4 inline-block text-sm font-semibold text-[#0700DE]"
                                 >
                                     Scopri di più
@@ -174,13 +172,13 @@ export default function FleetSection() {
             {/* ===== IMMAGINI DESKTOP (FUORI FASCIA) - Visibile solo da MD in su ===== */}
             <div className="hidden md:block container mx-auto px-4 -mt-24 max-w-[1240px]">
                 <div className="grid grid-cols-4 gap-10">
-                    {fleetItems.map((item) => (
-                        <div key={item.title} className="flex justify-center">
+                    {displayItems.map((item, idx) => (
+                        <div key={idx} className="flex justify-center">
                             <Image
-                                src={item.img}
-                                alt={item.imgAlt}
-                                width={item.width}
-                                height={item.height}
+                                src={getImageUrl(item.image)}
+                                alt={item.title}
+                                width={300}
+                                height={200}
                                 className="object-contain"
                             />
                         </div>

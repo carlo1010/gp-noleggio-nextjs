@@ -16,10 +16,21 @@ interface HeroBannerProps {
     };
     showSearch?: boolean;
     compact?: boolean;
+    config?: any; // Configurazione dal CMS
 }
 
-export default function HeroBanner({ imageUrl, title, description, promo, showSearch = true, compact = false }: HeroBannerProps) {
-    const hasContent = title || promo;
+export default function HeroBanner({ imageUrl, title, description, promo, showSearch = true, compact = false, config }: HeroBannerProps) {
+    // Override con valori dal CMS se presenti
+    const displayTitle = config?.hero?.title || title;
+    const displayDescription = config?.hero?.description || description;
+    
+    // Gestione immagine di sfondo: priorità al CMS
+    let finalImageUrl = imageUrl;
+    if (config?.hero?.bgImage?.url) {
+        finalImageUrl = config.hero.bgImage.url;
+    }
+
+    const hasContent = displayTitle || promo;
 
     const heightClass = compact
         ? "min-h-[160px] md:min-h-[200px]"
@@ -32,7 +43,7 @@ export default function HeroBanner({ imageUrl, title, description, promo, showSe
             <div className="absolute top-0 left-0 w-full z-40">
                 <OfferBanner />
             </div>
-            <Image src={imageUrl} alt={"logo hero banner"} fill className="object-cover" priority />
+            <Image src={finalImageUrl} alt={"logo hero banner"} fill className="object-cover" priority />
 
             {/* OVERLAY CONTENT */}
             {hasContent && (
@@ -44,14 +55,14 @@ export default function HeroBanner({ imageUrl, title, description, promo, showSe
                             <div className="flex-1 md:order-2">
                                 {(title || description) && (
                                     <div className="pt-2 md:pt-4 pointer-events-auto">
-                                        {title && (
+                                        {displayTitle && (
                                             <h1 className="text-white text-2xl md:text-4xl font-bold leading-tight drop-shadow-md">
-                                                {title}
+                                                {displayTitle}
                                             </h1>
                                         )}
-                                        {description && (
+                                        {displayDescription && (
                                             <p className="text-white/90 text-sm md:text-lg mt-1 md:mt-2 leading-relaxed drop-shadow-md">
-                                                {description}
+                                                {displayDescription}
                                             </p>
                                         )}
                                     </div>

@@ -1,10 +1,14 @@
-import OfferBar from "@/components/offer-banner";
 import HeroBanner from "@/components/hero-banner";
-import FlottaGriglia from "@/components/flotta-griglia";
+import BlockRenderer from "@/components/block-renderer";
+import { getPageConfig } from "@/lib/fetchPayload";
+
+// Import dei componenti originali per il fallback di default
 import GammaElettricaInfo from "@/components/gamma-elettricainfo";
+import FlottaGriglia from "@/components/flotta-griglia";
 import BannerElettriche from "@/components/banner-elettriche";
 import InfoElettrico from "@/components/info-elettrico";
 import ElettricoKeyPoints from "@/components/elettrico-key-points";
+import OfferBar from "@/components/offer-banner";
 
 const cars = [
     {imageUrl: "/fleet/fiat-500.png", nome: "Fiat 500", autonomia: "Autonomia 190/320"},
@@ -22,19 +26,26 @@ const cars = [
 ];
 
 
-export default function Page() {
+
+export default async function Page() {
+    const config = await getPageConfig('noleggio-elettriche');
+
     return (
         <>
-
-            <OfferBar/>
-            <HeroBanner imageUrl={'/hero/sfondo-hero-elettriche.png'}/>
-            <GammaElettricaInfo/>
-            <FlottaGriglia title="La nostra flotta" cars={cars}/>
-            <BannerElettriche/>
-            <InfoElettrico />
-            <ElettricoKeyPoints/>
-
-
+            <OfferBar />
+            <HeroBanner imageUrl={'/hero/sfondo-hero-elettriche.png'} config={config} />
+            
+            {config?.layout && config.layout.length > 0 ? (
+                <BlockRenderer blocks={config.layout} />
+            ) : (
+                <>
+                    <GammaElettricaInfo />
+                    <FlottaGriglia title="La nostra flotta" cars={cars} />
+                    <BannerElettriche />
+                    <InfoElettrico />
+                    <ElettricoKeyPoints />
+                </>
+            )}
         </>
     );
 }

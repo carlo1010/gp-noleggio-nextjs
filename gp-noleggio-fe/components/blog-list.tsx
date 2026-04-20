@@ -31,8 +31,28 @@ async function getBlogData() {
     }
 }
 
-export default async function BlogSection() {
-    const items = await getBlogData();
+interface BlogSectionProps {
+    title?: string;
+    manualSelection?: boolean;
+    manualItems?: any[];
+}
+
+export default async function BlogSection({ title = "Articoli in evidenza", manualSelection, manualItems }: BlogSectionProps) {
+    let items: any[] = [];
+
+    if (manualSelection && manualItems && manualItems.length > 0) {
+        items = manualItems.map(doc => ({
+            id: doc.slug,
+            kicker: doc.kicker,
+            title: doc.title,
+            desc: doc.excerpt,
+            cta: doc.ctaLabel,
+            img: typeof doc.cardImage === 'object' ? doc.cardImage?.url : '',
+            imgAlt: typeof doc.cardImage === 'object' ? doc.cardImage?.alt : doc.title,
+        }));
+    } else {
+        items = await getBlogData();
+    }
 
     // Handle the "No items" or "Broken file" state
     if (!items || items.length === 0) {
@@ -59,7 +79,7 @@ export default async function BlogSection() {
                     capitalizeLinks
                 />
                 <h2 className="text-3xl md:text-4xl font-bold mb-10">
-                    Articoli in evidenza
+                    {title}
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">

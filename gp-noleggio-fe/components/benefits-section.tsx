@@ -1,38 +1,56 @@
-import Image from "next/image";
-import Link from "next/link";
+interface BenefitsSectionProps {
+    items?: {
+        title: string;
+        description: string;
+        buttonLabel: string;
+        link: string;
+        icon: string;
+    }[];
+}
 
-const benefits = [
-    {
-        title: "Sconti e benefici",
-        desc: "Diventa un socio Piccirillo-Rent",
-        button: "Scopri i vantaggi",
-        href: "/vantaggi",
-        icon: "/benefit1.png",
-    },
-    {
-        title: "Tutto il tempo che vuoi",
-        desc: "Noleggia per tutto il tempo che vuoi",
-        button: "Prenota subito",
-        href: "/prenota",
-        icon: "/benefit2.png",
-    },
-    {
-        title: "Online Check-in",
-        desc: "Non perdere tempo quando ritiri",
-        button: "Vai al Check-in",
-        href: "/check-in",
-        icon: "/benefit3.png",
-    },
-];
+export default function BenefitsSection({ items }: BenefitsSectionProps) {
+    const defaultBenefits = [
+        {
+            title: "Sconti e benefici",
+            description: "Diventa un socio Piccirillo-Rent",
+            buttonLabel: "Scopri i vantaggi",
+            link: "/vantaggi",
+            icon: "benefit1",
+        },
+        {
+            title: "Tutto il tempo che vuoi",
+            description: "Noleggia per tutto il tempo che vuoi",
+            buttonLabel: "Prenota subito",
+            link: "/prenota",
+            icon: "benefit2",
+        },
+        {
+            title: "Online Check-in",
+            description: "Non perdere tempo quando ritiri",
+            buttonLabel: "Vai al Check-in",
+            link: "/check-in",
+            icon: "benefit3",
+        },
+    ];
 
-export default function BenefitsSection() {
+    const displayBenefits = items || defaultBenefits;
+
+    const getIconSrc = (icon: string) => {
+        switch (icon) {
+            case 'benefit1': return '/benefit1.png';
+            case 'benefit2': return '/benefit2.png';
+            case 'benefit3': return '/benefit3.png';
+            default: return '/benefit1.png';
+        }
+    };
+
     return (
         <section className="w-full bg-white py-10">
             <div className="container mx-auto px-4 py-16 max-w-[1240px]">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    {benefits.map((b) => (
-                        <div key={b.title} className="flex flex-col items-center text-center">
-                            {/* ICONA + SFONDO BLU (immagine) */}
+                    {displayBenefits.map((b, idx) => (
+                        <div key={idx} className="flex flex-col items-center text-center">
+                            {/* ICONA + SFONDO BLU */}
                             <div className="relative w-24 h-24 flex items-center justify-center">
                                 <Image
                                     src="/rectangle.png"
@@ -42,7 +60,7 @@ export default function BenefitsSection() {
                                 />
 
                                 <Image
-                                    src={b.icon}
+                                    src={getIconSrc(b.icon)}
                                     alt={b.title}
                                     width={100}
                                     height={100}
@@ -56,14 +74,14 @@ export default function BenefitsSection() {
                                 {b.title}
                             </h3>
 
-                            <p className="mt-2 text-sm text-gray-500">{b.desc}</p>
+                            <p className="mt-2 text-sm text-gray-500">{b.description || (b as any).desc}</p>
 
                             {/* BOTTONE */}
                             <Link
-                                href={b.href}
+                                href={b.link || (b as any).href}
                                 className="mt-6 inline-flex items-center rounded-tl-sm rounded-br-sm justify-center bg-[#0700DE] text-white px-10 py-2  text-sm font-medium hover:bg-[#0500b0] transition"
                             >
-                                {b.button}
+                                {b.buttonLabel || (b as any).button}
                             </Link>
                         </div>
                     ))}

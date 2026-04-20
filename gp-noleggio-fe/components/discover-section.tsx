@@ -14,33 +14,51 @@ export interface DiscoverItem {
     imgAlt: string;
 }
 
+interface DiscoverSectionProps {
+    title?: string;
+    featuredPosts?: any[]; // Relationship in Payload
+}
+
 // 2. The Server Component
-export default async function DiscoverSection() {
+export default async function DiscoverSection({ title = "Scopri il mondo Piccirillo Rent", featuredPosts }: DiscoverSectionProps) {
     const payload = await getPayload({ config });
     
-    // Fetch the 6 most recent published blog posts
-    const { docs: posts } = await payload.find({
-        collection: 'blog-posts',
-        limit: 6,
-        sort: '-publishedAt',
-        where: {
-            status: {
-                equals: 'published',
+    let posts: any[] = [];
+
+    if (featuredPosts && featuredPosts.length > 0) {
+        // Use manually selected posts
+        posts = featuredPosts;
+    } else {
+        // Fallback: Fetch the 6 most recent published blog posts
+        const result = await payload.find({
+            collection: 'blog-posts',
+            limit: 6,
+            sort: '-publishedAt',
+            where: {
+                status: {
+                    equals: 'published',
+                },
             },
-        },
-    });
+        });
+        posts = result.docs;
+    }
 
     // Map Payload data to the DiscoverItem format
-    const items: DiscoverItem[] = posts.map((post: any) => ({
-        id: post.id,
-        kicker: post.kicker || 'BLOG',
-        title: post.title,
-        desc: post.excerpt || '',
-        href: `/blog/${post.slug}`,
-        cta: post.ctaLabel || 'Leggi di più',
-        img: typeof post.cardImage === 'object' ? post.cardImage?.url : '',
-        imgAlt: post.title,
-    }));
+    const items: DiscoverItem[] = posts.map((post: any) => {
+        // Handle both populated and unpopulated relationships if necessary
+        const postData = typeof post === 'object' ? post : {}; 
+        
+        return {
+            id: postData.id || '',
+            kicker: postData.kicker || 'BLOG',
+            title: postData.title || '',
+            desc: postData.excerpt || '',
+            href: `/blog/${postData.slug}`,
+            cta: postData.ctaLabel || 'Leggi di più',
+            img: typeof postData.cardImage === 'object' ? postData.cardImage?.url : '',
+            imgAlt: postData.title || '',
+        };
+    }).filter(item => item.id); // Rimozione eventuali post non validi
 
     if (items.length === 0) return null;
 
@@ -49,7 +67,7 @@ export default async function DiscoverSection() {
             <div className="container mx-auto px-4 py-14 max-w-[1240px]">
                 <div className="flex items-center justify-between mb-10">
                     <h2 className="text-3xl md:text-4xl font-bold">
-                        Scopri il mondo Piccirillo Rent
+                        {title}
                     </h2>
                 </div>
 

@@ -1,13 +1,10 @@
-import Image from "next/image";
-import Link from "next/link";
-
 type PromoSplitProps = {
     title: string;
     body: string;
     ctaLabel: string;
     ctaHref: string;
-    imageSrc: string;
-    imageAlt: string;
+    image?: string | any;
+    imageAlt?: string;
 
     // "right" = immagine a destra (come primo blocco nello screen)
     // "left"  = immagine a sinistra (se ti serve)
@@ -24,7 +21,7 @@ export default function PromoSplit({
     body,
     ctaLabel,
     ctaHref,
-    imageSrc,
+    image,
     imageAlt,
     imageSide = "right",
     contentMaxWClassName = "max-w-[520px]",
@@ -32,6 +29,9 @@ export default function PromoSplit({
     imageAspectClassName = "aspect-[4/3]",
 }: PromoSplitProps) {
     const isImageRight = imageSide === "right";
+    
+    const imageUrl = typeof image === 'object' ? image?.url : image;
+    const finalAlt = imageAlt || (typeof image === 'object' ? image?.alt : title) || "";
 
     return (
         <section className="w-full bg-white py-16">
@@ -48,7 +48,7 @@ export default function PromoSplit({
                         </p>
 
                         <Link
-                            href={ctaHref}
+                            href={ctaHref || "#"}
                             className="mt-8 inline-flex h-11 items-center justify-center rounded-br-sm rounded-tl-sm bg-[#0700DE] px-8 text-sm font-semibold text-white hover:opacity-90"
                         >
                             {ctaLabel}
@@ -57,13 +57,15 @@ export default function PromoSplit({
 
                     {/* IMMAGINE */}
                     <div className={`relative w-full overflow-hidden ${imageRoundedClassName} ${imageAspectClassName} ${isImageRight ? "" : "md:order-1"}`}>
-                        <Image
-                            src={imageSrc}
-                            alt={imageAlt}
-                            fill
-                            className="object-cover"
-                            priority={false}
-                        />
+                        {imageUrl && (
+                            <Image
+                                src={imageUrl}
+                                alt={finalAlt}
+                                fill
+                                className="object-cover"
+                                priority={false}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

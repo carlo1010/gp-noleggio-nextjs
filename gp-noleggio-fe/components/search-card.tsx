@@ -32,7 +32,6 @@ import { format, startOfDay, isBefore } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useCheckoutStore } from "@/store/checkout.store";
 
-
 export default function SearchCard() {
     const router = useRouter();
     const parseYMDToLocalDate = (ymd: string) => {
@@ -277,7 +276,7 @@ export default function SearchCard() {
                 <div className="col-span-1 space-y-2">
                     <div className="flex items-center justify-between">
                         <Label htmlFor="pickup-city" className="font-semibold">
-                            {stessoUfficio ? "Città ritiro e riconsegna" : "Città ritiro"}
+                            {stessoUfficio ? "Riconsegna nello stesso ufficio" : "Città ritiro"}
                         </Label>
 
                         <div className="flex items-center gap-3">

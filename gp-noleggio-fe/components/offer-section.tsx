@@ -1,64 +1,73 @@
-import Image from "next/image";
-import Link from "next/link";
-import { Check } from "lucide-react";
-import BadgePromo from "@/components/badge-promo";
+interface OffersSectionProps {
+    title?: string;
+    offers?: {
+        title: string;
+        image: string | any;
+        link: string;
+        badgeTop?: string;
+        badgeBottom: string;
+    }[];
+}
 
-export default function OffersSection() {
+export default function OffersSection({ title = "Le offerte del momento", offers }: OffersSectionProps) {
+    // Default hardcoded offers if none provided
+    const displayOffers = offers || [
+        {
+            title: "Noleggio Vacanza",
+            image: "/vacanza.jpg",
+            link: "/tipo-noleggio/noleggio-auto",
+            badgeTop: "Fino al",
+            badgeBottom: "30%",
+            isLarge: true
+        },
+        {
+            title: "Noleggio Furgoni",
+            image: "/furgoni.jpg",
+            link: "/tipo-noleggio/noleggio-furgoni",
+            badgeTop: "Fino al",
+            badgeBottom: "10%"
+        },
+        {
+            title: "Noleggio Premium",
+            image: "/business.jpg",
+            link: "/tipo-noleggio/noleggio-premium",
+            badgeTop: "Fino al",
+            badgeBottom: "20%"
+        }
+    ];
+
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto px-4 py-6 max-w-[1240px]">
-                <h2 className="text-2xl font-bold mb-6">Le offerte del momento</h2>
+                <h2 className="text-2xl font-bold mb-6">{title}</h2>
 
-                {/* GRID OFFERTA - Added h-full and items-stretch logic */}
+                {/* GRID OFFERTA */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                    {displayOffers.map((offer, index) => {
+                        const isLarge = index === 0 && displayOffers.length === 3; // Mantieni layout originale se sono 3
+                        const imageUrl = typeof offer.image === 'object' ? offer.image?.url : offer.image;
 
-                    {/* CARD GRANDE (OCCUPA 2 COLONNE) */}
-                    <Link href="/tipo-noleggio/noleggio-auto" className="relative md:col-span-2 aspect-4/3 md:aspect-auto min-h-[250px] md:min-h-[300px] overflow-hidden rounded-tl-3xl rounded-br-3xl shadow-md cursor-pointer hover:scale-[1.01] transition block">
-                        <Image
-                            src="/vacanza.jpg"
-                            alt="Noleggio Vacanza"
-                            fill
-                            className="object-cover"
-                        />
-                        <BadgePromo topText="Fino al" bottomText="30%" />
-                        <div className="absolute bottom-5 left-5 z-10 bg-black/60 rounded-tl-xl rounded-br-xl px-4 py-2">
-                            <div className="text-white text-left leading-tight">
-                                <div className="text-2xl font-medium">Noleggio Vacanza</div>
-                            </div>
-                        </div>
-                    </Link>
-
-                    {/* CARD PICCOLA 1 */}
-                    <Link href="/tipo-noleggio/noleggio-furgoni" className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition block">
-                        <Image
-                            src="/furgoni.jpg"
-                            alt="Noleggio Furgoni"
-                            fill
-                            className="object-cover"
-                        />
-                        <BadgePromo topText="Fino al" bottomText="10%" />
-                        <div className="absolute bottom-5 left-5 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
-                            <div className="text-white text-left leading-tight">
-                                <div className="text-2xl font-medium">Noleggio Furgoni</div>
-                            </div>
-                        </div>
-                    </Link>
-
-                    {/* CARD PICCOLA 2 */}
-                    <Link href="/tipo-noleggio/noleggio-premium" className="relative aspect-4/3 md:aspect-auto md:h-full min-h-[250px] md:min-h-[300px] rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-md cursor-pointer hover:scale-[1.02] transition block">
-                        <Image
-                            src="/business.jpg"
-                            alt="Noleggio Premium"
-                            fill
-                            className="object-cover"
-                        />
-                        <BadgePromo topText="Fino al" bottomText="20%" />
-                        <div className="absolute bottom-5 left-5 z-10 bg-black/40 rounded-tl-sm rounded-br-sm px-3 py-2">
-                            <div className="text-white text-left leading-tight">
-                                <div className="text-2xl font-medium">Noleggio Premium</div>
-                            </div>
-                        </div>
-                    </Link>
+                        return (
+                            <Link 
+                                key={index}
+                                href={offer.link} 
+                                className={`relative ${isLarge ? "md:col-span-2" : ""} aspect-4/3 md:aspect-auto min-h-[250px] md:min-h-[300px] overflow-hidden rounded-tl-3xl rounded-br-3xl shadow-md cursor-pointer hover:scale-[1.01] transition block`}
+                            >
+                                <Image
+                                    src={imageUrl}
+                                    alt={offer.title}
+                                    fill
+                                    className="object-cover"
+                                />
+                                <BadgePromo topText={offer.badgeTop || "Fino al"} bottomText={offer.badgeBottom} />
+                                <div className="absolute bottom-5 left-5 z-10 bg-black/60 rounded-tl-xl rounded-br-xl px-4 py-2">
+                                    <div className="text-white text-left leading-tight">
+                                        <div className="text-2xl font-medium">{offer.title}</div>
+                                    </div>
+                                </div>
+                            </Link>
+                        );
+                    })}
                 </div>
 
                 {/* SECONDA RIGA: TESTO + IMMAGINE VANTAGGI */}

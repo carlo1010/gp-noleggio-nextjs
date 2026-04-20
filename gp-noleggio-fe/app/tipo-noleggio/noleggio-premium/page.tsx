@@ -1,21 +1,30 @@
-import OfferBar from "@/components/offer-banner";
 import HeroBanner from "@/components/hero-banner";
-import Footer from "@/components/footer";
+import BlockRenderer from "@/components/block-renderer";
+import { getPageConfig } from "@/lib/fetchPayload";
+
+// Import dei componenti originali per il fallback di default
+import PremiumIntro from "@/components/premium-intro";
 import ComeFunziona from "@/components/come-funziona";
 import ModelChoice from "@/components/model-choice";
-import PremiumIntro from "@/components/premium-intro";
+import OfferBar from "@/components/offer-banner";
 
-export default function Page() {
+export default async function Page() {
+    const config = await getPageConfig('noleggio-premium');
+
     return (
         <>
-
-            <OfferBar/>
-            <HeroBanner imageUrl={'/hero/sfondo-hero-premium.png'}/>
-            <PremiumIntro/>
-            <Footer/>
-            <ComeFunziona/>
-            <ModelChoice/>
-
+            <OfferBar />
+            <HeroBanner imageUrl={'/hero/sfondo-hero-premium.png'} config={config} />
+            
+            {config?.layout && config.layout.length > 0 ? (
+                <BlockRenderer blocks={config.layout} />
+            ) : (
+                <>
+                    <PremiumIntro />
+                    <ComeFunziona />
+                    <ModelChoice />
+                </>
+            )}
         </>
     );
 }
