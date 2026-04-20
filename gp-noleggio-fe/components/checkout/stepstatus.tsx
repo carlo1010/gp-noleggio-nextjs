@@ -13,6 +13,7 @@ export default function StepStatus() {
     const sp = useSearchParams();
 
     const clearStep3 = useCheckoutStore((s) => s.clearStep3);
+    const clearStep2 = useCheckoutStore((s) => s.clearStep2);
 
     // ===== STEP ATTIVO (default 1 se non c'è ?step= )
     const stepParam = sp.get("step");
@@ -54,9 +55,12 @@ export default function StepStatus() {
 
         // ✅ se torno allo STEP 2, resetto SEMPRE pacchetti + tutele + extra
         if (step === 2) {
+            clearStep2();
             clearStep3();
             params.delete("classe");
+            params.delete("tariffa");
             params.delete("pay");
+            params.set("refresh", String(Date.now()));
         }
 
         if (step === 1) {

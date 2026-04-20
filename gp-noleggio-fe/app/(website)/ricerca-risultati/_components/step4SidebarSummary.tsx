@@ -9,10 +9,11 @@ import { formatPrice } from "@/lib/formatPrice";
 import { calcDays } from "@/lib/date";
 
 import CambioIcon from "@/components/svg/cambioIcon";
-import PostiIcon from "@/components/svg/postiIcon";
 import { PatenteIcon } from "@/components/svg/patenteicon";
 import PorteIcon from "@/components/svg/porteicon";
 import AriaIcon from "@/components/svg/ariaicon";
+import FuelIcon from "@/components/svg/fuelIcon";
+import EvChargerIcon from "@/components/svg/evChargerIcon";
 import {
     Dialog,
     DialogContent,
@@ -23,6 +24,18 @@ import {
 } from "@/components/ui/dialog";
 import { resolveVehicleImageSrc } from "@/lib/vehicle-image";
 import { getSimilarVehicleLabel } from "@/lib/vehicle-label";
+import { getCombustioneDisplayLabel } from "@/lib/vehicle-combustione";
+
+function getCombustioneIcon(label: string) {
+    const normalized = label.trim().toLowerCase();
+    if (normalized.startsWith("elettr") || normalized.startsWith("electr")) {
+        return <EvChargerIcon className="text-gray-400" />;
+    }
+    if (normalized === "combustione" || normalized === "benzina" || normalized === "diesel") {
+        return <FuelIcon className="text-gray-400" />;
+    }
+    return null;
+}
 
 export default function Step4SidebarSummary() {
     return (
@@ -86,10 +99,17 @@ function SummaryCard() {
 
     // SPECS
     const cambio = veicolo?.cambio ?? "—";
-    const posti = veicolo?.posti;
     const porte = veicolo?.porte;
+    const ac = veicolo?.ac;
     const aria = veicolo?.ariaCondizionata;
     const etaMin = veicolo?.etaMin;
+    const acLabel = getAcLabel(ac, aria);
+    const combustioneDisplay = getCombustioneDisplayLabel({
+        combustioneLabel: veicolo?.combustioneLabel,
+        combustione: veicolo?.combustione,
+        alimentazione: veicolo?.alimentazione,
+    });
+    const combustioneIcon = getCombustioneIcon(combustioneDisplay);
 
     // EXTRAS LIST
     const pacchettoLabel = protezioni?.selezionata?.nome ?? protezioni?.pacchetto ?? "Basic";
@@ -144,10 +164,10 @@ function SummaryCard() {
                         {/* ICONE */}
                         <div className="flex flex-wrap items-center gap-x-5 gap-y-3 mb-6">
                             {cambio ? <SpecItem icon={<CambioIcon />} text={cambio} /> : null}
-                            {posti != null ? <SpecItem icon={<PostiIcon />} text={String(posti)} /> : null}
-                            {aria != null ? <SpecItem icon={<AriaIcon />} text={aria ? "A/C" : "No A/C"} /> : null}
+                            {acLabel ? <SpecItem icon={<AriaIcon />} text={acLabel} /> : null}
                             {etaMin != null ? <SpecItem icon={<PatenteIcon />} text={String(etaMin)} /> : null}
                             {porte != null ? <SpecItem icon={<PorteIcon />} text={String(porte)} /> : null}
+                            <SpecItem icon={combustioneIcon} text={`Alim. ${combustioneDisplay}`} />
                         </div>
 
                         {/* DETTAGLI TARIFFA */}
@@ -265,6 +285,15 @@ function SummaryCard() {
 
         </div>
     );
+}
+
+function getAcLabel(ac: number | null | undefined, ariaCondizionata: boolean | null | undefined) {
+    if (ac === 1) return "Sì";
+    if (ac === 0) return "No";
+    if (ac === null) return "N/D";
+    if (ariaCondizionata === true) return "Sì";
+    if (ariaCondizionata === false) return "No";
+    return null;
 }
 
 

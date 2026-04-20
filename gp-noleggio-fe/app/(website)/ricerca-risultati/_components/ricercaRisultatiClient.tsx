@@ -30,6 +30,7 @@ export default function RicercaRisultatiClient() {
     const checkout = useCheckoutStore((s) => s);
     const totale = useCheckoutStore((s) => s.getTotale());
     const clearStep3 = useCheckoutStore((s) => s.clearStep3);
+    const clearStep2 = useCheckoutStore((s) => s.clearStep2);
     const setStep = useCheckoutStore((s) => s.setStep);
     const setVeicolo = useCheckoutStore((s) => s.setVeicolo);
     const setTariffa = useCheckoutStore((s) => s.setTariffa);
@@ -123,9 +124,10 @@ export default function RicercaRisultatiClient() {
         }
 
         if (step === "2") {
+            clearStep2();
             clearStep3();
         }
-    }, [step, clearStep3, setStep, pickupDate, dropoffDate, sp, agenzie]);
+    }, [step, clearStep2, clearStep3, setStep, pickupDate, dropoffDate, sp, agenzie]);
 
     useEffect(() => {
         if (!needRehydrate || !veicoliRehydrate?.length || !classe) return;
