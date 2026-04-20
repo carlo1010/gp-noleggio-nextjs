@@ -27,6 +27,12 @@ import {
 } from "@/components/ui/select";
 
 import { useListaAgenzia } from "@/hook/useAgenzia";
+import type { Agenzia } from "@/types/agenzia";
+import {
+    filterReturnSlotsSameDay,
+    getSlotsForDate,
+    parseOpeningHours,
+} from "@/lib/agency-opening-hours";
 import { useEffect, useMemo, useState } from "react";
 import { format, startOfDay, isBefore } from "date-fns";
 import { useRouter } from "next/navigation";
@@ -100,6 +106,94 @@ export default function SearchCard() {
     }>({});
 
     const { isPending: isLoadingAgenzie, data: agenzie } = useListaAgenzia();
+    const agenzieList = useMemo(() => agenzie ?? [], [agenzie]);
+
+    const pickupAgenzia = useMemo(
+        () => agenzieList.find((a) => String(a.codiceAgenzia) === String(pickupOfficeId)),
+        [agenzieList, pickupOfficeId],
+    );
+
+    const dropoffAgenzia = useMemo(() => {
+        if (stessoUfficio) return pickupAgenzia;
+        return agenzieList.find((a) => String(a.codiceAgenzia) === String(dropoffOfficeId));
+    }, [agenzieList, dropoffOfficeId, pickupAgenzia, stessoUfficio]);
+
+    const pickupOpeningHours = useMemo(
+        () => parseOpeningHours(pickupAgenzia?.orariAperturaAgenzia),
+        [pickupAgenzia?.orariAperturaAgenzia],
+    );
+
+    const dropoffOpeningHours = useMemo(
+        () => parseOpeningHours(dropoffAgenzia?.orariAperturaAgenzia),
+        [dropoffAgenzia?.orariAperturaAgenzia],
+    );
+
+    const pickupSlots = useMemo(() => {
+        if (!pickupOfficeId || !pickupAgenzia || !pickupOpeningHours.isValid) return [];
+        return getSlotsForDate(pickupOpeningHours.weekly, pickupDateStr, {
+            timeZone: "Europe/Rome",
+            chunkMinutes: 15,
+            holidays: pickupOpeningHours.holidays,
+        });
+    }, [pickupOfficeId, pickupAgenzia, pickupOpeningHours, pickupDateStr]);
+
+    const isSameRentalDate = pickupDateStr === dropoffDateStr;
+
+    const rawDropoffSlots = useMemo(() => {
+        if (!dropoffOfficeId || !dropoffAgenzia || !dropoffOpeningHours.isValid) return [];
+        return getSlotsForDate(dropoffOpeningHours.weekly, dropoffDateStr, {
+            timeZone: "Europe/Rome",
+            chunkMinutes: 15,
+            holidays: dropoffOpeningHours.holidays,
+            includeRangeEnd: true,
+        });
+    }, [dropoffOfficeId, dropoffAgenzia, dropoffOpeningHours, dropoffDateStr]);
+
+    const dropoffSlots = useMemo(
+        () => filterReturnSlotsSameDay(rawDropoffSlots, pickupTime, isSameRentalDate),
+        [rawDropoffSlots, pickupTime, isSameRentalDate],
+    );
+
+    const pickupScheduleWarning = useMemo(() => {
+        if (!pickupOfficeId || !pickupAgenzia) return null;
+        return pickupOpeningHours.warning;
+    }, [pickupOfficeId, pickupAgenzia, pickupOpeningHours.warning]);
+
+    const dropoffScheduleWarning = useMemo(() => {
+        if (!dropoffOfficeId || !dropoffAgenzia) return null;
+        return dropoffOpeningHours.warning;
+    }, [dropoffOfficeId, dropoffAgenzia, dropoffOpeningHours.warning]);
+
+    const pickupNoSlotsMessage = useMemo(() => {
+        if (!pickupOfficeId || !pickupAgenzia || pickupScheduleWarning) return null;
+        if (pickupSlots.length > 0) return null;
+        return "Nessun orario di ritiro disponibile per la data selezionata.";
+    }, [pickupOfficeId, pickupAgenzia, pickupScheduleWarning, pickupSlots.length]);
+
+    const dropoffNoSlotsMessage = useMemo(() => {
+        if (!dropoffOfficeId || !dropoffAgenzia || dropoffScheduleWarning) return null;
+
+        if (isSameRentalDate && pickupTime && rawDropoffSlots.length > 0 && dropoffSlots.length === 0) {
+            return "Per la stessa data, scegli un orario di consegna successivo al ritiro.";
+        }
+
+        if (dropoffSlots.length === 0) {
+            return "Nessun orario di consegna disponibile per la data selezionata.";
+        }
+
+        return null;
+    }, [
+        dropoffOfficeId,
+        dropoffAgenzia,
+        dropoffScheduleWarning,
+        isSameRentalDate,
+        pickupTime,
+        rawDropoffSlots.length,
+        dropoffSlots.length,
+    ]);
+
+    const isPickupTimeDisabled = !pickupOfficeId || !pickupAgenzia || pickupSlots.length === 0;
+    const isDropoffTimeDisabled = !dropoffOfficeId || !dropoffAgenzia || dropoffSlots.length === 0;
 
     // oggi "pulito" a mezzanotte
     const today = useMemo(() => startOfDay(new Date()), []);
@@ -129,6 +223,20 @@ export default function SearchCard() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ritiro.data]);
+
+    useEffect(() => {
+        if (!pickupTime) return;
+        if (!pickupSlots.includes(pickupTime)) {
+            setRitiro({ ora: "" });
+        }
+    }, [pickupSlots, pickupTime, setRitiro]);
+
+    useEffect(() => {
+        if (!dropoffTime) return;
+        if (!dropoffSlots.includes(dropoffTime)) {
+            setRiconsegna({ ora: "" });
+        }
+    }, [dropoffSlots, dropoffTime, setRiconsegna]);
 
     function validateBeforeSearch() {
         const nextErrors: typeof errors = {};
@@ -208,12 +316,44 @@ export default function SearchCard() {
     }
 
     // helpers per disabilitare le date nel calendario
-    const disablePickupDate = (date: Date) => isBefore(startOfDay(date), today);
+    const disablePickupDate = (date: Date) => {
+        const normalizedDate = startOfDay(date);
+        if (isBefore(normalizedDate, today)) return true;
+
+        if (!pickupOfficeId || !pickupAgenzia || !pickupOpeningHours.isValid) return false;
+
+        const dateKey = format(normalizedDate, "yyyy-MM-dd");
+        const slots = getSlotsForDate(pickupOpeningHours.weekly, dateKey, {
+            timeZone: "Europe/Rome",
+            chunkMinutes: 15,
+            holidays: pickupOpeningHours.holidays,
+        });
+
+        return slots.length === 0;
+    };
 
     const disableDropoffDate = (date: Date) => {
-        const d = startOfDay(date);
-        if (isBefore(d, today)) return true;
-        if (isBefore(d, minDropoffDate)) return true;
+        const normalizedDate = startOfDay(date);
+        if (isBefore(normalizedDate, today)) return true;
+        if (isBefore(normalizedDate, minDropoffDate)) return true;
+
+        if (!dropoffOfficeId || !dropoffAgenzia || !dropoffOpeningHours.isValid) return false;
+
+        const dateKey = format(normalizedDate, "yyyy-MM-dd");
+        const slots = getSlotsForDate(dropoffOpeningHours.weekly, dateKey, {
+            timeZone: "Europe/Rome",
+            chunkMinutes: 15,
+            holidays: dropoffOpeningHours.holidays,
+            includeRangeEnd: true,
+        });
+
+        if (slots.length === 0) return true;
+
+        if (dateKey === pickupDateStr && pickupTime) {
+            const sameDaySlots = filterReturnSlotsSameDay(slots, pickupTime, true);
+            return sameDaySlots.length === 0;
+        }
+
         return false;
     };
 
@@ -318,7 +458,7 @@ export default function SearchCard() {
                         <Select
                             value={pickupOfficeId}
                             onValueChange={(v) => {
-                                const agenzia = (agenzie ?? []).find((a: any) => a.codiceAgenzia === v);
+                                const agenzia = agenzieList.find((a) => String(a.codiceAgenzia) === String(v));
 
                                 setRitiro({
                                     luogo: v,
@@ -351,7 +491,7 @@ export default function SearchCard() {
                             </SelectTrigger>
 
                             <SelectContent>
-                                {(agenzie ?? []).map((a: any) => (
+                                {agenzieList.map((a: Agenzia) => (
                                     <SelectItem key={a.codiceAgenzia} value={a.codiceAgenzia}>
                                         <div className="flex flex-col">
                                             <span className="font-medium">{a.descrizioneAgenzia}</span>
@@ -365,7 +505,7 @@ export default function SearchCard() {
                         </Select>
                     </div>
 
-                    <div className="h-5">
+                    <div className="min-h-5 space-y-1">
                         {errors.pickupOffice && (
                             <p className="text-xs text-red-600 animate-in slide-in-from-bottom-2 duration-300">Seleziona una sede di ritiro.</p>
                         )}
@@ -418,6 +558,7 @@ export default function SearchCard() {
                             className="w-1/2 flex items-center justify-center bg-white hover:bg-gray-50 transition-colors relative">
                             <Select
                                 value={pickupTime}
+                                disabled={isPickupTimeDisabled}
                                 onValueChange={(v) => {
                                     setRitiro({ ora: v });
                                     setErrors((e) => ({ ...e, pickupTime: false }));
@@ -436,16 +577,29 @@ export default function SearchCard() {
                                     position="popper"
                                     className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
                                 >
-                                    <SelectItem value="09:00">09:00</SelectItem>
-                                    <SelectItem value="10:00">10:00</SelectItem>
-                                    <SelectItem value="11:00">11:00</SelectItem>
-                                    <SelectItem value="12:00">12:00</SelectItem>
+                                    {pickupSlots.length > 0 ? (
+                                        pickupSlots.map((slot) => (
+                                            <SelectItem key={slot} value={slot}>
+                                                {slot}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="__pickup-no-slots" disabled>
+                                            Nessun orario disponibile
+                                        </SelectItem>
+                                    )}
                                 </SelectContent>
                             </Select>
                         </div>
                     </div>
 
-                    <div className="h-5">
+                    <div className="min-h-5 space-y-1">
+                        {pickupScheduleWarning && (
+                            <p className="text-xs text-amber-700">{pickupScheduleWarning}</p>
+                        )}
+                        {pickupNoSlotsMessage && (
+                            <p className="text-xs text-red-600">{pickupNoSlotsMessage}</p>
+                        )}
                         {errors.pickupTime && (
                             <p className="text-xs text-red-600">Seleziona l’ora di ritiro.</p>
                         )}
@@ -497,6 +651,7 @@ export default function SearchCard() {
                             className="w-1/2 flex items-center justify-center bg-white hover:bg-gray-50 transition-colors relative">
                             <Select
                                 value={dropoffTime}
+                                disabled={isDropoffTimeDisabled}
                                 onValueChange={(v) => {
                                     setRiconsegna({ ora: v });
                                     setErrors((e) => ({ ...e, dropoffTime: false }));
@@ -514,16 +669,29 @@ export default function SearchCard() {
                                     position="popper"
                                     className="w-[var(--radix-select-trigger-width)] min-w-[var(--radix-select-trigger-width)]"
                                 >
-                                    <SelectItem value="09:00">09:00</SelectItem>
-                                    <SelectItem value="10:00">10:00</SelectItem>
-                                    <SelectItem value="11:00">11:00</SelectItem>
-                                    <SelectItem value="12:00">12:00</SelectItem>
+                                    {dropoffSlots.length > 0 ? (
+                                        dropoffSlots.map((slot) => (
+                                            <SelectItem key={slot} value={slot}>
+                                                {slot}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="__dropoff-no-slots" disabled>
+                                            Nessun orario disponibile
+                                        </SelectItem>
+                                    )}
                                 </SelectContent>
                             </Select>
                         </div>
                     </div>
 
-                    <div className="h-5">
+                    <div className="min-h-5 space-y-1">
+                        {dropoffScheduleWarning && (
+                            <p className="text-xs text-amber-700">{dropoffScheduleWarning}</p>
+                        )}
+                        {dropoffNoSlotsMessage && (
+                            <p className="text-xs text-red-600">{dropoffNoSlotsMessage}</p>
+                        )}
                         {errors.dropoffTime && (
                             <p className="text-xs text-red-600">Seleziona l’ora di consegna.</p>
                         )}
@@ -550,7 +718,7 @@ export default function SearchCard() {
                             <Select
                                 value={dropoffOfficeId}
                                 onValueChange={(v) => {
-                                    const agenzia = (agenzie ?? []).find((a: any) => a.codiceAgenzia === v);
+                                    const agenzia = agenzieList.find((a) => String(a.codiceAgenzia) === String(v));
 
                                     setRiconsegna({
                                         luogo: v,
@@ -576,7 +744,7 @@ export default function SearchCard() {
                                 </SelectTrigger>
 
                                 <SelectContent>
-                                    {(agenzie ?? []).map((a: any) => (
+                                    {agenzieList.map((a: Agenzia) => (
                                         <SelectItem key={a.codiceAgenzia} value={a.codiceAgenzia}>
                                             <div className="flex flex-col">
                                                 <span className="font-medium">{a.descrizioneAgenzia}</span>

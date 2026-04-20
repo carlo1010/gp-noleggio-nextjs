@@ -3,6 +3,7 @@
 export interface Agenzia {
     codiceAgenzia: string
     descrizioneAgenzia: string
+    orariAperturaAgenzia?: string | null
     indirizzoAgenzia: string
     capAgenzia: string
     localitaAgenzia: string
