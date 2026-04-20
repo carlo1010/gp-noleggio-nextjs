@@ -1,4 +1,5 @@
 import { parsePrice } from "@/lib/price";
+import { resolveCombustioneLabel } from "@/lib/vehicle-combustione";
 import type {
     BackendListaVeicolo,
     ListaVeicolo,
@@ -48,6 +49,30 @@ function toNumber(value: string | number | null | undefined): number | undefined
     return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+function normalizeTransmissionLabel(value: string | null | undefined): string | undefined {
+    if (typeof value !== "string") return undefined;
+
+    const normalized = value.trim();
+    if (!normalized) return undefined;
+
+    const mapped = TRANSMISSION_MAP[normalized.toUpperCase() as keyof typeof TRANSMISSION_MAP];
+    return mapped?.label ?? normalized;
+}
+
+function normalizeAcValue(value: number | string | null | undefined): number | null | undefined {
+    if (value === null) return null;
+    if (value === undefined) return undefined;
+
+    const parsed = toNumber(value);
+    if (parsed === 0) return 0;
+    if (parsed === 1) return 1;
+    return null;
+}
+
+function hasOwnProperty<K extends string>(object: unknown, key: K): object is Record<K, unknown> {
+    return Object.prototype.hasOwnProperty.call(object, key);
+}
+
 function getAcrissSuffix(code: string): string | null {
     const normalized = code.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
     const suffix = normalized.slice(-4);
@@ -87,22 +112,49 @@ export function normalizeVehicle(raw: BackendListaVeicolo): ListaVeicolo {
     const acrissBody = acrissSuffix?.[1];
     const acrissTransmission = acrissSuffix?.[2] as keyof typeof TRANSMISSION_MAP | undefined;
     const acrissFuel = acrissSuffix?.[3] as keyof typeof FUEL_MAP | undefined;
+    const rawTransmissionCode =
+        typeof raw.cambio === "string"
+            ? raw.cambio.trim().toUpperCase()
+            : undefined;
 
-    const transmission = acrissTransmission ? TRANSMISSION_MAP[acrissTransmission] : undefined;
+    const transmission =
+        (rawTransmissionCode
+            ? TRANSMISSION_MAP[rawTransmissionCode as keyof typeof TRANSMISSION_MAP]
+            : undefined) ??
+        (acrissTransmission ? TRANSMISSION_MAP[acrissTransmission] : undefined);
     const fuel = acrissFuel ? FUEL_MAP[acrissFuel] : undefined;
+    const normalizedCambio = normalizeTransmissionLabel(raw.cambio) ?? transmission?.label;
+    const rawAc = hasOwnProperty(raw, "ac")
+        ? (raw as BackendListaVeicolo & { ac?: number | string | null }).ac
+        : undefined;
+    const normalizedAc = normalizeAcValue(rawAc);
+    const normalizedCombustioneLabel = resolveCombustioneLabel({
+        combustioneLabel: raw.combustioneLabel,
+        combustione: raw.combustione,
+        alimentazione: raw.alimentazione ?? fuel?.alimentazione ?? null,
+    });
+    const normalizedAriaCondizionata =
+        normalizedAc === 1
+            ? true
+            : normalizedAc === 0
+              ? false
+              : raw.ariaCondizionata ?? fuel?.ariaCondizionata;
 
     return {
         ...raw,
         giorniNoleggio: toNumber(raw.giorniNoleggio) ?? 0,
         disponibilita: toNumber(raw.disponibilita) ?? 0,
-        cambio: raw.cambio ?? transmission?.label,
+        cambio: normalizedCambio ?? null,
         cambioKey: raw.cambioKey ?? transmission?.key,
         categoria: raw.categoria ?? (acrissCategory ? CATEGORY_MAP[acrissCategory] : undefined),
         posti: toNumber(raw.posti),
-        porte: toNumber(raw.porte),
-        ariaCondizionata: raw.ariaCondizionata ?? fuel?.ariaCondizionata,
+        porte: toNumber(raw.porte) ?? null,
+        ariaCondizionata: normalizedAriaCondizionata,
+        ac: normalizedAc,
         etaMin: toNumber(raw.etaMin),
-        alimentazione: raw.alimentazione ?? fuel?.alimentazione,
+        combustione: raw.combustione ?? null,
+        combustioneLabel: normalizedCombustioneLabel,
+        alimentazione: normalizedCombustioneLabel,
         tipologia: raw.tipologia ?? inferTipologia(acrissCategory, acrissBody, raw.isTruck),
     };
 }

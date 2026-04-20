@@ -3,23 +3,26 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/formatPrice";
 import CambioIcon from "@/components/svg/cambioIcon";
-import PostiIcon from "@/components/svg/postiIcon";
 import { PatenteIcon } from "@/components/svg/patenteicon";
 import PorteIcon from "@/components/svg/porteicon";
 import AriaIcon from "@/components/svg/ariaicon";
+import FuelIcon from "@/components/svg/fuelIcon";
+import EvChargerIcon from "@/components/svg/evChargerIcon";
 import { getSimilarVehicleLabel } from "@/lib/vehicle-label";
+import { getCombustioneDisplayLabel } from "@/lib/vehicle-combustione";
 
 interface CardNoleggioProps {
     imageUrl: string;
     nome: string;
     descrizioneGruppo?: string;
-    cambio?: string;
+    cambio?: string | null;
     codiceClasse: string
-    posti?: number;
-    ariaCondizionata?: boolean;
+    posti?: number | null;
+    ariaCondizionata?: boolean | null;
+    ac?: number | null;
     eta?: string;
-    porte?: number;
-    alimentazione?: string;
+    porte?: number | null;
+    alimentazione?: string | null;
     prezzoTotale: string | number;
     prezzoGiornaliero: string | number;
     eagerImage?: boolean;
@@ -27,16 +30,39 @@ interface CardNoleggioProps {
     openDialog: (event: boolean, selection: { codiceClasse: string; codiceTariffa: string }) => void;
 }
 
+function getAcLabel(ac: number | null | undefined, ariaCondizionata: boolean | null | undefined) {
+    if (ac === 1) return "Sì";
+    if (ac === 0) return "A/C No";
+    if (ac === null) return "N/D";
+    if (ariaCondizionata === true) return "Sì";
+    if (ariaCondizionata === false) return "No";
+    return null;
+}
+
+
+function getCombustioneIcon(label: string) {
+    const normalized = label.trim().toLowerCase();
+    if (normalized.startsWith("elettr") || normalized.startsWith("electr")) {
+        return <EvChargerIcon className="text-gray-400" />;
+    }
+    if (normalized === "combustione" || normalized === "benzina" || normalized === "diesel") {
+        return <FuelIcon className="text-gray-400" />;
+    }
+    return null;
+}
+
 
 export default function CardNoleggio(props: CardNoleggioProps,) {
+    const acLabel = getAcLabel(props.ac, props.ariaCondizionata);
+    const combustioneDisplay = getCombustioneDisplayLabel({ alimentazione: props.alimentazione });
+    const combustioneIcon = getCombustioneIcon(combustioneDisplay);
+
     const specs = [
         props.cambio ? { key: "cambio", icon: <CambioIcon />, label: props.cambio } : null,
-        props.posti != null ? { key: "posti", icon: <PostiIcon />, label: String(props.posti) } : null,
-        props.ariaCondizionata != null
-            ? { key: "aria", icon: <AriaIcon />, label: props.ariaCondizionata ? "A/C" : "NO A/C" }
-            : null,
+        acLabel ? { key: "aria", icon: <AriaIcon />, label: acLabel } : null,
         props.eta ? { key: "eta", icon: <PatenteIcon />, label: props.eta } : null,
         props.porte != null ? { key: "porte", icon: <PorteIcon />, label: String(props.porte) } : null,
+        { key: "combustione", icon: combustioneIcon, label: combustioneDisplay },
     ].filter(Boolean) as Array<{ key: string; icon: React.ReactNode; label: string }>;
 
     return (
@@ -86,7 +112,7 @@ export default function CardNoleggio(props: CardNoleggioProps,) {
                     </div>
                     <div className={" flex flex-row gap-x-2"}>
                         <Check strokeWidth={4} className={" w-6 h-6 text-primary"} />
-                        Cancellazzione inclusa fino a 48h prima del ritiro
+                        Cancellazione inclusa fino a 48h prima del ritiro
                     </div>
 
                 </div>

@@ -10,10 +10,11 @@ import {
 
 import Image from "next/image";
 import CambioIcon from "@/components/svg/cambioIcon";
-import PostiIcon from "@/components/svg/postiIcon";
 import AriaIcon from "@/components/svg/ariaicon";
 import { PatenteIcon } from "@/components/svg/patenteicon";
 import PorteIcon from "@/components/svg/porteicon";
+import FuelIcon from "@/components/svg/fuelIcon";
+import EvChargerIcon from "@/components/svg/evChargerIcon";
 import { Check, X } from "lucide-react";
 import { formatPrice } from "@/lib/formatPrice";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -21,17 +22,19 @@ import { useCheckoutStore } from "@/store/checkout.store";
 import type { ListaVeicolo } from "@/types/veicolo";
 import { parsePrice } from "@/lib/price";
 import { getSimilarVehicleLabel } from "@/lib/vehicle-label";
+import { getCombustioneDisplayLabel } from "@/lib/vehicle-combustione";
 
 interface SceltaTariffaProps {
     veicolo: ListaVeicolo;
     imageUrl: string;
     nome: string;
-    cambio?: string;
-    posti?: number;
-    ariaCondizionata?: boolean;
+    cambio?: string | null;
+    posti?: number | null;
+    ariaCondizionata?: boolean | null;
+    ac?: number | null;
     eta?: string;
-    porte?: number;
-    alimentazione?: string;
+    porte?: number | null;
+    alimentazione?: string | null;
 
     prezzoGiornalieroRitiro: string | number;
     prezzoGiornalieroOnline: string | number;
@@ -42,6 +45,26 @@ interface SceltaTariffaProps {
     onOpenChange: (event: boolean) => void;
 }
 
+function getAcLabel(ac: number | null | undefined, ariaCondizionata: boolean | null | undefined) {
+    if (ac === 1) return "Sì";
+    if (ac === 0) return "No";
+    if (ac === null) return "N/D";
+    if (ariaCondizionata === true) return "Sì";
+    if (ariaCondizionata === false) return "No";
+    return null;
+}
+
+function getCombustioneIcon(label: string) {
+    const normalized = label.trim().toLowerCase();
+    if (normalized.startsWith("elettr") || normalized.startsWith("electr")) {
+        return <EvChargerIcon className="text-gray-400" />;
+    }
+    if (normalized === "combustione" || normalized === "benzina" || normalized === "diesel") {
+        return <FuelIcon className="text-gray-400" />;
+    }
+    return null;
+}
+
 export function SceltaTariffa(props: SceltaTariffaProps) {
     const sp = useSearchParams();
     const router = useRouter();
@@ -50,6 +73,9 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
     const setVeicolo = useCheckoutStore((s) => s.setVeicolo);
     const setTariffa = useCheckoutStore((s) => s.setTariffa);
     const setStep = useCheckoutStore((s) => s.setStep);
+    const acLabel = getAcLabel(props.ac, props.ariaCondizionata);
+    const combustioneDisplay = getCombustioneDisplayLabel({ alimentazione: props.alimentazione });
+    const combustioneIcon = getCombustioneIcon(combustioneDisplay);
 
     // Se i prezzi arrivano con virgola, questo evita NaN
     function NextStep(
@@ -129,16 +155,10 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
                                     <span className="truncate">{props.cambio}</span>
                                 </div>
                             )}
-                            {props.posti != null && (
-                                <div className="flex flex-row gap-x-1 items-center">
-                                    <PostiIcon />
-                                    <span>{props.posti}</span>
-                                </div>
-                            )}
-                            {props.ariaCondizionata != null && (
+                            {acLabel && (
                                 <div className="flex flex-row gap-x-1 items-center">
                                     <AriaIcon />
-                                    <span className="truncate">{props.ariaCondizionata ? "A/C" : "NO A/C"}</span>
+                                    <span className="truncate">A/C {acLabel}</span>
                                 </div>
                             )}
                             {props.eta && (
@@ -153,6 +173,10 @@ export function SceltaTariffa(props: SceltaTariffaProps) {
                                     <span>{props.porte}</span>
                                 </div>
                             )}
+                            <div className="flex flex-row gap-x-1 items-center">
+                                {combustioneIcon}
+                                <span className="truncate">Alim. {combustioneDisplay}</span>
+                            </div>
                         </div>
                     </div>
 

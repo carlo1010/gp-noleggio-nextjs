@@ -152,6 +152,7 @@ type CheckoutActions = {
         selezionata?: ProtezioneSelezionata
     ) => void;
     clearStep3: () => void;
+    clearStep2: () => void;
 
     addVisitedStep: (step: number) => void;
 
@@ -274,6 +275,15 @@ export const useCheckoutStore = create<CheckoutState & CheckoutActions>((set, ge
                 selezionata: undefined,
             },
             servizi: {},
+        })),
+    clearStep2: () =>
+        set(() => ({
+            veicolo: undefined,
+            tariffa: {
+                tipo: undefined,
+                prezzoGiorno: 0,
+                prezzoTotale: 0,
+            },
         })),
 
 

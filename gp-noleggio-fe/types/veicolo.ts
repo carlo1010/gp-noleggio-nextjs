@@ -20,15 +20,18 @@ export interface BackendListaVeicolo {
     tariffaFranchigiaFurto: string
     tariffaFranchigiaDanno: string
     disponibilita?: number | string
-    cambio?: string
+    cambio?: string | null
     cambioKey?: VehicleTransmissionKey
     categoria?: string
     tipologia?: VehicleTipologia
-    posti?: number
-    porte?: number
-    ariaCondizionata?: boolean
-    etaMin?: number
-    alimentazione?: string
+    posti?: number | null
+    porte?: number | null
+    ariaCondizionata?: boolean | null
+    etaMin?: number | null
+    alimentazione?: string | null
+    combustione?: string | null
+    combustioneLabel?: string | null
+    ac?: number | null
 }
 
 export interface ListaVeicolo extends Omit<BackendListaVeicolo, "giorniNoleggio" | "disponibilita"> {

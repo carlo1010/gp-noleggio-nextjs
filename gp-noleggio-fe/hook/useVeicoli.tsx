@@ -16,6 +16,7 @@ export type VeicoliFilters = {
     tipologia?: string | null;
     prezzo?: string | null;
     sort?: string | null;
+    refreshKey?: string | null;
 };
 
 export function useListaVeicoli(filters: VeicoliFilters) {
@@ -31,6 +32,7 @@ export function useListaVeicoli(filters: VeicoliFilters) {
         tipologia,
         prezzo,
         sort,
+        refreshKey,
     } = filters;
 
     return useQuery<ListaVeicolo[]>({
@@ -48,6 +50,7 @@ export function useListaVeicoli(filters: VeicoliFilters) {
             tipologia ?? "all",
             prezzo ?? "all",
             sort ?? "price_asc",
+            refreshKey ?? "",
         ],
         queryFn: async () => {
             const params = new URLSearchParams();

@@ -35,6 +35,7 @@ export default function SceltaVeicolo() {
     const tipologia = sp.get("tipologia") ?? "all";
     const prezzo = sp.get("prezzo") ?? "all";
     const sort = sp.get("sort") ?? "price_asc";
+    const refresh = sp.get("refresh");
 
     const { isPending: isLoadingVeicoli, data: veicoli } = useListaVeicoli({
         datainizio: pickupDate,
@@ -48,6 +49,7 @@ export default function SceltaVeicolo() {
         tipologia,
         prezzo,
         sort,
+        refreshKey: refresh,
     });
 
     const availableCategoryCount = useMemo(
@@ -77,6 +79,7 @@ export default function SceltaVeicolo() {
                 const posti = veicolo.posti;
                 const porte = veicolo.porte;
                 const ariaCondizionata = veicolo.ariaCondizionata;
+                const ac = veicolo.ac;
                 const etaMin = veicolo.etaMin;
 
                 return (
@@ -87,6 +90,7 @@ export default function SceltaVeicolo() {
                         cambio={cambio}
                         posti={posti}
                         ariaCondizionata={ariaCondizionata}
+                        ac={ac}
                         eta={etaMin != null ? String(etaMin) : undefined}
                         porte={porte}
                         alimentazione={veicolo.alimentazione}
@@ -131,6 +135,7 @@ export default function SceltaVeicolo() {
                         const posti = veicolo.posti;
                         const porte = veicolo.porte;
                         const ariaCondizionata = veicolo.ariaCondizionata;
+                        const ac = veicolo.ac;
                         const etaMin = veicolo.etaMin;
 
                         return (
@@ -144,6 +149,7 @@ export default function SceltaVeicolo() {
                                 cambio={cambio}
                                 posti={posti}
                                 ariaCondizionata={ariaCondizionata}
+                                ac={ac}
                                 eta={etaMin != null ? `${etaMin}+` : undefined}
                                 porte={porte}
                                 openDialog={(event, selection) => {
