@@ -1,3 +1,8 @@
+import Link from "next/link";
+import Image from "next/image";
+import { Check } from "lucide-react";
+import BadgePromo from "./badge-promo";
+
 interface OffersSectionProps {
     title?: string;
     offers?: {
