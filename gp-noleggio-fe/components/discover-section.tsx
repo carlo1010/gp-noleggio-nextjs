@@ -15,12 +15,14 @@ export interface DiscoverItem {
 }
 
 interface DiscoverSectionProps {
+    config?: any;
     title?: string;
     featuredPosts?: any[]; // Relationship in Payload
 }
 
 // 2. The Server Component
-export default async function DiscoverSection({ title = "Scopri il mondo Piccirillo Rent", featuredPosts }: DiscoverSectionProps) {
+export default async function DiscoverSection({ config: pageConfig, title, featuredPosts }: DiscoverSectionProps) {
+    const cmsTitle = pageConfig?.homeConfig?.discoverSection?.title || title || "Scopri il mondo Piccirillo Rent";
     const payload = await getPayload({ config });
     
     let posts: any[] = [];
@@ -67,7 +69,7 @@ export default async function DiscoverSection({ title = "Scopri il mondo Picciri
             <div className="container mx-auto px-4 py-14 max-w-[1240px]">
                 <div className="flex items-center justify-between mb-10">
                     <h2 className="text-3xl md:text-4xl font-bold">
-                        {title}
+                        {cmsTitle}
                     </h2>
                 </div>
 

@@ -2,6 +2,7 @@ import MacchinaElettrica from "@/components/svg/macchinaElettrica";
 import SimboloElettrico from "@/components/svg/simboloElettrico";
 
 interface ElettricoKeyPointsProps {
+    config?: any;
     items?: {
         title: string;
         description: string;
@@ -9,7 +10,7 @@ interface ElettricoKeyPointsProps {
     }[];
 }
 
-export default function ElettricoKeyPoints({ items }: ElettricoKeyPointsProps) {
+export default function ElettricoKeyPoints({ config, items }: ElettricoKeyPointsProps) {
     const defaultItems = [
         {
             title: "Le auto elettriche hanno più autonomia di quanto potresti pensare",

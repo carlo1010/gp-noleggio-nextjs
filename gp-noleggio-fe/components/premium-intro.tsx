@@ -1,4 +1,5 @@
 interface PremiumIntroProps {
+    config?: any;
     title?: string;
     body?: any;
     cards?: {
@@ -11,12 +12,15 @@ interface PremiumIntroProps {
 }
 
 export default function PremiumIntro({ 
+    config,
     title = "Auto Premium Piccirillo Rent: trasforma ogni viaggio in un’esperienza memorabile", 
     body, 
     cards,
     ctaLabel = "Prenota ora",
     ctaHref = "/prenota"
 }: PremiumIntroProps) {
+    const cmsTitle = config?.premiumConfig?.premiumIntro?.title || title;
+    const cmsSubtitle = config?.premiumConfig?.premiumIntro?.subtitle || body;
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto max-w-[1240px] px-4 py-12">
@@ -28,13 +32,13 @@ export default function PremiumIntro({
 
                 {/* Titolo */}
                 <h1 className="mt-6 text-4xl font-bold leading-tight text-gray-900">
-                    {title}
+                    {cmsTitle}
                 </h1>
 
                 {/* Testo intro */}
                 <div className="mt-6 max-w-3xl space-y-4 text-sm leading-relaxed text-gray-700">
-                    {body ? (
-                        typeof body === 'string' ? body : "Contenuto Rich Text (CMS)"
+                    {cmsSubtitle ? (
+                        typeof cmsSubtitle === 'string' ? <p className="whitespace-pre-wrap">{cmsSubtitle}</p> : "Contenuto Rich Text (CMS)"
                     ) : (
                         <>
                             <p>

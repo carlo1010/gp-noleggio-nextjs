@@ -1,16 +1,22 @@
 interface InfoNoleggioProps {
+    config?: any;
     title?: string;
     body?: any;
     image?: string | any;
 }
 
 export default function InfoNoleggio({ 
+    config,
     title = "Noleggio a breve, medio o lungo termine", 
     body, 
     image 
 }: InfoNoleggioProps) {
-    const imageUrl = typeof image === 'object' ? image?.url : image || "/toyota-rossa.png";
-    const imageAlt = typeof image === 'object' ? image?.alt : title;
+    const cmsTitle = config?.autoConfig?.infoNoleggio?.title || title;
+    const cmsBody = config?.autoConfig?.infoNoleggio?.body || body;
+    const cmsImage = config?.autoConfig?.infoNoleggio?.image?.url || image || "/toyota-rossa.png";
+    
+    const imageUrl = typeof cmsImage === 'object' ? cmsImage?.url : cmsImage;
+    const imageAlt = typeof cmsImage === 'object' ? cmsImage?.alt : cmsTitle;
 
     return (
         <section className="w-full bg-white">
@@ -32,13 +38,13 @@ export default function InfoNoleggio({
                         {/* Testo */}
                         <div>
                             <h3 className="text-xl md:text-2xl font-bold text-gray-900">
-                                {title}
+                                {cmsTitle}
                             </h3>
 
                             <div className="mt-4 space-y-4 text-sm leading-relaxed text-gray-700">
-                                {body ? (
+                                {cmsBody ? (
                                     // Semplice rendering se non abbiamo un renderer rich text pronto
-                                    typeof body === 'string' ? body : "Contenuto Rich Text (CMS)"
+                                    typeof cmsBody === 'string' ? <p className="whitespace-pre-wrap">{cmsBody}</p> : "Contenuto Rich Text (CMS)"
                                 ) : (
                                     <>
                                         <p>

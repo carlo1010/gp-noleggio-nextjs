@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 interface FleetSectionProps {
+    config?: any;
     title?: string;
     items?: {
         title: string;
@@ -14,7 +15,8 @@ interface FleetSectionProps {
     }[];
 }
 
-export default function FleetSection({ title = "La flotta", items }: FleetSectionProps) {
+export default function FleetSection({ config, title, items }: FleetSectionProps) {
+    const cmsTitle = config?.homeConfig?.fleetSection?.title || title || "La flotta";
     const defaultItems = [
         {
             title: "Auto",
@@ -97,7 +99,7 @@ export default function FleetSection({ title = "La flotta", items }: FleetSectio
             {/* ===== FASCIA GRIGIA ===== */}
             <div className="bg-gray-50 h-auto md:h-[422px]">
                 <div className="container mx-auto px-4 pt-14 pb-10 md:pb-0 max-w-[1240px]">
-                    <h2 className="text-3xl font-bold mb-10 text-center md:text-left">{title}</h2>
+                    <h2 className="text-3xl font-bold mb-10 text-center md:text-left">{cmsTitle}</h2>
 
                     {/* MOBILE CAROUSEL */}
                     <div

@@ -1,4 +1,5 @@
 interface RentalFeaturesProps {
+    config?: any;
     title?: string;
     description?: string | any;
     features?: {
@@ -9,10 +10,12 @@ interface RentalFeaturesProps {
 }
 
 export default function RentalFeatures({ 
+    config,
     title = "Piccirillo Rent: il noleggio auto su misura, in tutta Italia", 
     description,
     features 
 }: RentalFeaturesProps) {
+    const cmsTitle = config?.autoConfig?.rentalFeatures?.title || title;
     const defaultFeatures = [
         {
             title: "Miglior prezzo garantito",
@@ -53,7 +56,7 @@ export default function RentalFeatures({
                     </p>
 
                     <h1 className="text-3xl md:text-4xl font-bold mb-6">
-                        {title}
+                        {cmsTitle}
                     </h1>
 
                     <div className="text-gray-600 text-sm leading-relaxed">

@@ -1,5 +1,5 @@
 import HeroBanner from "@/components/hero-banner";
-import BlockRenderer from "@/components/block-renderer";
+
 import { getPageConfig } from "@/lib/fetchPayload";
 
 // Import dei componenti originali per il fallback di default
@@ -16,16 +16,10 @@ export default async function Home() {
         <main className="min-h-dvh bg-black w-full">
             <HeroBanner imageUrl={'/logo-banner.png'} config={config} />
             
-            {config?.layout && config.layout.length > 0 ? (
-                <BlockRenderer blocks={config.layout} />
-            ) : (
-                <>
-                    <OffersSection />
-                    <FleetSection />
-                    <BenefitsSection />
-                    <DiscoverSection />
-                </>
-            )}
+            <OffersSection config={config} />
+            <FleetSection config={config} />
+            <BenefitsSection config={config} />
+            <DiscoverSection config={config} />
         </main>
     );
 }

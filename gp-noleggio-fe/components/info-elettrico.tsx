@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function InfoElettrico() {
+export default function InfoElettrico({ config }: { config?: any }) {
     return (
         <section className="w-full bg-white py-16">
             <div className="container mx-auto max-w-[1240px] px-4">

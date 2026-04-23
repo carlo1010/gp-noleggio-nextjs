@@ -1,4 +1,6 @@
 type PromoSplitProps = {
+    config?: any;
+    promoIndex?: number;
     title: string;
     body: string;
     ctaLabel: string;
@@ -17,6 +19,8 @@ type PromoSplitProps = {
 };
 
 export default function PromoSplit({
+    config,
+    promoIndex,
     title,
     body,
     ctaLabel,
@@ -30,8 +34,28 @@ export default function PromoSplit({
 }: PromoSplitProps) {
     const isImageRight = imageSide === "right";
     
-    const imageUrl = typeof image === 'object' ? image?.url : image;
-    const finalAlt = imageAlt || (typeof image === 'object' ? image?.alt : title) || "";
+    let cmsTitle = title;
+    let cmsBody = body;
+    let cmsImage = image;
+
+    if (config?.furgoniConfig) {
+        if (promoIndex === 1 && config.furgoniConfig.promo1) {
+            cmsTitle = config.furgoniConfig.promo1.title || title;
+            cmsBody = config.furgoniConfig.promo1.body || body;
+            cmsImage = config.furgoniConfig.promo1.image || image;
+        } else if (promoIndex === 2 && config.furgoniConfig.promo2) {
+            cmsTitle = config.furgoniConfig.promo2.title || title;
+            cmsBody = config.furgoniConfig.promo2.body || body;
+            cmsImage = config.furgoniConfig.promo2.image || image;
+        } else if (promoIndex === 3 && config.furgoniConfig.promo3) {
+            cmsTitle = config.furgoniConfig.promo3.title || title;
+            cmsBody = config.furgoniConfig.promo3.body || body;
+            cmsImage = config.furgoniConfig.promo3.image || image;
+        }
+    }
+
+    const imageUrl = typeof cmsImage === 'object' ? cmsImage?.url : cmsImage;
+    const finalAlt = imageAlt || (typeof cmsImage === 'object' ? cmsImage?.alt : cmsTitle) || "";
 
     return (
         <section className="w-full bg-white py-16">
@@ -40,11 +64,11 @@ export default function PromoSplit({
                     {/* TESTO */}
                     <div className={`${contentMaxWClassName} ${isImageRight ? "" : "md:order-2"}`}>
                         <h2 className="text-[20px] font-semibold leading-snug text-black">
-                            {title}
+                            {cmsTitle}
                         </h2>
 
                         <p className="mt-4 text-[12px] leading-6 text-gray-600 whitespace-pre-line">
-                            {body}
+                            {cmsBody}
                         </p>
 
                         <Link

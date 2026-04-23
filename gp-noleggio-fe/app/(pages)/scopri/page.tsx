@@ -1,5 +1,5 @@
 import HeroBanner from "@/components/hero-banner";
-import BlockRenderer from "@/components/block-renderer";
+
 import { getPageConfig } from "@/lib/fetchPayload";
 
 // Import dei componenti originali per il fallback di default
@@ -16,15 +16,9 @@ export default async function Scopri() {
         <>
             <HeroBanner imageUrl={bannerImageUrl} config={config} />
             
-            {config?.layout && config.layout.length > 0 ? (
-                <BlockRenderer blocks={config.layout} />
-            ) : (
-                <>
-                    <DoveSiamo />
-                    <DiscoverSection />
-                    <WhyRent />
-                </>
-            )}
+            <DoveSiamo config={config} />
+            <DiscoverSection config={config} />
+            <WhyRent config={config} />
         </>
     );
 }

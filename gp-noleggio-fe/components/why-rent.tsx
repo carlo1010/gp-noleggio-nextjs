@@ -1,4 +1,5 @@
 interface WhyRentProps {
+    config?: any;
     title?: string;
     benefits?: {
         title: string;
@@ -7,6 +8,7 @@ interface WhyRentProps {
 }
 
 export default function WhyRent({ 
+    config,
     title = "Perché noleggiare un’auto con Piccirillo Rent?", 
     benefits 
 }: WhyRentProps) {

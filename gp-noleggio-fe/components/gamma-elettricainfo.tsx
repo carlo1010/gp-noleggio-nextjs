@@ -1,4 +1,5 @@
 interface GammaElettricaInfoProps {
+    config?: any;
     title?: string;
     body?: any;
     linkUrl?: string;
@@ -6,21 +7,24 @@ interface GammaElettricaInfoProps {
 }
 
 export default function GammaElettricaInfo({
+    config,
     title = "La nostra esclusiva gamma di auto elettriche",
     body,
     linkUrl = "/punti-di-ricarica",
     linkLabel = "Vai ai punti di ricarica"
 }: GammaElettricaInfoProps) {
+    const cmsTitle = config?.elettricheConfig?.introElettrico?.title || title;
+    const cmsBody = config?.elettricheConfig?.introElettrico?.body || body;
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto max-w-[1240px] px-4 py-12">
                 <h2 className="text-3xl font-bold text-black">
-                    {title}
+                    {cmsTitle}
                 </h2>
 
                 <div className="mt-6 max-w-5xl space-y-6 text-[15px] leading-7 text-black">
-                    {body ? (
-                        typeof body === 'string' ? body : "Contenuto Rich Text (CMS)"
+                    {cmsBody ? (
+                        typeof cmsBody === 'string' ? <p className="whitespace-pre-wrap">{cmsBody}</p> : "Contenuto Rich Text (CMS)"
                     ) : (
                         <>
                             <p>

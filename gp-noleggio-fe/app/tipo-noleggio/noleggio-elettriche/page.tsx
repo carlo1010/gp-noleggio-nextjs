@@ -1,5 +1,5 @@
 import HeroBanner from "@/components/hero-banner";
-import BlockRenderer from "@/components/block-renderer";
+
 import { getPageConfig } from "@/lib/fetchPayload";
 
 // Import dei componenti originali per il fallback di default
@@ -35,17 +35,11 @@ export default async function Page() {
             <OfferBar />
             <HeroBanner imageUrl={'/hero/sfondo-hero-elettriche.png'} config={config} />
             
-            {config?.layout && config.layout.length > 0 ? (
-                <BlockRenderer blocks={config.layout} />
-            ) : (
-                <>
-                    <GammaElettricaInfo />
-                    <FlottaGriglia title="La nostra flotta" cars={cars} />
-                    <BannerElettriche />
-                    <InfoElettrico />
-                    <ElettricoKeyPoints />
-                </>
-            )}
+            <GammaElettricaInfo config={config} />
+            <FlottaGriglia title="La nostra flotta" cars={cars} config={config} />
+            <BannerElettriche config={config} />
+            <InfoElettrico config={config} />
+            <ElettricoKeyPoints config={config} />
         </>
     );
 }

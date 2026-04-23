@@ -1,4 +1,5 @@
 type WideImageBannerProps = {
+    config?: any;
     image?: string | any;
     alt?: string;
     // se vuoi controllare altezza/ratio
@@ -7,13 +8,15 @@ type WideImageBannerProps = {
 };
 
 export default function WideImageBanner({
+    config,
     image,
     alt,
     aspectClassName = "aspect-[16/5]",
     roundedClassName = "rounded-md",
 }: WideImageBannerProps) {
-    const imageUrl = typeof image === 'object' ? image?.url : image;
-    const finalAlt = alt || (typeof image === 'object' ? image?.alt : "Banner");
+    const cmsImage = config?.furgoniConfig?.wideBanner?.image || image;
+    const imageUrl = typeof cmsImage === 'object' ? cmsImage?.url : cmsImage;
+    const finalAlt = alt || (typeof cmsImage === 'object' ? cmsImage?.alt : "Banner");
 
     if (!imageUrl) return null;
 

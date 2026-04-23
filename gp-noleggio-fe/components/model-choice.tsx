@@ -1,4 +1,5 @@
 interface ModelChoiceProps {
+    config?: any;
     title?: string;
     body?: any;
     image?: string | any;
@@ -7,12 +8,15 @@ interface ModelChoiceProps {
 }
 
 export default function ModelChoice({ 
+    config,
     title = "Scegli il modello che desideri, davvero", 
     body, 
     image,
     ctaLabel = "Scegli la tua auto",
     ctaHref = "/veicoli"
 }: ModelChoiceProps) {
+    const cmsTitle = config?.premiumConfig?.modelChoice?.title || title;
+    const cmsCtaLabel = config?.premiumConfig?.modelChoice?.ctaLabel || ctaLabel;
     const imageUrl = typeof image === 'object' ? image?.url : image || "/lambo-gialla.png";
     const imageAlt = typeof image === 'object' ? image?.alt : title;
 
@@ -23,7 +27,7 @@ export default function ModelChoice({
                     {/* Testo (sx) */}
                     <div className="max-w-md">
                         <h2 className="text-3xl font-bold leading-tight text-gray-900">
-                            {title}
+                            {cmsTitle}
                         </h2>
 
                         <div className="mt-6 space-y-4 text-sm leading-relaxed text-gray-700">
@@ -59,7 +63,7 @@ export default function ModelChoice({
                         {/* Bottone */}
                         <div className="mt-8">
                             <Button asChild className="h-12 w-[260px]  text-base">
-                                <Link href={ctaHref}>{ctaLabel}</Link>
+                                <Link href={ctaHref}>{cmsCtaLabel}</Link>
                             </Button>
                         </div>
                     </div>

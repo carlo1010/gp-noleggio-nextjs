@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 interface BenefitsSectionProps {
+    config?: any;
     items?: {
         title: string;
         description: string;
@@ -11,7 +12,9 @@ interface BenefitsSectionProps {
     }[];
 }
 
-export default function BenefitsSection({ items }: BenefitsSectionProps) {
+export default function BenefitsSection({ config, items }: BenefitsSectionProps) {
+    const cmsTitle = config?.homeConfig?.benefitsSection?.title;
+    const cmsSubtitle = config?.homeConfig?.benefitsSection?.subtitle;
     const defaultBenefits = [
         {
             title: "Sconti e benefici",
@@ -50,6 +53,8 @@ export default function BenefitsSection({ items }: BenefitsSectionProps) {
     return (
         <section className="w-full bg-white py-10">
             <div className="container mx-auto px-4 py-16 max-w-[1240px]">
+                {cmsTitle && <h2 className="text-3xl font-bold mb-2 text-center md:text-left">{cmsTitle}</h2>}
+                {cmsSubtitle && <p className="mb-10 text-gray-600 text-center md:text-left">{cmsSubtitle}</p>}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                     {displayBenefits.map((b, idx) => (
                         <div key={idx} className="flex flex-col items-center text-center">

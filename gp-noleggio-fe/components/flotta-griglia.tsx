@@ -1,4 +1,5 @@
 interface FlottaGrigliaProps {
+    config?: any;
     title?: string;
     cars?: {
         image: string | any;
@@ -8,6 +9,7 @@ interface FlottaGrigliaProps {
 }
 
 export default function FlottaGriglia({ 
+    config,
     title = "I nostri modelli", 
     cars = [] 
 }: FlottaGrigliaProps) {

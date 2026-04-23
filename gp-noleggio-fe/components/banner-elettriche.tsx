@@ -2,7 +2,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function BannerElettriche() {
+export default function BannerElettriche({ config }: { config?: any }) {
+    const cmsTitle2 = config?.elettricheConfig?.bannerBusiness?.title || "In che modo il noleggio di veicoli elettrici supporta il tuo business?";
+    const cmsBody2 = config?.elettricheConfig?.bannerBusiness?.body || "Grazie al noleggio di elettrico avrai la possibilità di guidare nelle ZTL e ridurre i costi di gestione.";
     return (
         <section className="w-full py-16">
             <div className="container mx-auto max-w-[1240px] px-4">
@@ -45,12 +47,11 @@ export default function BannerElettriche() {
                         {/* testo */}
                         <div className="max-w-[420px] md:order-1 order-2">
                             <h3 className="text-lg font-semibold">
-                                In che modo il noleggio di veicoli elettrici supporta il tuo business?
+                                {cmsTitle2}
                             </h3>
 
                             <p className="mt-3 text-sm text-gray-600 leading-6">
-                                Grazie al noleggio di elettrico avrai la possibilità di guidare nelle ZTL
-                                e ridurre i costi di gestione.
+                                {cmsBody2}
                             </p>
 
                             <Link
