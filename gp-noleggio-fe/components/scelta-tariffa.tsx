@@ -35,6 +35,7 @@ interface SceltaTariffaProps {
     prezzoGiornalieroOnline: string;
     prezzoTotaleOnline: string;
     prezzoTotaleRitiro: string;
+    codiceTariffa?: string;
 
     open: boolean;
     onOpenChange: (event: boolean) => void;
