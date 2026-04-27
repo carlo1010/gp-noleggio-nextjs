@@ -7,12 +7,7 @@ import { getEnabledProviders } from "@/lib/payments/config";
 const enabledProviders = getEnabledProviders();
 
 const createSessionSchema = z.object({
-  provider: z.enum(["stripe", "nexi_hpp"]).refine(
-    (provider) => enabledProviders.includes(provider),
-    (provider) => ({
-      message: `Payment provider "${provider}" is not enabled. Enabled providers: ${enabledProviders.join(", ")}`,
-    })
-  ),
+  provider: z.enum(["stripe", "nexi_hpp"]),
   amount: z.number().positive(),
   currency: z.literal("EUR"),
   bookingReference: z.string().min(1),
@@ -28,6 +23,14 @@ const createSessionSchema = z.object({
       taxCode: z.string().min(1).optional(),
     })
     .optional(),
+}).superRefine((data, ctx) => {
+  if (!enabledProviders.includes(data.provider)) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["provider"],
+      message: `Payment provider "${data.provider}" is not enabled. Enabled providers: ${enabledProviders.join(", ")}`,
+    });
+  }
 });
 
 export async function POST(req: Request) {
