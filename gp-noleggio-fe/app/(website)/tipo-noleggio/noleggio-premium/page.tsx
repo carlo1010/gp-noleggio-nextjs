@@ -30,7 +30,9 @@ const jsonLd = {
     areaServed: { "@type": "State", name: "Campania" },
 };
 
-export default function Page() {
+export default async function Page() {
+    const { getPageConfig } = await import("@/lib/fetchPayload");
+    const config = await getPageConfig("noleggio-premium");
     return (
         <>
             <script
@@ -38,10 +40,10 @@ export default function Page() {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <OfferBar />
-            <HeroBanner imageUrl={"/hero/sfondo-hero-premium.png"} />
-            <PremiumIntro />
-            <ComeFunziona />
-            <ModelChoice />
+            <HeroBanner imageUrl={"/hero/sfondo-hero-premium.png"} config={config} />
+            <PremiumIntro config={config} />
+            <ComeFunziona config={config} />
+            <ModelChoice config={config} />
         </>
     );
 }

@@ -25,10 +25,25 @@ const benefits = [
     },
 ];
 
-export default function BenefitsSection() {
+interface BenefitsSectionProps {
+    config?: any;
+}
+
+export default function BenefitsSection({ config }: BenefitsSectionProps) {
+    const sectionConfig = config?.homeConfig?.benefitsSection || {};
+    const title = sectionConfig.title;
+    const subtitle = sectionConfig.subtitle;
+    // Potremmo usare bgImage se ci fosse un container apposito, ma per ora teniamo lo stile base
+
     return (
         <section className="w-full bg-white py-10">
             <div className="container mx-auto px-4 py-16 max-w-[1240px]">
+                {(title || subtitle) && (
+                    <div className="text-center mb-10">
+                        {title && <h2 className="text-3xl font-bold">{title}</h2>}
+                        {subtitle && <p className="text-gray-600 mt-2">{subtitle}</p>}
+                    </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                     {benefits.map((b) => (
                         <div key={b.title} className="flex flex-col items-center text-center">

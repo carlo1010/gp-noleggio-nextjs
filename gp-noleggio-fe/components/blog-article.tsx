@@ -1,20 +1,14 @@
 import Image from "next/image";
 import NextBreadcrumb from "@/components/blog-breadcrumbs";
-
-interface BlogPost {
-    kicker: string;
-    title: string;
-    desc: string;
-    img: string | any;
-    imgAlt: string;
-}
+import type { BlogPost as PayloadBlogPost } from "@/payload-types";
 
 interface BlogArticleProps {
-    post: BlogPost;
+    post: PayloadBlogPost;
 }
 
 export default function BlogArticle({ post }: BlogArticleProps) {
-    const imageUrl = typeof post.img === 'object' && post.img?.url ? post.img.url : '/placeholder.png';
+    const imageUrl = typeof post.cardImage === 'object' && post.cardImage?.url ? post.cardImage.url : '/placeholder.png';
+    const alt = typeof post.cardImage === 'object' && post.cardImage?.alt ? post.cardImage.alt : "Immagine articolo";
 
     return (
         <article className="container mx-auto px-4 py-20 max-w-[1240px]">
@@ -39,7 +33,7 @@ export default function BlogArticle({ post }: BlogArticleProps) {
             <div className="relative w-full aspect-16/7 mt-14 rounded-tl-3xl rounded-br-3xl overflow-hidden">
                 <Image
                     src={imageUrl}
-                    alt={post.imgAlt || "Immagine articolo"}
+                    alt={alt}
                     fill
                     className="object-cover"
                     priority
@@ -47,7 +41,10 @@ export default function BlogArticle({ post }: BlogArticleProps) {
             </div>
 
             <div className="mt-14 max-w-3xl mx-auto text-gray-700 leading-relaxed text-lg">
-                {post.desc}
+                {/* Il contenuto può contenere HTML se viene dal rich text di Payload CMS. 
+                    Se è HTML puro, decommenta l'uso di dangerouslySetInnerHTML e rimuovi post.content
+                */}
+                <div dangerouslySetInnerHTML={{ __html: post.content }} />
             </div>
         </article>
     );

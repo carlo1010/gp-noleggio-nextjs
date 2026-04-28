@@ -18,20 +18,56 @@ interface DiscoverItem {
 
 // 2. Data Fetching Function (Server-Side)
 async function getDiscoverData(): Promise<DiscoverItem[]> {
-    const filePath = path.join(process.cwd(), 'data', 'scopri.json');
-    const fileContents = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(fileContents);
+    try {
+        const { getPayload } = await import('@/lib/payload');
+        const payload = await getPayload();
+        
+        const { docs } = await payload.find({
+            collection: 'blog-posts',
+            limit: 3,
+            sort: '-createdAt', // fetch the newest posts
+        });
+
+        if (docs.length === 0) {
+            // Fallback to JSON if no blog posts
+            const filePath = path.join(process.cwd(), 'data', 'scopri.json');
+            const fileContents = await fs.readFile(filePath, 'utf8');
+            return JSON.parse(fileContents);
+        }
+
+        // Map payload docs to DiscoverItem
+        return docs.map((doc: any) => ({
+            id: doc.id,
+            kicker: doc.kicker || 'BLOG',
+            title: doc.title,
+            desc: doc.excerpt || doc.content?.substring(0, 150) || '',
+            href: `/blog/${doc.slug}`,
+            cta: doc.ctaLabel || 'Scopri di più',
+            img: doc.cardImage?.url || '/placeholder.png',
+            imgAlt: doc.cardImage?.alt || doc.title,
+        }));
+    } catch (e) {
+        // Fallback to JSON on error
+        const filePath = path.join(process.cwd(), 'data', 'scopri.json');
+        const fileContents = await fs.readFile(filePath, 'utf8');
+        return JSON.parse(fileContents);
+    }
 }
 
 // 3. The Server Component
-export default async function DiscoverSection() {
+interface DiscoverSectionProps {
+    config?: any;
+}
+
+export default async function DiscoverSection({ config }: DiscoverSectionProps) {
     const items = await getDiscoverData();
+    const title = config?.homeConfig?.discoverSection?.title || config?.scopriConfig?.discoverSection?.title || "Scopri il mondo Piccirillo Rent";
 
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto px-4 py-14 max-w-[1240px]">
                 <h2 className="text-3xl md:text-4xl font-bold mb-10">
-                    Scopri il mondo Piccirillo Rent
+                    {title}
                 </h2>
 
                 {/* MOBILE CAROUSEL WRAPPER (Client Component) */}

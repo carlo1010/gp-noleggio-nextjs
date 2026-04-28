@@ -18,12 +18,14 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const bannerImageUrl = "/hero/sfondo-hero-blog.jpg";
-export default function Blog() {
+export default async function Blog() {
+    const { getPageConfig } = await import("@/lib/fetchPayload");
+    const config = await getPageConfig("blog");
     return (
         <>
-            <HeroBanner imageUrl={bannerImageUrl} />
-            <BlogSection />
-            <WhyRent />
+            <HeroBanner imageUrl={bannerImageUrl} config={config} />
+            <BlogSection config={config} />
+            <WhyRent config={config} />
         </>
     );
 }

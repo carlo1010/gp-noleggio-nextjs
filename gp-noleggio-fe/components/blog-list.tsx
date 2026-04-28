@@ -3,19 +3,36 @@ import Link from "next/link";
 import NextBreadcrumb from "@/components/blog-breadcrumbs";
 import { getPayload } from "@/lib/payload";
 
-export default async function BlogSection() {
+interface BlogSectionProps {
+    config?: any;
+}
+
+export default async function BlogSection({ config }: BlogSectionProps) {
     let items: Array<any> = [];
 
-    try {
-        const payload = await getPayload();
-        const result = await payload.find({
-            collection: 'posts',
-            limit: 10,
-            sort: '-createdAt'
-        });
-        items = result.docs;
-    } catch {
-        items = [];
+    const blogConfig = config?.scopriConfig?.chiSiamo || config?.homeConfig?.discoverSection || config; // fallback if needed, wait, better use the root config if passed, or just fetch directly.
+    const isManualSelection = config?.blogConfig?.blogList?.manualSelection;
+    const manualItems = config?.blogConfig?.blogList?.items;
+
+    if (isManualSelection && manualItems && manualItems.length > 0) {
+        items = manualItems;
+    } else {
+        try {
+            const payload = await getPayload();
+            const result = await payload.find({
+                collection: 'blog-posts',
+                where: {
+                    status: {
+                        equals: 'published'
+                    }
+                },
+                limit: 10,
+                sort: '-publishedAt'
+            });
+            items = result.docs;
+        } catch {
+            items = [];
+        }
     }
 
     // Handle the "No items" state
@@ -48,7 +65,9 @@ export default async function BlogSection() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                     {items.map((item) => {
-                        const imageUrl = typeof item.img === 'object' && item.img?.url ? item.img.url : '/placeholder.png';
+                        // The cardImage is now nested inside the collapsible group or at the root depending on payload response
+                        const imageObj = item.cardImage || item.img;
+                        const imageUrl = typeof imageObj === 'object' && imageObj?.url ? imageObj.url : '/placeholder.png';
                         return (
                             <article key={item.id} className="flex flex-col group">
 
@@ -57,7 +76,7 @@ export default async function BlogSection() {
                                     <div className="relative w-full aspect-video">
                                         <Image
                                             src={imageUrl}
-                                            alt={item.imgAlt || "Immagine articolo"}
+                                            alt={item.imgAlt || item.title || "Immagine articolo"}
                                             fill
                                             className="object-cover transition-transform duration-500 group-hover:scale-110"
                                             sizes="(max-width: 1024px) 100vw, 33vw"
@@ -75,13 +94,13 @@ export default async function BlogSection() {
                                         </h3>
                                     </Link>
                                     <p className="mt-3 text-gray-600 leading-relaxed line-clamp-3">
-                                        {item.desc}
+                                        {item.excerpt || item.desc}
                                     </p>
                                     <Link
                                         href={`/blog/${item.slug}`}
                                         className="mt-6 inline-block text-[#0700DE] font-semibold hover:text-blue-800 transition-colors"
                                     >
-                                        {item.cta}
+                                        {item.ctaLabel || item.cta || "Leggi di più"}
                                     </Link>
                                 </div>
                             </article>

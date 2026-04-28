@@ -2,7 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export default function PremiumIntro() {
+interface PremiumIntroProps {
+    config?: any;
+}
+
+export default function PremiumIntro({ config }: PremiumIntroProps) {
+    const sectionConfig = config?.premiumConfig?.premiumIntro || {};
+    const title = sectionConfig.title || "Auto Premium Piccirillo Rent: trasforma ogni viaggio in un’esperienza memorabile";
+    const subtitle = sectionConfig.subtitle;
+    
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto max-w-[1240px] px-4 py-12">
@@ -14,36 +22,41 @@ export default function PremiumIntro() {
 
                 {/* Titolo */}
                 <h1 className="mt-6 text-4xl font-bold leading-tight text-gray-900">
-                    Auto Premium Piccirillo Rent: trasforma ogni viaggio in un’esperienza
-                    memorabile
+                    {title}
                 </h1>
 
                 {/* Testo intro */}
                 <div className="mt-6 max-w-3xl space-y-4 text-sm leading-relaxed text-gray-700">
-                    <p>
-                        <strong>Comfort, eleganza e prestazioni d’eccellenza:</strong> scopri
-                        la nostra selezione di veicoli Premium
-                        <br />
-                        Se ami guidare <strong>auto di alta gamma</strong> anche in viaggio, o
-                        stai cercando il massimo del comfort per te e la tua famiglia,{" "}
-                        <strong>Piccirillo Rent</strong> ha la soluzione perfetta per te.
-                        <br />
-                        Che tu stia partendo per una vacanza romantica o un weekend con gli
-                        amici, con la nostra <strong>flotta Premium</strong> potrai vivere
-                        un’esperienza di guida superiore, a bordo di modelli dei migliori
-                        marchi.
-                    </p>
+                    {subtitle ? (
+                        <div className="whitespace-pre-wrap">{subtitle}</div>
+                    ) : (
+                        <>
+                            <p>
+                                <strong>Comfort, eleganza e prestazioni d’eccellenza:</strong> scopri
+                                la nostra selezione di veicoli Premium
+                                <br />
+                                Se ami guidare <strong>auto di alta gamma</strong> anche in viaggio, o
+                                stai cercando il massimo del comfort per te e la tua famiglia,{" "}
+                                <strong>Piccirillo Rent</strong> ha la soluzione perfetta per te.
+                                <br />
+                                Che tu stia partendo per una vacanza romantica o un weekend con gli
+                                amici, con la nostra <strong>flotta Premium</strong> potrai vivere
+                                un’esperienza di guida superiore, a bordo di modelli dei migliori
+                                marchi.
+                            </p>
 
-                    <p>
-                        <em>Eleganza, tecnologia e sicurezza</em> ti accompagneranno ovunque.
-                    </p>
+                            <p>
+                                <em>Eleganza, tecnologia e sicurezza</em> ti accompagneranno ovunque.
+                            </p>
 
-                    <p>
-                        <strong>
-                            Scegli la tua prossima destinazione in Italia e prenota ora la tua
-                            auto Premium con Piccirillo Rent.
-                        </strong>
-                    </p>
+                            <p>
+                                <strong>
+                                    Scegli la tua prossima destinazione in Italia e prenota ora la tua
+                                    auto Premium con Piccirillo Rent.
+                                </strong>
+                            </p>
+                        </>
+                    )}
                 </div>
 
                 {/* Cards */}

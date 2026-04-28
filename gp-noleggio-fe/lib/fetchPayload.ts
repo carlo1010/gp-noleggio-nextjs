@@ -84,3 +84,31 @@ export async function getFaqBySlug(slug: string): Promise<Faq | null> {
         return null
     }
 }
+
+/**
+ * Recupera la configurazione di una pagina specifica tramite slug.
+ * Usabile solo nei Server Components.
+ */
+export async function getPageConfig(slug: string): Promise<any | null> {
+    const payload = await getPayload()
+
+    try {
+        const result = await payload.find({
+            collection: 'page-configs',
+            where: {
+                slug: {
+                    equals: slug,
+                },
+            },
+            depth: 1,
+            limit: 1,
+        })
+
+        if (result.docs.length > 0) return result.docs[0]
+        return null
+    } catch (error) {
+        console.error(`[getPageConfig] Errore nel recupero della config per ${slug}:`, error)
+        return null
+    }
+}
+

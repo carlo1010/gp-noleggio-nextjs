@@ -9,7 +9,12 @@ import {
   getUniqueAgencyLocations,
 } from "@/lib/agency-location";
 
-export default function DoveSiamo({ selectedAgencyId = null }: { selectedAgencyId?: string | null }) {
+interface DoveSiamoProps {
+  selectedAgencyId?: string | null;
+  config?: any;
+}
+
+export default function DoveSiamo({ selectedAgencyId = null, config }: DoveSiamoProps) {
   const { data: agenzie = [] } = useListaAgenzia();
   const mapPoints = useMemo(() => getAgencyMapPoints(agenzie), [agenzie]);
   const locations = useMemo(() => getUniqueAgencyLocations(agenzie), [agenzie]);
@@ -18,10 +23,16 @@ export default function DoveSiamo({ selectedAgencyId = null }: { selectedAgencyI
     [agenzie, selectedAgencyId],
   );
 
+  const sectionConfig = config?.scopriConfig?.doveSiamo || config?.homeConfig?.doveSiamo || {};
+  const title = sectionConfig.title || "Piccirillo Rent In Italia";
+  const subtitle = sectionConfig.subtitle || "DOVE SIAMO IN ITALIA";
+  const heading = sectionConfig.heading || "Punti di ritiro e riconsegna in tutto il Paese";
+  const description = sectionConfig.description || "Trova la sede Piccirillo Rent piu vicina a te. La rete sedi e la mappa vengono alimentate direttamente dall'endpoint agenzie, cosi il contenuto resta allineato al backend operativo.";
+
   return (
     <section id="dove-siamo" className="w-full bg-white">
       <div className="container mx-auto max-w-[1240px] px-4 py-14">
-        <h2 className="mb-10 text-3xl font-bold md:text-4xl">Piccirillo Rent In Italia</h2>
+        <h2 className="mb-10 text-3xl font-bold md:text-4xl">{title}</h2>
 
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
           <div className="h-[400px]">
@@ -29,16 +40,14 @@ export default function DoveSiamo({ selectedAgencyId = null }: { selectedAgencyI
           </div>
 
           <div className="content-center">
-            <span className="text-xs font-semibold uppercase text-gray-500">DOVE SIAMO IN ITALIA</span>
+            <span className="text-xs font-semibold uppercase text-gray-500">{subtitle}</span>
 
             <h3 className="mb-4 mt-2 text-2xl font-bold">
-              Punti di ritiro e riconsegna in tutto il Paese
+              {heading}
             </h3>
 
-            <p className="mb-6 text-gray-600">
-              Trova la sede Piccirillo Rent piu vicina a te. La rete sedi e la mappa vengono
-              alimentate direttamente dall&apos;endpoint agenzie, cosi il contenuto resta allineato al
-              backend operativo.
+            <p className="mb-6 text-gray-600 whitespace-pre-wrap">
+              {description}
             </p>
 
             {selectedAgency ? (

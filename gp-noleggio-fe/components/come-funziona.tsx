@@ -1,9 +1,20 @@
-export default function ComeFunziona() {
+interface ComeFunzionaProps {
+    config?: any;
+}
+
+export default function ComeFunziona({ config }: ComeFunzionaProps) {
+    const sectionConfig = config?.autoConfig?.comeFunziona || 
+                          config?.premiumConfig?.comeFunziona || 
+                          config?.furgoniConfig?.comeFunziona || 
+                          config?.elettricheConfig?.comeFunziona || {};
+                          
+    const title = sectionConfig.title || "Come noleggiare un'auto con Piccirillo Rent";
+
     return (
         <section className="w-full bg-[#F7F7F7]">
             <div className="container mx-auto max-w-[1240px] px-4 py-12">
                 <h2 className="text-2xl font-bold text-gray-900">
-                    Come noleggiare un&apos;auto con Piccirillo Rent
+                    {title}
                 </h2>
 
                 <div className="mt-4 space-y-3 text-sm text-gray-700 leading-relaxed">

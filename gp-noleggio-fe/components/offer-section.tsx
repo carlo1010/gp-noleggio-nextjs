@@ -2,11 +2,26 @@ import Image from "next/image";
 import { Check } from "lucide-react";
 import BadgePromo from "@/components/badge-promo";
 
-export default function OffersSection() {
+interface OffersSectionProps {
+    config?: any;
+}
+
+export default function OffersSection({ config }: OffersSectionProps) {
+    const sectionConfig = config?.homeConfig?.offersSection || {};
+    
+    const title = sectionConfig.title || "Le offerte del momento";
+    const vantaggiTitle = sectionConfig.vantaggiTitle || "Viaggia in tranquillità, scegli il meglio";
+    const vantaggiSubtitle = sectionConfig.vantaggiSubtitle || "IL MEGLIO";
+    const vantaggiBody = sectionConfig.vantaggiBody || "Prenota il tuo noleggio direttamente dal nostro sito: scegli l'auto che fa per te, aggiungi gli extra che desideri e approfitta delle tariffe vantaggiose.";
+    const vantaggiImage = sectionConfig.imageVantaggi?.url || "/vacanza.jpg";
+    const vantaggiList = sectionConfig.vantaggiList?.length > 0 
+        ? sectionConfig.vantaggiList.map((i: any) => i.testo)
+        : ["Vantaggio 1", "Vantaggio 2", "Vantaggio 3", "Vantaggio 4", "Vantaggio 5"];
+
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto px-4 py-6 max-w-[1240px]">
-                <h2 className="text-2xl font-bold mb-6">Le offerte del momento</h2>
+                <h2 className="text-2xl font-bold mb-6">{title}</h2>
 
                 {/* GRID OFFERTA - Added h-full and items-stretch logic */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
@@ -66,11 +81,10 @@ export default function OffersSection() {
                 {/* SECONDA RIGA: TESTO + IMMAGINE VANTAGGI */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-10 items-center">
                     <div className="md:col-span-2">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">IL MEGLIO</span>
-                        <h3 className="text-2xl font-bold mt-2 mb-4">Viaggia in tranquillità, scegli il meglio</h3>
-                        <p className="text-gray-600 mb-6">
-                            Prenota il tuo noleggio direttamente dal nostro sito: scegli {"l'auto"} che fa per te,
-                            aggiungi gli extra che desideri e approfitta delle tariffe vantaggiose.
+                        <span className="text-xs font-semibold text-gray-500 uppercase">{vantaggiSubtitle}</span>
+                        <h3 className="text-2xl font-bold mt-2 mb-4">{vantaggiTitle}</h3>
+                        <p className="text-gray-600 mb-6 whitespace-pre-wrap">
+                            {vantaggiBody}
                         </p>
                         <button className="bg-[#0700DE] text-white px-6 py-2 rounded-md hover:bg-[#0500b0] transition">
                             Scopri i vantaggi
@@ -79,7 +93,7 @@ export default function OffersSection() {
 
                     <div className="md:col-span-2 relative rounded-tl-3xl rounded-br-3xl overflow-hidden shadow-lg min-h-[350px]">
                         <Image
-                            src="/vacanza.jpg"
+                            src={vantaggiImage}
                             alt="Vantaggi"
                             fill
                             sizes="(max-width: 768px) 100vw, 50vw"
@@ -88,11 +102,10 @@ export default function OffersSection() {
                         <div className="absolute inset-0 bg-black/50"></div>
 
                         <div className="absolute inset-0 flex flex-col justify-center pl-10 space-y-4">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                                <div key={i} className="flex items-center gap-4">
-                                    {/* Green Tick applied here */}
+                            {vantaggiList.map((testo: string, idx: number) => (
+                                <div key={idx} className="flex items-center gap-4">
                                     <Check className='w-6 h-6 text-green-500 stroke-[3px]' />
-                                    <span className="text-xl md:text-2xl text-white font-medium">Vantaggio {i}</span>
+                                    <span className="text-xl md:text-2xl text-white font-medium">{testo}</span>
                                 </div>
                             ))}
                         </div>
