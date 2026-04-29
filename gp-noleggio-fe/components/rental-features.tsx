@@ -18,7 +18,14 @@ const features = [
     },
 ];
 
-export default function RentalFeatures() {
+interface RentalFeaturesProps {
+    config?: any;
+}
+
+export default function RentalFeatures({ config }: RentalFeaturesProps) {
+    const sectionConfig = config?.autoConfig?.rentalFeatures || {};
+    const title = sectionConfig.title || "Piccirillo Rent: il noleggio auto su misura, in tutta Italia";
+
     return (
         <section className="w-full bg-white py-20">
             <div className="container mx-auto px-4 max-w-[1240px]">
@@ -30,7 +37,7 @@ export default function RentalFeatures() {
                     </p>
 
                     <h1 className="text-3xl md:text-4xl font-bold mb-6">
-                        Piccirillo Rent: il noleggio auto su misura, in tutta Italia
+                        {title}
                     </h1>
 
                     <p className="text-gray-600 text-sm leading-relaxed">

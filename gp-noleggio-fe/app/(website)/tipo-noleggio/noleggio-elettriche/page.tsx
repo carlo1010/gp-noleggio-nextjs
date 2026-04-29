@@ -50,7 +50,9 @@ const cars = [
 ];
 
 
-export default function Page() {
+export default async function Page() {
+    const { getPageConfig } = await import("@/lib/fetchPayload");
+    const config = await getPageConfig("noleggio-elettriche");
     return (
         <>
             <script
@@ -58,12 +60,12 @@ export default function Page() {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <OfferBar />
-            <HeroBanner imageUrl={"/hero/sfondo-hero-elettriche.png"} />
-            <GammaElettricaInfo />
-            <FlottaGriglia title="La nostra flotta" cars={cars} />
+            <HeroBanner imageUrl={"/hero/sfondo-hero-elettriche.png"} config={config} />
+            <GammaElettricaInfo config={config} />
+            <FlottaGriglia title="La nostra flotta" cars={cars} config={config} />
             <BannerElettriche />
             <InfoElettrico />
-            <ElettricoKeyPoints />
+            <ElettricoKeyPoints config={config} />
         </>
     );
 }

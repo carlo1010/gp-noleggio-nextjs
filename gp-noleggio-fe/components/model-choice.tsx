@@ -2,7 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export default function ModelChoice() {
+interface ModelChoiceProps {
+    config?: any;
+}
+
+export default function ModelChoice({ config }: ModelChoiceProps) {
+    const sectionConfig = config?.premiumConfig?.modelChoice || {};
+    const title = sectionConfig.title || "Scegli il modello che desideri, davvero";
+    const ctaLabel = sectionConfig.ctaLabel || "Scegli la tua auto";
+    
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto max-w-[1240px] px-4 py-16">
@@ -10,7 +18,7 @@ export default function ModelChoice() {
                     {/* Testo (sx) */}
                     <div className="max-w-md">
                         <h2 className="text-3xl font-bold leading-tight text-gray-900">
-                            Scegli il modello che desideri, davvero
+                            {title}
                         </h2>
 
                         <div className="mt-6 space-y-4 text-sm leading-relaxed text-gray-700">
@@ -40,7 +48,7 @@ export default function ModelChoice() {
                         {/* Bottone */}
                         <div className="mt-8">
                             <Button asChild className="h-12 w-[260px]  text-base">
-                                <Link href="/veicoli">Scegli la tua auto</Link>
+                                <Link href="/veicoli">{ctaLabel}</Link>
                             </Button>
                         </div>
                     </div>

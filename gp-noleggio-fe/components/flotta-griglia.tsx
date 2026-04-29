@@ -8,15 +8,18 @@ interface FlottaGrigliaProps {
         nome: string;
         autonomia: string;
     }[];
+    config?: any;
 }
 
 export default function FlottaGriglia(props: FlottaGrigliaProps) {
+    const cmsTitle = props.config?.elettricheConfig?.flottaGrid?.title || props.title;
+
     return (
         <section className="w-full bg-white">
 
             <div className="container mx-auto max-w-[1240px] px-4 py-5">
                 <h2 className=" text-2xl font-bold text-black justify-start">
-                    {props.title}
+                    {cmsTitle}
                 </h2>
 
                 <div className="mt-10 grid grid-cols-2 gap-x-10 gap-y-12 sm:grid-cols-3 lg:grid-cols-4 py-10">

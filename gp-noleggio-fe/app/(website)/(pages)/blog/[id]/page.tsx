@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { getPayload } from "@/lib/payload";
-import type { Post } from "@/payload-types";
+import type { BlogPost } from "@/payload-types";
 import HeroBanner from "@/components/hero-banner";
 import WhyRent from "@/components/why-rent";
 import BlogArticle from "@/components/blog-article";
 import { notFound } from "next/navigation";
 
-async function getBlogPost(slug: string): Promise<Post | null> {
+async function getBlogPost(slug: string): Promise<BlogPost | null> {
     try {
         const payload = await getPayload();
         const { docs } = await payload.find({
-            collection: 'posts',
+            collection: 'blog-posts',
             where: {
                 slug: {
                     equals: slug,
@@ -18,7 +18,7 @@ async function getBlogPost(slug: string): Promise<Post | null> {
             },
             limit: 1,
         });
-        return (docs[0] as Post | undefined) ?? null;
+        return (docs[0] as BlogPost | undefined) ?? null;
     } catch {
         return null;
     }
@@ -36,16 +36,17 @@ export async function generateMetadata({
         return { title: "Articolo non trovato" };
     }
 
-    const imageUrl = typeof post.img === 'object' && post.img?.url ? post.img.url : '/placeholder.png';
+    const imageUrl = typeof post.cardImage === 'object' && post.cardImage?.url ? post.cardImage.url : '/placeholder.png';
+    const alt = typeof post.cardImage === 'object' && post.cardImage?.alt ? post.cardImage.alt : "Immagine articolo";
 
     return {
         title: post.title,
-        description: post.desc,
+        description: post.excerpt || "",
         openGraph: {
             title: post.title,
-            description: post.desc,
+            description: post.excerpt || "",
             url: `/blog/${id}`,
-            images: [{ url: imageUrl, alt: post.imgAlt }],
+            images: [{ url: imageUrl, alt: alt }],
         },
         alternates: { canonical: `/blog/${id}` },
     };

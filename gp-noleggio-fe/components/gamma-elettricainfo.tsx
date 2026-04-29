@@ -1,36 +1,50 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-export default function GammaElettricaInfo() {
+interface GammaElettricaInfoProps {
+    config?: any;
+}
+
+export default function GammaElettricaInfo({ config }: GammaElettricaInfoProps) {
+    const sectionConfig = config?.elettricheConfig?.gammaInfo || {};
+    const title = sectionConfig.title || "La nostra esclusiva gamma di auto elettriche";
+    const body = sectionConfig.body;
+    
     return (
         <section className="w-full bg-white">
             <div className="container mx-auto max-w-[1240px] px-4 py-12">
                 <h2 className="text-3xl font-bold text-black">
-                    La nostra esclusiva gamma di auto elettriche
+                    {title}
                 </h2>
 
-                <div className="mt-6 max-w-5xl space-y-6 text-[15px] leading-7 text-black">
-                    <p>
-                        Noleggiare un auto elettrica oggi significa poter testare con mano la
-                        tecnologia e l’innovazione e scoprirne nel dettaglio le
-                        caratteristiche e i reali vantaggi. All’interno della nostra
-                        esclusiva gamma elettrica troverai dalle piccole city car ad auto più
-                        spaziose e confortevoli. Su tutte il comfort di guida, la
-                        silenziosità, le prestazioni e il rispetto per l’ambiente sono
-                        garantiti.
-                    </p>
+                <div className="mt-6 max-w-5xl space-y-6 text-[15px] leading-7 text-black whitespace-pre-wrap">
+                    {body ? (
+                        <p>{body}</p>
+                    ) : (
+                        <>
+                            <p>
+                                Noleggiare un auto elettrica oggi significa poter testare con mano la
+                                tecnologia e l’innovazione e scoprirne nel dettaglio le
+                                caratteristiche e i reali vantaggi. All’interno della nostra
+                                esclusiva gamma elettrica troverai dalle piccole city car ad auto più
+                                spaziose e confortevoli. Su tutte il comfort di guida, la
+                                silenziosità, le prestazioni e il rispetto per l’ambiente sono
+                                garantiti.
+                            </p>
 
-                    <p>
-                        Ti ricordiamo che tutti i nostri noleggi di{" "}
-                        <strong>veicoli elettrici includono una carica completa</strong>, il
-                        che significa che non è necessario ricaricare prima di restituire il
-                        veicolo alla fine del noleggio*, permettendoti di risparmiare
-                        ulteriore tempo e denaro.
-                    </p>
+                            <p>
+                                Ti ricordiamo che tutti i nostri noleggi di{" "}
+                                <strong>veicoli elettrici includono una carica completa</strong>, il
+                                che significa che non è necessario ricaricare prima di restituire il
+                                veicolo alla fine del noleggio*, permettendoti di risparmiare
+                                ulteriore tempo e denaro.
+                            </p>
 
-                    <p>
-                        Per maggiori informazioni su dove trovare le auto e dove ricaricarle
-                    </p>
+                            <p>
+                                Per maggiori informazioni su dove trovare le auto e dove ricaricarle
+                            </p>
+                        </>
+                    )}
                 </div>
 
                 <Link

@@ -27,12 +27,15 @@ export default async function Scopri({
         ? resolvedSearchParams.agenzia[0]
         : resolvedSearchParams.agenzia ?? null;
 
+    const { getPageConfig } = await import("@/lib/fetchPayload");
+    const config = await getPageConfig("scopri");
+
     return (
         <>
-            <HeroBanner imageUrl={bannerImageUrl} />
-            <DoveSiamo selectedAgencyId={selectedAgencyId} />
-            <DiscoverSection />
-            <WhyRent />
+            <HeroBanner imageUrl={bannerImageUrl} config={config} />
+            <DoveSiamo selectedAgencyId={selectedAgencyId} config={config} />
+            <DiscoverSection config={config} />
+            <WhyRent config={config} />
         </>
     );
 }

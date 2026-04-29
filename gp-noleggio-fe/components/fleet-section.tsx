@@ -44,7 +44,14 @@ const fleetItems = [
     },
 ];
 
-export default function FleetSection() {
+interface FleetSectionProps {
+    config?: any;
+}
+
+export default function FleetSection({ config }: FleetSectionProps) {
+    const sectionConfig = config?.homeConfig?.fleetSection || {};
+    const title = sectionConfig.title || "La flotta";
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -93,7 +100,7 @@ export default function FleetSection() {
             {/* ===== FASCIA GRIGIA ===== */}
             <div className="bg-gray-50 h-auto md:h-[422px]">
                 <div className="container mx-auto px-4 pt-14 pb-10 md:pb-0 max-w-[1240px]">
-                    <h2 className="text-3xl font-bold mb-10 text-center md:text-left">La flotta</h2>
+                    <h2 className="text-3xl font-bold mb-10 text-center md:text-left">{title}</h2>
 
                     {/* MOBILE CAROUSEL */}
                     <div

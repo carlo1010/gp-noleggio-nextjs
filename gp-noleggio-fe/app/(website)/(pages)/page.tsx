@@ -57,7 +57,9 @@ const jsonLd = {
     ],
 };
 
-export default function Home() {
+export default async function Home() {
+    const { getPageConfig } = await import("@/lib/fetchPayload");
+    const config = await getPageConfig("home");
     return (
         <>
             <script
@@ -65,11 +67,11 @@ export default function Home() {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <main className="min-h-dvh bg-black w-full">
-                <HeroBanner imageUrl={"/logo-banner.png"} />
-                <OffersSection />
-                <FleetSection />
-                <BenefitsSection />
-                <DiscoverSection />
+                <HeroBanner imageUrl={"/logo-banner.png"} config={config} />
+                <OffersSection config={config} />
+                <FleetSection config={config} />
+                <BenefitsSection config={config} />
+                <DiscoverSection config={config} />
             </main>
         </>
     );

@@ -71,7 +71,8 @@ export interface Config {
     media: Media;
     faqcategories: Faqcategory;
     faqs: Faq;
-    posts: Post;
+    'blog-posts': BlogPost;
+    'page-configs': PageConfig;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -83,7 +84,8 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     faqcategories: FaqcategoriesSelect<false> | FaqcategoriesSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
-    posts: PostsSelect<false> | PostsSelect<true>;
+    'blog-posts': BlogPostsSelect<false> | BlogPostsSelect<true>;
+    'page-configs': PageConfigsSelect<false> | PageConfigsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -214,33 +216,164 @@ export interface Faq {
   createdAt: string;
 }
 /**
+ * Gestisci gli articoli del blog. Scrivi il testo qui sotto e configura l'anteprima in fondo.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
+ * via the `definition` "blog-posts".
  */
-export interface Post {
+export interface BlogPost {
   id: string;
-  slug: string;
-  kicker: string;
   title: string;
-  desc: string;
-  cta: string;
-  img: string | Media;
-  imgAlt: string;
-  content?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
+  /**
+   * Identificativo univoco per la URL (es. noleggio-business).
+   */
+  slug: string;
+  status?: ('draft' | 'published') | null;
+  publishedAt?: string | null;
+  /**
+   * Scrivi qui il corpo del tuo articolo.
+   */
+  content: string;
+  cardImage: string | Media;
+  kicker?: string | null;
+  excerpt?: string | null;
+  ctaLabel: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Gestisci i testi statici e le immagini delle varie pagine. Lascia i campi vuoti per utilizzare i testi di default.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-configs".
+ */
+export interface PageConfig {
+  id: string;
+  slug: 'home' | 'noleggio-auto' | 'noleggio-premium' | 'noleggio-furgoni' | 'noleggio-elettriche' | 'scopri' | 'blog';
+  hero?: {
+    title?: string | null;
+    description?: string | null;
+    bgImage?: (string | null) | Media;
+  };
+  homeConfig?: {
+    offersSection?: {
+      title?: string | null;
+      vantaggiTitle?: string | null;
+      vantaggiSubtitle?: string | null;
+      vantaggiBody?: string | null;
+      imageVantaggi?: (string | null) | Media;
+      vantaggiList?:
+        | {
+            testo?: string | null;
+            id?: string | null;
+          }[]
+        | null;
     };
-    [k: string]: unknown;
-  } | null;
+    fleetSection?: {
+      title?: string | null;
+      subtitle?: string | null;
+    };
+    benefitsSection?: {
+      title?: string | null;
+      subtitle?: string | null;
+      bgImage?: (string | null) | Media;
+    };
+    discoverSection?: {
+      title?: string | null;
+    };
+  };
+  autoConfig?: {
+    rentalFeatures?: {
+      title?: string | null;
+    };
+    comeFunziona?: {
+      title?: string | null;
+      subtitle?: string | null;
+    };
+    infoNoleggio?: {
+      title?: string | null;
+      subtitle?: string | null;
+      body?: string | null;
+      image?: (string | null) | Media;
+    };
+  };
+  premiumConfig?: {
+    premiumIntro?: {
+      title?: string | null;
+      subtitle?: string | null;
+      image?: (string | null) | Media;
+    };
+    comeFunziona?: {
+      title?: string | null;
+      subtitle?: string | null;
+    };
+    modelChoice?: {
+      title?: string | null;
+      ctaLabel?: string | null;
+    };
+  };
+  furgoniConfig?: {
+    introFurgoni?: {
+      title?: string | null;
+      subtitle?: string | null;
+      body?: string | null;
+    };
+    promo1?: {
+      title?: string | null;
+      body?: string | null;
+      ctaLabel?: string | null;
+      ctaHref?: string | null;
+      image?: (string | null) | Media;
+    };
+    promo2?: {
+      title?: string | null;
+      body?: string | null;
+      ctaLabel?: string | null;
+      ctaHref?: string | null;
+      image?: (string | null) | Media;
+    };
+    promo3?: {
+      title?: string | null;
+      body?: string | null;
+      ctaLabel?: string | null;
+      ctaHref?: string | null;
+      image?: (string | null) | Media;
+    };
+    wideBanner?: {
+      image?: (string | null) | Media;
+    };
+    comeFunziona?: {
+      title?: string | null;
+      subtitle?: string | null;
+    };
+  };
+  elettricheConfig?: {
+    introElettrico?: {
+      title?: string | null;
+      subtitle?: string | null;
+      body?: string | null;
+      image?: (string | null) | Media;
+    };
+    vantaggiElettrico?: {
+      title?: string | null;
+      subtitle?: string | null;
+    };
+    comeFunziona?: {
+      title?: string | null;
+      subtitle?: string | null;
+    };
+  };
+  scopriConfig?: {
+    chiSiamo?: {
+      title?: string | null;
+      body?: string | null;
+      image?: (string | null) | Media;
+    };
+    doveSiamo?: {
+      title?: string | null;
+      subtitle?: string | null;
+    };
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -285,8 +418,12 @@ export interface PayloadLockedDocument {
         value: string | Faq;
       } | null)
     | ({
-        relationTo: 'posts';
-        value: string | Post;
+        relationTo: 'blog-posts';
+        value: string | BlogPost;
+      } | null)
+    | ({
+        relationTo: 'page-configs';
+        value: string | PageConfig;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -397,17 +534,207 @@ export interface FaqsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts_select".
+ * via the `definition` "blog-posts_select".
  */
-export interface PostsSelect<T extends boolean = true> {
-  slug?: T;
-  kicker?: T;
+export interface BlogPostsSelect<T extends boolean = true> {
   title?: T;
-  desc?: T;
-  cta?: T;
-  img?: T;
-  imgAlt?: T;
+  slug?: T;
+  status?: T;
+  publishedAt?: T;
   content?: T;
+  cardImage?: T;
+  kicker?: T;
+  excerpt?: T;
+  ctaLabel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-configs_select".
+ */
+export interface PageConfigsSelect<T extends boolean = true> {
+  slug?: T;
+  hero?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        bgImage?: T;
+      };
+  homeConfig?:
+    | T
+    | {
+        offersSection?:
+          | T
+          | {
+              title?: T;
+              vantaggiTitle?: T;
+              vantaggiSubtitle?: T;
+              vantaggiBody?: T;
+              imageVantaggi?: T;
+              vantaggiList?:
+                | T
+                | {
+                    testo?: T;
+                    id?: T;
+                  };
+            };
+        fleetSection?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+            };
+        benefitsSection?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              bgImage?: T;
+            };
+        discoverSection?:
+          | T
+          | {
+              title?: T;
+            };
+      };
+  autoConfig?:
+    | T
+    | {
+        rentalFeatures?:
+          | T
+          | {
+              title?: T;
+            };
+        comeFunziona?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+            };
+        infoNoleggio?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              body?: T;
+              image?: T;
+            };
+      };
+  premiumConfig?:
+    | T
+    | {
+        premiumIntro?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              image?: T;
+            };
+        comeFunziona?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+            };
+        modelChoice?:
+          | T
+          | {
+              title?: T;
+              ctaLabel?: T;
+            };
+      };
+  furgoniConfig?:
+    | T
+    | {
+        introFurgoni?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              body?: T;
+            };
+        promo1?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              image?: T;
+            };
+        promo2?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              image?: T;
+            };
+        promo3?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              ctaLabel?: T;
+              ctaHref?: T;
+              image?: T;
+            };
+        wideBanner?:
+          | T
+          | {
+              image?: T;
+            };
+        comeFunziona?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+            };
+      };
+  elettricheConfig?:
+    | T
+    | {
+        introElettrico?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              body?: T;
+              image?: T;
+            };
+        vantaggiElettrico?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+            };
+        comeFunziona?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+            };
+      };
+  scopriConfig?:
+    | T
+    | {
+        chiSiamo?:
+          | T
+          | {
+              title?: T;
+              body?: T;
+              image?: T;
+            };
+        doveSiamo?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
 }

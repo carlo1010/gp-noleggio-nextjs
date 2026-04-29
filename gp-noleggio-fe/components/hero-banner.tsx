@@ -17,6 +17,7 @@ interface HeroBannerProps {
     showSearch?: boolean;
     compact?: boolean;
     medium?: boolean;
+    config?: any; // Aggiunto per il CMS
 }
 
 export default function HeroBanner({
@@ -27,8 +28,14 @@ export default function HeroBanner({
     showSearch = true,
     compact = false,
     medium = false,
+    config,
 }: HeroBannerProps) {
-    const hasContent = title || promo;
+    // Override with CMS data if present
+    const cmsTitle = config?.hero?.title || title;
+    const cmsDescription = config?.hero?.description || description;
+    const cmsImage = config?.hero?.bgImage?.url || imageUrl;
+
+    const hasContent = cmsTitle || promo;
 
     const heightClass = compact
         ? "min-h-[160px] md:min-h-[200px]"
@@ -43,7 +50,7 @@ export default function HeroBanner({
             <div className="absolute top-0 left-0 w-full z-40">
                 <OfferBanner />
             </div>
-            <Image src={imageUrl} alt={"logo hero banner"} fill className="object-cover" priority />
+            <Image src={cmsImage} alt={cmsTitle || "hero banner"} fill className="object-cover" priority />
 
             {/* OVERLAY CONTENT */}
             {hasContent && (
@@ -51,18 +58,17 @@ export default function HeroBanner({
                     <div className="container mx-auto px-4 max-w-[1240px]">
                         <div className="flex flex-row md:flex-col justify-between md:justify-start items-start gap-2 md:gap-4">
 
-                            {/* LEFT (MOBILE) / BOTTOM (DESKTOP): TITLE & DESCRIPTION */}
                             <div className="flex-1 md:order-2">
-                                {(title || description) && (
+                                {(cmsTitle || cmsDescription) && (
                                     <div className="pt-2 md:pt-4 pointer-events-auto">
-                                        {title && (
+                                        {cmsTitle && (
                                             <h1 className="text-white text-2xl md:text-4xl font-bold leading-tight drop-shadow-md">
-                                                {title}
+                                                {cmsTitle}
                                             </h1>
                                         )}
-                                        {description && (
+                                        {cmsDescription && (
                                             <p className="text-white/90 text-sm md:text-lg mt-1 md:mt-2 leading-relaxed drop-shadow-md">
-                                                {description}
+                                                {cmsDescription}
                                             </p>
                                         )}
                                     </div>
