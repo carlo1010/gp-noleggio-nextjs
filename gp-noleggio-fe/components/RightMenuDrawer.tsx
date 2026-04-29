@@ -7,21 +7,21 @@ import { X } from "lucide-react";
 
 type RightMenuDrawerProps = {
     open: boolean;
-    onClose: () => void;
+    onCloseAction: () => void;
 };
 
-export default function RightMenuDrawer({ open, onClose }: RightMenuDrawerProps) {
+export default function RightMenuDrawer({ open, onCloseAction }: RightMenuDrawerProps) {
     // Chiudi con ESC
     useEffect(() => {
         if (!open) return;
 
         const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
+            if (e.key === "Escape") onCloseAction();
         };
 
         window.addEventListener("keydown", onKeyDown);
         return () => window.removeEventListener("keydown", onKeyDown);
-    }, [open, onClose]);
+    }, [open, onCloseAction]);
 
     // // Blocca scroll body quando aperto
     // useEffect(() => {
@@ -58,7 +58,7 @@ export default function RightMenuDrawer({ open, onClose }: RightMenuDrawerProps)
             <div
                 className={`fixed inset-0 z-40 transition-opacity duration-200 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
                     } bg-black/50 backdrop-blur-sm`}
-                onClick={onClose}
+                onClick={onCloseAction}
             />
 
             {/* Drawer */}
@@ -84,7 +84,7 @@ export default function RightMenuDrawer({ open, onClose }: RightMenuDrawerProps)
                     </div>
 
                     <button
-                        onClick={onClose}
+                        onClick={onCloseAction}
                         className="ml-4 inline-flex h-10 w-10 items-center justify-center rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50"
                         aria-label="Chiudi menu"
                     >
@@ -95,7 +95,7 @@ export default function RightMenuDrawer({ open, onClose }: RightMenuDrawerProps)
                 <nav className="px-6 pb-10">
                     <ul className="space-y-6 text-sm">
                         <li>
-                            <Link href="/scopri" onClick={onClose} className="font-semibold hover:underline">
+                            <Link href="/scopri" onClick={onCloseAction} className="font-semibold hover:underline">
                                 Le nostre sedi
                             </Link>
                         </li>
@@ -103,25 +103,25 @@ export default function RightMenuDrawer({ open, onClose }: RightMenuDrawerProps)
                         <li>
                             <div className="font-semibold">La nostra flotta</div>
                             <ul className="mt-3 space-y-2 pl-4 text-gray-700">
-                                <li><Link href="/tipo-noleggio/noleggio-auto" onClick={onClose}
+                                <li><Link href="/tipo-noleggio/noleggio-auto" onClick={onCloseAction}
                                     className="hover:underline">Auto</Link></li>
-                                <li><Link href="/tipo-noleggio/noleggio-premium" onClick={onClose}
+                                <li><Link href="/tipo-noleggio/noleggio-premium" onClick={onCloseAction}
                                     className="hover:underline">Premium</Link></li>
-                                <li><Link href="/tipo-noleggio/noleggio-elettriche" onClick={onClose}
+                                <li><Link href="/tipo-noleggio/noleggio-elettriche" onClick={onCloseAction}
                                     className="hover:underline">Elettriche</Link></li>
-                                <li><Link href="/tipo-noleggio/noleggio-furgoni" onClick={onClose}
+                                <li><Link href="/tipo-noleggio/noleggio-furgoni" onClick={onCloseAction}
                                     className="hover:underline">Furgoni</Link></li>
                             </ul>
                         </li>
 
                         <li>
-                            <Link href="/blog" onClick={onClose} className="font-semibold hover:underline">
+                            <Link href="/blog" onClick={onCloseAction} className="font-semibold hover:underline">
                                 Il blog
                             </Link>
                         </li>
 
                         <li>
-                            <Link href="#" onClick={onClose} className="font-semibold hover:underline">
+                            <Link href="#" onClick={onCloseAction} className="font-semibold hover:underline">
                                 Piccirillo Rent Business
                             </Link>
                         </li>

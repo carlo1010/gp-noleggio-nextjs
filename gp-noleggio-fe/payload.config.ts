@@ -10,12 +10,12 @@ import {
     LinkFeature,
 } from '@payloadcms/richtext-lexical'
 
-import { Users } from './collections/Users'
-import { Media } from './collections/Media'
-import { Faqs } from './collections/Faqs'
-import { FaqCategories } from './collections/FaqCategories'
-import { BlogPosts } from './collections/BlogPosts'
-import { PageConfigs } from './collections/PageConfigs'
+import { Users } from './payload/collections/Users'
+import { Media } from './payload/collections/Media'
+import { Faqs } from './payload/collections/Faqs'
+import { FaqCategories } from './payload/collections/FaqCategories'
+import { BlogPosts } from './payload/collections/BlogPosts'
+import { PageConfigs } from './payload/collections/PageConfigs'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

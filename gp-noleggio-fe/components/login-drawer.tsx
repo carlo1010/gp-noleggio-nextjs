@@ -7,19 +7,19 @@ import Image from "next/image";
 
 type LoginDrawerProps = {
     open: boolean;
-    onClose: () => void;
+    onCloseAction: () => void;
 };
 
-export default function LoginDrawer({ open, onClose }: LoginDrawerProps) {
+export default function LoginDrawer({ open, onCloseAction }: LoginDrawerProps) {
     const [showPwd, setShowPwd] = useState(false);
 
     // ESC to close
     useEffect(() => {
         if (!open) return;
-        const onKeyDown = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+        const onKeyDown = (e: KeyboardEvent) => e.key === "Escape" && onCloseAction();
         window.addEventListener("keydown", onKeyDown);
         return () => window.removeEventListener("keydown", onKeyDown);
-    }, [open, onClose]);
+    }, [open, onCloseAction]);
 
     // lock body scroll
     // useEffect(() => {
@@ -57,7 +57,7 @@ export default function LoginDrawer({ open, onClose }: LoginDrawerProps) {
             <div
                 className={`fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-200
         ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
-                onClick={onClose}
+                onClick={onCloseAction}
             />
 
             {/* Drawer */}
@@ -96,7 +96,7 @@ export default function LoginDrawer({ open, onClose }: LoginDrawerProps) {
                     </div>
 
                     <button
-                        onClick={onClose}
+                        onClick={onCloseAction}
                         className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#0700DE] text-[#0700DE] hover:bg-blue-50"
                         aria-label="Chiudi"
                     >
@@ -164,7 +164,7 @@ export default function LoginDrawer({ open, onClose }: LoginDrawerProps) {
                                 className="h-11 flex-1 rounded-br-sm rounded-tl-sm border border-[#0700DE] bg-white
                 text-sm font-semibold text-[#0700DE] hover:bg-blue-50
                 inline-flex items-center justify-center"
-                                onClick={onClose}
+                                onClick={onCloseAction}
                             >
                                 Crea un account
                             </Link>

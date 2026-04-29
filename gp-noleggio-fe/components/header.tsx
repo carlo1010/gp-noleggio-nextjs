@@ -115,12 +115,12 @@ export default function Header({ dark = false }: HeaderProps) {
             {/* LOGIN DRAWER */}
             <LoginDrawer
                 open={loginOpen}
-                onClose={() => setLoginOpen(false)}
+                onCloseAction={() => setLoginOpen(false)}
             />
             {/* MENU DRAWER */}
             <RightMenuDrawer
                 open={menuOpen}
-                onClose={() => setMenuOpen(false)}
+                onCloseAction={() => setMenuOpen(false)}
             />
         </>
     );
