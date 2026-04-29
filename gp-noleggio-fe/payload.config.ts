@@ -30,7 +30,7 @@ export default buildConfig({
     collections: [Users, Media, FaqCategories, Faqs, BlogPosts, PageConfigs],
     secret: process.env.PAYLOAD_SECRET || '',
     typescript: {
-        outputFile: path.resolve(dirname, '../payload-types.ts'),
+        outputFile: path.resolve(dirname, './payload-types.ts'),
     },
     db: mongooseAdapter({
         url: process.env.DATABASE_URI || '',

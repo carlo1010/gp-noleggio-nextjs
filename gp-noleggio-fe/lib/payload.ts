@@ -10,3 +10,16 @@ import { cache } from 'react'
 export const getPayload = cache(async () => {
     return _getPayload({ config })
 })
+
+/**
+ * Safe wrapper for build/runtime resiliency.
+ * Returns null when Payload cannot initialize (e.g. DB unreachable).
+ */
+export const getPayloadSafe = cache(async () => {
+    try {
+        return await _getPayload({ config })
+    } catch (error) {
+        console.error('[getPayloadSafe] Unable to initialize Payload instance:', error)
+        return null
+    }
+})

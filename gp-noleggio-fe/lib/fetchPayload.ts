@@ -1,4 +1,4 @@
-import { getPayload } from '@/lib/payload'
+import { getPayloadSafe } from '@/lib/payload'
 import type { Faq } from '@/payload-types'
 
 /**
@@ -7,7 +7,8 @@ import type { Faq } from '@/payload-types'
  */
 export async function getFAQs(): Promise<Faq[]> {
     try {
-        const payload = await getPayload()
+        const payload = await getPayloadSafe()
+        if (!payload) return []
 
         const result = await payload.find({
             collection: 'faqs',
@@ -32,7 +33,8 @@ export async function getFAQs(): Promise<Faq[]> {
  */
 export async function getFAQById(id: string): Promise<Faq | null> {
     try {
-        const payload = await getPayload()
+        const payload = await getPayloadSafe()
+        if (!payload) return null
         const faq = await payload.findByID({
             collection: 'faqs',
             id,
@@ -48,7 +50,8 @@ export async function getFAQById(id: string): Promise<Faq | null> {
  */
 export async function getFaqBySlug(slug: string): Promise<Faq | null> {
     try {
-        const payload = await getPayload()
+        const payload = await getPayloadSafe()
+        if (!payload) return null
         // Prima prova a cercare per slug
         const result = await payload.find({
             collection: 'faqs',
@@ -90,9 +93,10 @@ export async function getFaqBySlug(slug: string): Promise<Faq | null> {
  * Usabile solo nei Server Components.
  */
 export async function getPageConfig(slug: string): Promise<any | null> {
-    const payload = await getPayload()
-
     try {
+        const payload = await getPayloadSafe()
+        if (!payload) return null
+
         const result = await payload.find({
             collection: 'page-configs',
             where: {
